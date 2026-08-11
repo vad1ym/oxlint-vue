@@ -6,7 +6,6 @@ import type {
   OxlintSpan,
   RulesMap,
 } from './types.js'
-import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -422,6 +421,7 @@ async function invokeOxlint(
       throw new Error(
         `could not execute oxlint at "${oxlintPath}". `
         + 'Install it in the project or alongside oxlint-vue.',
+        { cause: err },
       )
     }
     const captured = stdoutOf(err)
@@ -430,6 +430,7 @@ async function invokeOxlint(
       const detail = (stderrOf(err) || message || '').trim()
       throw new Error(
         `oxlint failed (exit ${isExecError(err) ? err.code : undefined}): ${detail}`,
+        { cause: err },
       )
     }
     stdout = captured
@@ -446,7 +447,7 @@ export function parseOxlintJson(
   stdout: string,
   tmpRoot: string,
   backMap: Map<string, string>,
-  cwd: string,
+  _cwd: string,
 ): Diagnostic[] {
   const trimmed = stdout.trim()
   if (!trimmed) return []

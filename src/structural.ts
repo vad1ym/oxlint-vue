@@ -23,6 +23,10 @@ import { ElementTypes, NodeTypes } from '@vue/compiler-core'
 /** Any node the walker may hand a rule. */
 type AnyNode = RootNode | TemplateChildNode
 
+/* eslint-disable no-underscore-dangle -- These live on compiler-sfc's own AST
+   nodes, not on ours. The `__` prefix marks them as foreign and keeps them
+   from ever colliding with a field the Vue compiler adds later. */
+
 /**
  * Context a rule needs but the node itself does not carry, stashed on the node
  * by `annotate` before the traversal reaches it.

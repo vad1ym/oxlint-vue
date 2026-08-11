@@ -1,4 +1,3 @@
-import { existsSync } from 'node:fs'
 import { access, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
@@ -235,6 +234,7 @@ export async function formatFiles(
       throw new Error(
         `could not execute oxfmt at "${oxfmtPath}". `
         + 'Install it in the project or alongside oxlint-vue.',
+        { cause: err },
       )
     }
     // Exit 1 means "files differ", which is the answer, not a failure.

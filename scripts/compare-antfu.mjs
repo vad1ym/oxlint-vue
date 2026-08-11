@@ -92,7 +92,7 @@ const group = (findings) => {
 
 const E = group(eslintFindings)
 const O = group(oxxxFindings)
-const names = [...new Set([...E.keys(), ...O.keys()])].sort()
+const names = [...new Set([...E.keys(), ...O.keys()])].toSorted()
 
 const pad = (s, n) => String(s).padEnd(n)
 console.log(`${pad('rule', 42)}${pad('eslint', 8)}${pad('oxlint-vue', 10)}`)

@@ -223,6 +223,15 @@ const IDENTIFIER = /^[A-Za-z_$][\w$]*$/
  * Bindings are thus *formulated* in ordinary JS rather than modelled by hand,
  * so oxlint resolves them with its existing scope analyser.
  */
+/** `my-widget` / `my_widget` -> `MyWidget`, matching Vue's tag resolution. */
+function pascalCase(tag: string): string {
+  return tag
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map(p => p[0]!.toUpperCase() + p.slice(1))
+    .join('')
+}
+
 function extractTemplate(
   root: RootNode,
   source: string,
@@ -339,14 +348,6 @@ function extractTemplate(
   }
 
   /** `my-widget` / `my_widget` -> `MyWidget`, matching Vue's tag resolution. */
-  function pascalCase(tag: string): string {
-    return tag
-      .split(/[-_]/)
-      .filter(Boolean)
-      .map(p => p[0]!.toUpperCase() + p.slice(1))
-      .join('')
-  }
-
   /**
    * Emit a reference to the component a tag resolves to.
    *

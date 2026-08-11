@@ -5,7 +5,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { loadConfig, runOxlint } from './run.js'
 import { moduleDir } from './resolve.js'
-import type { Diagnostic, OxlintConfig } from './types.js'
+import type { Diagnostic } from './types.js'
 
 /** The colour helpers, each either wrapping in an escape or returning as-is. */
 type Colours = Record<'red' | 'yellow' | 'dim' | 'bold' | 'cyan', (s: string) => string>
@@ -47,35 +47,39 @@ function globToRegExp(pattern: string): RegExp {
   return new RegExp(`^${re}$`)
 }
 
+/**
+ * Every ignorePattern reachable from a config, following `extends`.
+ *
+ * A cycle in `extends` would otherwise recurse forever, hence `seen`.
+ */
+async function collectIgnorePatterns(
+  file: string,
+  seen: Set<string> = new Set(),
+): Promise<string[]> {
+  const resolved = path.resolve(file)
+  if (seen.has(resolved)) return []
+  seen.add(resolved)
+  try {
+    const cfg = await loadConfig(resolved)
+    const inherited: string[] = []
+    for (const parent of cfg.extends ?? []) {
+      inherited.push(
+        ...await collectIgnorePatterns(path.resolve(path.dirname(resolved), parent), seen),
+      )
+    }
+    return [...inherited, ...(cfg.ignorePatterns ?? [])]
+  } catch {
+    return []
+  }
+}
+
 /** Build a predicate from an oxlint config's ignorePatterns. */
 async function buildIgnore(cwd: string): Promise<(abs: string) => boolean> {
   const { findConfig } = await import('./run.js')
   const configPath = await findConfig(cwd)
   if (!configPath) return () => false
 
-  // Follow `extends` so a preset's ignorePatterns are honoured too.
-  const collect = async (
-    file: string,
-    seen: Set<string> = new Set(),
-  ): Promise<string[]> => {
-    const resolved = path.resolve(file)
-    if (seen.has(resolved)) return []
-    seen.add(resolved)
-    try {
-      const cfg = await loadConfig(resolved)
-      const inherited: string[] = []
-      for (const parent of cfg.extends ?? []) {
-        inherited.push(
-          ...await collect(path.resolve(path.dirname(resolved), parent), seen),
-        )
-      }
-      return [...inherited, ...(cfg.ignorePatterns ?? [])]
-    } catch {
-      return []
-    }
-  }
-
-  const patterns = await collect(configPath)
+  const patterns = await collectIgnorePatterns(configPath)
   if (!patterns.length) return () => false
 
   const regexes = patterns.map(globToRegExp)
@@ -142,7 +146,7 @@ async function collectFiles(
   }
 
   await Promise.all(targets.map(visit))
-  return out.sort()
+  return out.toSorted()
 }
 
 function render(diagnostics: Diagnostic[], cwd: string): void {
@@ -154,10 +158,10 @@ function render(diagnostics: Diagnostic[], cwd: string): void {
     byFile.get(d.filename)!.push(d)
   }
 
-  for (const [file, list] of [...byFile].sort()) {
-    list.sort((a, b) => a.line - b.line || a.column - b.column)
+  for (const [file, list] of [...byFile].toSorted()) {
+    const ordered = list.toSorted((a, b) => a.line - b.line || a.column - b.column)
     process.stdout.write(`\n${C.bold(C.cyan(path.relative(cwd, file)))}\n`)
-    for (const d of list) {
+    for (const d of ordered) {
       const sev = d.severity === 'warning' ? C.yellow('warn ') : C.red('error')
       const pos = C.dim(`${d.line}:${d.column}`.padEnd(7))
       process.stdout.write(`  ${pos} ${sev}  ${d.message}  ${C.dim(d.rule)}\n`)
@@ -341,7 +345,7 @@ async function runInit(cwd: string): Promise<number> {
 
   if (hasPresets) {
     await write(path.join(cwd, 'oxlint.config.mjs'), `import { defineConfig } from 'oxlint'
-import preset from 'antfu-oxlint-vue/oxlintrc' with { type: 'json' }
+import preset from 'antfu-oxlint-vue/oxlintrc'
 
 export default defineConfig({
   ...preset,
@@ -362,7 +366,7 @@ export default defineConfig({
 })
 `)
 
-    await write(path.join(cwd, 'oxfmt.config.mjs'), `import preset from 'antfu-oxlint-vue/oxfmtrc' with { type: 'json' }
+    await write(path.join(cwd, 'oxfmt.config.mjs'), `import preset from 'antfu-oxlint-vue/oxfmtrc'
 
 export default {
   ...preset,
@@ -385,7 +389,7 @@ export default {
   if (!created.length) {
     process.stderr.write(
       'Nothing to do. To wire the preset into an existing config, spread it:\n'
-      + "  import preset from 'antfu-oxlint-vue/oxlintrc' with { type: 'json' }\n"
+      + "  import preset from 'antfu-oxlint-vue/oxlintrc'\n"
       + '  export default defineConfig({ ...preset })\n',
     )
     return 1

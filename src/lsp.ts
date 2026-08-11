@@ -4,7 +4,6 @@ import type { Readable, Writable } from 'node:stream'
 import type { RulesMap } from './types.js'
 import { spawn } from 'node:child_process'
 import { rmSync, writeFileSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
@@ -12,7 +11,6 @@ import { preprocess } from './preprocess.js'
 import { spawnableFrom } from './resolve.js'
 import { findConfig, loadConfig, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
 import { checkTemplate } from './structural.js'
-import type { OxlintConfig } from './types.js'
 
 /**
  * LSP proxy: `oxlint --lsp` with .vue support bolted on.
@@ -200,7 +198,8 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
     virtualFiles.delete(file)
   }
   const dropAllVirtual = (): void => {
-    for (const f of [...virtualFiles]) dropVirtual(f)
+    // Copied first: dropVirtual deletes from the set it is iterating.
+    for (const f of Array.from(virtualFiles)) dropVirtual(f)
   }
 
   // Structural rules are ours, so the child never sees them; read the same
