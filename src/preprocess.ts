@@ -248,6 +248,8 @@ function extractTemplate(
 
     if (node.type === NodeTypes.ELEMENT) {
       const scopeOpeners: DirectiveNode[] = []
+      /** Expressions that sit left of their own v-for; see precedesOwnScope. */
+      const deferred: DirectiveNode['exp'][] = []
 
       for (const prop of node.props) {
         // `ref="emblaRef"` is a static attribute, but it names a binding in
@@ -270,7 +272,19 @@ function extractTemplate(
           scopeOpeners.push(prop)
           continue
         }
-        if (prop.exp) emitExpression(prop.exp)
+        // Position in the virtual file follows the source offset, not the
+        // order these run in. So a directive written to the LEFT of the v-for
+        // it belongs to -- `<component :is="node" v-for="(node) in list">` --
+        // would emit its use before the binding exists, and `node` would be
+        // reported both undefined and unused. Vue scopes it correctly, so the
+        // honest move is to leave the expression out rather than emit a lie.
+        if (!prop.exp) continue
+        if (precedesOwnScope(prop, node)) {
+          // Emitted later, inside the scope body where the binding exists.
+          deferred.push(prop.exp)
+          continue
+        }
+        emitExpression(prop.exp)
       }
 
       // After the props, so the reference can only be placed in padding that
@@ -281,7 +295,7 @@ function extractTemplate(
       // Children first: they fill the element's interior with expressions, so
       // closeScope() can then find genuinely-free padding for its closer.
       for (const child of node.children) walk(child)
-      for (const opener of scopeOpeners) emitScope(opener, node)
+      for (const opener of scopeOpeners) emitScope(opener, node, deferred)
       return
     }
 
@@ -292,6 +306,36 @@ function extractTemplate(
         }
       }
     }
+  }
+
+  /**
+   * True when `prop` sits to the left of a `v-for` on the same element and
+   * references the binding that `v-for` introduces.
+   *
+   * Emitted output is ordered by source offset, so such an expression lands
+   * before the `.map(alias => {` that declares the alias. Emitting it would
+   * produce two false reports at once -- the alias undefined at the use site,
+   * and unused at the binding.
+   */
+  function precedesOwnScope(prop: DirectiveNode, node: ElementNode): boolean {
+    const vFor = node.props.find(
+      (p): p is DirectiveNode =>
+        p.type === NodeTypes.DIRECTIVE && p.name === 'for' && !!p.forParseResult,
+    )
+    if (!vFor || vFor.loc.start.offset < prop.loc.start.offset) return false
+
+    const r = vFor.forParseResult!
+    // The three slots are ExpressionNode, a union whose compound variant has
+    // no `content`; only the simple form names an identifier.
+    const names = [r.value, r.key, r.index]
+      .map(n => (n?.type === NodeTypes.SIMPLE_EXPRESSION ? n.content.trim() : ''))
+      .filter(n => n && IDENTIFIER.test(n))
+    if (!names.length) return false
+
+    const text = String(prop.exp?.type === NodeTypes.SIMPLE_EXPRESSION
+      ? prop.exp.content
+      : '')
+    return names.some(n => new RegExp(`\\b${n}\\b`).test(text))
   }
 
   /** `my-widget` / `my_widget` -> `MyWidget`, matching Vue's tag resolution. */
@@ -330,11 +374,25 @@ function extractTemplate(
     // see. A bare `X` would make every such tag a `no-undef` false positive.
     //
     // The tag name itself is ours to overwrite, so the scan for extra room
-    // starts just past it. It must not run past this element's own opening
-    // tag: children are emitted before their parent, so `<ElIcon><Delete /></ElIcon>`
-    // would otherwise let the outer tag write over the inner one's reference.
+    // starts just past it. Two things bound how far it may run:
+    //
+    // - the first child, because children are emitted before their parent and
+    //   `<ElIcon><Delete /></ElIcon>` would otherwise let the outer tag write
+    //   over the inner one's reference;
+    // - a scope opener (`v-for` / `v-slot`), because it is written into its own
+    //   directive span *after* this runs and does not consult the ledger.
+    //   `<ElFormItem v-for="f in fields">` produced the spliced identifier
+    //   `ElForfields`, silently destroying both references. Ordinary props
+    //   need no such bound: they are emitted first and the ledger covers them.
     const firstChild = node.children[0]
-    const limit = firstChild ? firstChild.loc.start.offset : node.loc.end.offset
+    const scopeOpener = node.props.find(
+      p => p.type === NodeTypes.DIRECTIVE && (p.name === 'for' || p.name === 'slot'),
+    )
+    const limit = Math.min(
+      scopeOpener ? scopeOpener.loc.start.offset : Number.POSITIVE_INFINITY,
+      firstChild ? firstChild.loc.start.offset : Number.POSITIVE_INFINITY,
+      node.loc.end.offset,
+    )
     const wide = Math.min(freePaddingEnd(at + tag.length), limit, chars.length)
 
     // The trailing `;` is required, not decorative: without it the identifier
@@ -511,7 +569,11 @@ function extractTemplate(
    * source point at the right place in the .vue file. The closing `})` is
    * parked in the element's closing tag, which is padding by then.
    */
-  function emitScope(prop: DirectiveNode, node: ElementNode): void {
+  function emitScope(
+    prop: DirectiveNode,
+    node: ElementNode,
+    deferred: DirectiveNode['exp'][] = [],
+  ): void {
     const dirStart = prop.loc.start.offset
     const dirEnd = prop.loc.end.offset
 
@@ -540,6 +602,7 @@ function extractTemplate(
         blankRegion(chars, dirStart, dirEnd)
         return
       }
+      emitDeferred(deferred, dirStart + open.length, node)
       out.push({ start: dirStart, end: dirEnd, kind: 'v-for' })
       return
     }
@@ -553,6 +616,43 @@ function extractTemplate(
         return
       }
       out.push({ start: dirStart, end: dirEnd, kind: 'v-slot' })
+    }
+  }
+
+  /**
+   * Write the deferred uses into the scope body that now exists.
+   *
+   * These are expressions written to the left of their own `v-for`
+   * (`<component :is="node" v-for="(node) in list">`). Emitting them in place
+   * would put the use before the binding; emitting them here, just inside
+   * `map(node => {`, matches what Vue actually does. Only bare identifiers are
+   * re-emitted: a full expression rarely fits, and the identifier alone is
+   * what `no-unused-vars` needs on both ends.
+   */
+  function emitDeferred(
+    deferred: DirectiveNode['exp'][],
+    from: number,
+    node: ElementNode,
+  ): void {
+    if (!deferred.length) return
+
+    const names = deferred
+      .map(e => (e?.type === NodeTypes.SIMPLE_EXPRESSION ? e.content.trim() : ''))
+      .filter(n => n && IDENTIFIER.test(n))
+    if (!names.length) return
+
+    const text = `${[...new Set(names)].join(';')};`
+    // The body runs from just past the opener to the element's end; the closer
+    // was parked at its tail, so scan forward for a free run before it.
+    const limit = node.loc.end.offset
+    for (let at = from; at + text.length <= limit; at++) {
+      if (canWrite(chars, at, text.length, limit)
+        && !written.has(at)
+        && chars.slice(at, at + text.length).every(c => c === ' ')) {
+        writeAt(chars, at, text, at + text.length)
+        claim(at, at + text.length)
+        return
+      }
     }
   }
 
