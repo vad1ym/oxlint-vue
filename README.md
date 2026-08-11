@@ -47,12 +47,13 @@ npx oxlint-vue src --fix --format-code
 For the antfu rule set, add the preset package:
 
 ```bash
-npm install -D antfu-oxlint-vue eslint-plugin-regexp
-npx oxlint-vue init          # detects both and wires them up
+npm install -D antfu-oxlint-vue
+npx oxlint-vue init          # detects it and wires it up
 ```
 
 Without it you still get every template rule, on oxlint's default categories.
-`init` never installs anything on your behalf; it configures what it finds.
+`init` never installs anything on your behalf; it configures what it finds --
+including `eslint-plugin-regexp`, if you add it, for 54 more rules.
 
 Node 20.19+.
 
