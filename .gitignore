@@ -1,0 +1,11 @@
+node_modules
+dist
+tsconfig.tsbuildinfo
+*.log
+.DS_Store
+
+# npm pack output, produced by the smoke test.
+*.tgz
+
+# Written by `oxxxlint init` when testing the tool inside its own repo.
+/.oxfmtrc.json

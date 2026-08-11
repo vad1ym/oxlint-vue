@@ -1,0 +1,92 @@
+{
+  "name": "oxlint-vue",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Vue SFC linting and formatting on the oxc toolchain. Rules reach inside <template>, no eslint-plugin-vue.",
+  "license": "MIT",
+  "author": "Vadym Bulakh <bulakhvad@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vad1ym/oxlint-vue.git"
+  },
+  "homepage": "https://github.com/vad1ym/oxlint-vue#readme",
+  "bugs": "https://github.com/vad1ym/oxlint-vue/issues",
+  "keywords": [
+    "vue",
+    "sfc",
+    "oxlint",
+    "oxfmt",
+    "oxc",
+    "linter",
+    "formatter",
+    "eslint-alternative",
+    "nuxt"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./preprocess": {
+      "types": "./dist/preprocess.d.ts",
+      "import": "./dist/preprocess.js"
+    },
+    "./lsp": {
+      "types": "./dist/lsp.d.ts",
+      "import": "./dist/lsp.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "bin": {
+    "oxlint-vue": "./dist/cli.js"
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist"
+  ],
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build": "tsc --build --force",
+    "build:clean": "rm -rf dist tsconfig.tsbuildinfo && pnpm build",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test test/*.test.js",
+    "test:watch": "node --test --watch test/*.test.js",
+    "stress": "node scripts/stress.mjs",
+    "stress:self": "node scripts/stress.mjs test/fixtures",
+    "compare": "node scripts/compare-antfu.mjs",
+    "lint": "node dist/cli.js . -- -D correctness",
+    "smoke": "node scripts/smoke.mjs",
+    "release": "changelogen --release",
+    "verify": "pnpm build && pnpm typecheck && pnpm test && pnpm stress:self && pnpm smoke"
+  },
+  "dependencies": {
+    "@vue/compiler-core": "^3.5.41",
+    "@vue/compiler-sfc": "^3.5.0"
+  },
+  "peerDependencies": {
+    "eslint-plugin-regexp": ">=2.0.0",
+    "oxfmt": ">=0.60.0",
+    "oxlint": ">=1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "changelogen": "^0.6.2",
+    "eslint-plugin-regexp": "^3.1.1",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
+    "typescript": "^7.0.2"
+  },
+  "changelog": {
+    "output": false
+  },
+  "types": "./dist/index.d.ts",
+  "peerDependenciesMeta": {
+    "antfu-oxlint-vue": {
+      "optional": true
+    }
+  }
+}

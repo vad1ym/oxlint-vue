@@ -1,0 +1,47 @@
+{
+  "singleQuote": true,
+  "semi": false,
+  "tabWidth": 2,
+  "useTabs": false,
+  "printWidth": 100,
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "quoteProps": "consistent",
+  "trailingComma": "all",
+  "//arrowParens": "antfu uses as-needed + requireForBlockBody; oxfmt only offers always|avoid, so exact parity is impossible. Measured on real code, 'avoid' disagrees less than 'always'.",
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "singleAttributePerLine": false,
+  "vueIndentScriptAndStyle": false,
+  "sortImports": {
+    "groups": [
+      "type-import",
+      [
+        "type-parent",
+        "type-sibling",
+        "type-index",
+        "type-internal"
+      ],
+      "value-builtin",
+      "value-external",
+      "value-internal",
+      [
+        "value-parent",
+        "value-sibling",
+        "value-index"
+      ],
+      "side_effect",
+      "unknown"
+    ],
+    "order": "asc",
+    "ignoreCase": true
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.nuxt/**",
+    "**/.output/**",
+    "**/coverage/**"
+  ]
+}

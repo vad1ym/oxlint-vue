@@ -1,0 +1,51 @@
+name: Publish Package
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  # Required for npm provenance: the OIDC token is what proves to the registry
+  # that this build came from this repository, so no npm token is stored here.
+  id-token: write
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          cache: pnpm
+
+      # The npm bundled with Node is older than the OIDC support provenance
+      # relies on.
+      - name: Update npm for OIDC support
+        run: npm install -g npm@11.6.2
+
+      - run: pnpm install --frozen-lockfile
+
+      # The same gate CI runs. A tag should not publish something that would
+      # have failed on a pull request.
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm stress:self
+
+      # The published tarball is what users get, so it is what gets smoke
+      # tested: install it into a scratch project and lint a real SFC through
+      # the packaged bin. Catches a missing entry in `files` -- which no test
+      # running from the source tree ever would.
+      - name: Smoke test the packaged tarball
+        run: node scripts/smoke.mjs
+
+      - run: npm publish --provenance --access public

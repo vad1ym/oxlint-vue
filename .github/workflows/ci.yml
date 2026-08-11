@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A second push to the same branch makes the first run irrelevant.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # One version failing should not hide the result of the others.
+      fail-fast: false
+      matrix:
+        # 22.13 is the floor pnpm 11 itself runs on, not the floor this
+        # package needs -- the runtime works on 20.11, which is where
+        # `import.meta.dirname` landed and what `engines` declares. That
+        # lower bound is covered by the `engines-floor` job below, which
+        # uses npm precisely because pnpm cannot run there.
+        node: ['22.13', '24']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Everything downstream runs against dist/, so a stale or missing build
+      # would test the previous commit -- or nothing at all.
+      - run: pnpm build
+
+      - run: pnpm typecheck
+
+      # The suite drives the real oxlint and oxfmt binaries, including a full
+      # stdio LSP session, so the peers must be installed -- which
+      # --frozen-lockfile guarantees.
+      - run: pnpm test
+
+      # The padding invariant is the load-bearing assumption of the whole
+      # tool and it breaks silently, so it is checked on every run against
+      # the committed fixtures.
+      - run: pnpm stress:self
+
+      # Lint this repo with the tool itself. It has no .vue files, so this is
+      # a smoke test of the CLI on plain JS rather than a real gate -- if the
+      # binary cannot start, this is where it shows.
+      - run: pnpm lint
+
+  # `engines` says >=20.19 and that has to stay true. pnpm 11 refuses to run
+  # on anything below 22.13, so this job uses npm: the point is to prove the
+  # published package works on the Node it claims, not to exercise pnpm.
+  #
+  # 20.19 rather than 20.11: `import.meta.dirname` landed in 20.11, but a
+  # transitive dependency of the toolchain requires ^20.19, and a floor that
+  # cannot actually install is not a floor.
+  engines-floor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+
+      - run: npm install --no-audit --no-fund
+      - run: npm run build
+      - run: npm test
+      - run: npm run stress:self
+
+  # Windows and macOS differ in exactly the places this tool touches: path
+  # separators, symlinked temp directories (/var -> /private/var on macOS,
+  # which already broke ignore matching once), and CRLF line endings, which
+  # the padding transform has to preserve byte for byte.
+  cross-platform:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm test
+      - run: pnpm stress:self

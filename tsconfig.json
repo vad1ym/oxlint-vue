@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["es2023"],
+    // This is a CLI: everything it touches is Node, nothing is DOM.
+    "types": ["node"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+
+    "strict": true,
+    // The AST from compiler-sfc is full of optional fields and index access;
+    // these two catch the cases `strict` alone lets through.
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // The published bin is executed directly, so emitted files must be
+    // runnable as-is: no helpers imported from tslib, no downlevel shims.
+    "importHelpers": false,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src/**/*.ts"]
+}
