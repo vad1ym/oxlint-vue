@@ -1,7 +1,7 @@
 {
   "name": "oxlint-vue",
   "type": "module",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Vue SFC linting and formatting on the oxc toolchain. Rules reach inside <template>, no eslint-plugin-vue.",
   "license": "MIT",
   "author": "Vadym Bulakh <bulakhvad@gmail.com>",
