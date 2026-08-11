@@ -4,7 +4,9 @@ The 18 rules `oxlint-vue` adds on top of oxlint. They walk the
 `compiler-sfc` template AST, which the padding transform discards, and are
 configured under `settings.vue.rules` -- a key oxlint ignores.
 
-These walk the `compiler-sfc` template AST, which padding discards.
+With [antfu-oxlint-vue](https://github.com/vad1ym/antfu-oxlint-vue) you write
+them flat under `rules` alongside every other rule; it routes them here for
+you, since these names and oxlint's native `vue/*` rules never overlap.
 
 | Rule | Default |
 |---|---|

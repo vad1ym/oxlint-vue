@@ -139,10 +139,11 @@ let unusedThing = 2
     fs.rmSync(path.join(dir, '.oxlintrc.json'), { force: true })
     run('npx', ['oxlint-vue', 'init'], { cwd: dir })
 
-    // With the preset present init writes JS configs that spread it: a plain
-    // spread carries ignorePatterns across, which `extends` does not.
+    // With the preset present init writes JS configs that call its factory:
+    // it returns a complete config, carrying ignorePatterns across, which
+    // `extends` does not.
     const wired = fs.readFileSync(path.join(dir, 'oxlint.config.mjs'), 'utf8')
-    if (!wired.includes('antfu-oxlint-vue/oxlintrc')) {
+    if (!wired.includes("from 'antfu-oxlint-vue'")) {
       fail(`init did not pick up the installed preset:\n${wired}`)
     }
     if (!fs.existsSync(path.join(dir, 'oxfmt.config.mjs'))) {

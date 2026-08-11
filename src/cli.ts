@@ -309,17 +309,17 @@ async function runWatch(
 /**
  * Write starter configs.
  *
- * With the preset package installed these are `.mjs`, which spread it:
+ * With the preset package installed these are `.mjs` calling its factory:
  *
- *   export default defineConfig({ ...preset, rules: { ...preset.rules } })
+ *   export default antfu({ rules: { 'no-console': 'off' } })
  *
- * A plain spread carries the whole preset across -- including
- * `ignorePatterns`, which oxlint does NOT inherit through `extends`. Using
- * `extends` instead means the first run walks node_modules: 102k diagnostics
- * on a scratch project. oxfmt has no `extends` at all, so a JS config is the
- * only way to reference its preset rather than copy the file.
+ * The factory returns a complete config, so `extends` never enters into it --
+ * oxlint does NOT inherit `ignorePatterns` through `extends`, and a config
+ * written that way walks node_modules: 102k diagnostics on a scratch project.
+ * oxfmt has no `extends` at all, so a JS config is the only way to reference
+ * its preset rather than copy the file.
  *
- * Without the preset, there is nothing to spread and a plain JSON config is
+ * Without the preset there is nothing to call, and a plain JSON config is
  * simpler and works in every runtime.
  */
 async function runInit(cwd: string): Promise<number> {
@@ -344,24 +344,13 @@ async function runInit(cwd: string): Promise<number> {
   const hasPresets = existsSync(presetDir)
 
   if (hasPresets) {
-    await write(path.join(cwd, 'oxlint.config.mjs'), `import { defineConfig } from 'oxlint'
-import preset from 'antfu-oxlint-vue/oxlintrc'
+    await write(path.join(cwd, 'oxlint.config.mjs'), `import antfu from 'antfu-oxlint-vue'
 
-export default defineConfig({
-  ...preset,
-
+export default antfu({
   rules: {
-    ...preset.rules,
-    // Your oxlint rules here.
-  },
-
-  settings: {
-    vue: {
-      rules: {
-        ...preset.settings.vue.rules,
-        // Your template rules here.
-      },
-    },
+    // Your rules here -- oxlint's and the template ones alike, e.g.
+    //   'no-console': 'off',
+    //   'vue/no-v-html': 'off',
   },
 })
 `)
@@ -388,9 +377,9 @@ export default {
   }
   if (!created.length) {
     process.stderr.write(
-      'Nothing to do. To wire the preset into an existing config, spread it:\n'
-      + "  import preset from 'antfu-oxlint-vue/oxlintrc'\n"
-      + '  export default defineConfig({ ...preset })\n',
+      'Nothing to do. To wire the preset into an existing config:\n'
+      + "  import antfu from 'antfu-oxlint-vue'\n"
+      + '  export default antfu()\n',
     )
     return 1
   }
