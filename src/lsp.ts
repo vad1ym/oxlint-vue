@@ -177,8 +177,18 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
     oxlintPath = resolveOxlintPath(cwd),
   } = opts
 
+  // oxlint only discovers `.oxlintrc.json` on its own; a JS config has to be
+  // passed explicitly, or the child lints with defaults and the editor shows
+  // nothing while the CLI reports plenty.
+  const found = await findConfig(cwd)
+  // Relative: what the server stores and resolves against the workspace root.
+  const configPath = found ? path.relative(cwd, found) : undefined
+  const configArgs = found && !found.endsWith('.json') && !found.endsWith('.oxlintrc')
+    ? ['-c', found]
+    : []
+
   const lsp = spawnableFrom(oxlintPath)
-  const child = spawn(lsp.command, [...lsp.args, '--lsp'], {
+  const child = spawn(lsp.command, [...lsp.args, '--lsp', ...configArgs], {
     cwd,
     stdio: ['pipe', 'pipe', 'inherit'],
   })
@@ -206,9 +216,8 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
   // config it reads so `"vue/no-v-html": "off"` still applies in the editor.
   let structuralConfig: RulesMap = {}
   try {
-    const configPath = await findConfig(cwd)
-    if (configPath) {
-      const cfg = await loadConfig(configPath)
+    if (found) {
+      const cfg = await loadConfig(found)
       structuralConfig = { ...cfg.rules, ...cfg.settings?.vue?.rules }
     }
   } catch { /* no config is fine */ }
@@ -273,6 +282,21 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
   const fromEditor = createFrameReader((msg) => {
     const doc = msg.params?.textDocument
     const uri = doc?.uri
+
+    // The child publishes empty diagnostics for everything until it is told
+    // its configuration this way -- `-c` alone is not enough, and an editor
+    // that never sends this (Zed, today) gets a silent server. Sending it
+    // ourselves right after `initialized` makes the proxy work anywhere; an
+    // editor that does send its own follows and wins.
+    if (msg.method === 'initialized') {
+      writeFrame(child.stdin, msg)
+      writeFrame(child.stdin, {
+        jsonrpc: '2.0',
+        method: 'workspace/didChangeConfiguration',
+        params: { settings: { configPath, run: 'onType', flags: {} } },
+      })
+      return
+    }
 
     if (doc && isVue(uri)) {
       if (msg.method === 'textDocument/didOpen' && typeof doc.text === 'string') {

@@ -254,3 +254,64 @@ test('passes non-vue documents through untouched', { timeout: 30000 }, async () 
     )
   })
 })
+
+test('a JS config reaches the child server', async () => {
+  // oxlint discovers `.oxlintrc.json` by itself but not `oxlint.config.mjs`,
+  // and publishes empty diagnostics until it is sent its configuration --
+  // so a JS-config project used to light up in the CLI and stay silent in
+  // the editor.
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxxx-lsp-js-'))
+  const client = createClient(dir)
+  try {
+    await fs.writeFile(
+      path.join(dir, 'oxlint.config.mjs'),
+      "export default { rules: { 'eqeqeq': 'error' } }\n",
+      'utf8',
+    )
+    const file = path.join(dir, 'a.ts')
+    await fs.writeFile(file, 'export const bad = (1 as any) == 2\n', 'utf8')
+
+    client.send({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: {
+        processId: process.pid,
+        rootUri: fileUri(dir),
+        workspaceFolders: [{ uri: fileUri(dir), name: 'test' }],
+        capabilities: { textDocument: { publishDiagnostics: {} } },
+      },
+    })
+    await sleep(1500)
+    client.send({ jsonrpc: '2.0', method: 'initialized', params: {} })
+    await sleep(600)
+
+    const uri = fileUri(file)
+    client.send({
+      jsonrpc: '2.0',
+      method: 'textDocument/didOpen',
+      params: {
+        textDocument: {
+          uri,
+          languageId: 'typescript',
+          version: 1,
+          text: await fs.readFile(file, 'utf8'),
+        },
+      },
+    })
+
+    const published = await waitFor(() => {
+      const latest = client.latestFor(uri)
+      return latest?.params.diagnostics.length ? latest : null
+    })
+    assert.ok(published, 'no diagnostics arrived for a project configured in JS')
+    assert.ok(
+      published.params.diagnostics.some(d => String(d.code).includes('eqeqeq')),
+      `expected the config's eqeqeq rule to fire, got ${JSON.stringify(published.params.diagnostics.map(d => d.code))}`,
+    )
+  } finally {
+    client.kill()
+    await sleep(200)
+    await fs.rm(dir, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 })
+  }
+})
