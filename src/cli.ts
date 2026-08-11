@@ -323,20 +323,9 @@ async function runInit(cwd: string): Promise<number> {
   const presetDir = path.join(cwd, 'node_modules', 'antfu-oxlint-vue', 'configs')
   const hasPresets = existsSync(presetDir)
 
-  // eslint-plugin-regexp is the one real gap against antfu that oxlint cannot
-  // fill natively (60 rules, no such plugin in Rust). oxlint's `jsPlugins`
-  // loads the genuine ESLint plugin, so the preset is wired up when the project
-  // already depends on it -- never installed behind the user's back.
-  const hasRegexpPlugin = existsSync(
-    path.join(cwd, 'node_modules', 'eslint-plugin-regexp'),
-  )
-
   const extendsList: string[] = []
   if (hasPresets) {
     extendsList.push('./node_modules/antfu-oxlint-vue/configs/antfu.oxlintrc.json')
-    if (hasRegexpPlugin) {
-      extendsList.push('./node_modules/antfu-oxlint-vue/configs/regexp.oxlintrc.json')
-    }
   }
 
   await write(lintTarget, {
@@ -394,17 +383,6 @@ async function runInit(cwd: string): Promise<number> {
       `\n${C.dim('Tip: npm i -D antfu-oxlint-vue adds the antfu preset —')}\n`
       + `${C.dim('     47 lint rules, Vue/Nuxt globals and matching')}\n`
       + `${C.dim('     formatting. Re-run init afterwards to wire it up.')}\n`,
-    )
-  } else if (hasRegexpPlugin) {
-    process.stdout.write(
-      `\n${C.dim('eslint-plugin-regexp found — its 54 rules are enabled.')}\n`,
-    )
-  } else {
-    process.stdout.write(
-      `\n${C.dim('Tip: npm i -D eslint-plugin-regexp adds 54 regex rules')}\n`
-      + `${C.dim('     (the one gap oxlint cannot fill natively), then')}\n`
-      + `${C.dim('     re-run oxlint-vue init or add the regexp preset to')}\n`
-      + `${C.dim('     "extends" yourself.')}\n`,
     )
   }
   return 0
