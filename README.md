@@ -6,8 +6,8 @@
 
 **[oxlint](https://oxc.rs) and [oxfmt](https://oxc.rs), with `.vue` support.**
 
-Same tools, same flags, same config — they just stop being blind to
-`<template>`.
+A drop-in replacement: it lints and formats your `.ts` and `.js` exactly as
+oxlint does, and additionally understands `.vue` — same flags, same config.
 
 ```bash
 npm install -D oxlint-vue

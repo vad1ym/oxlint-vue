@@ -139,12 +139,14 @@ let unusedThing = 2
     fs.rmSync(path.join(dir, '.oxlintrc.json'), { force: true })
     run('npx', ['oxlint-vue', 'init'], { cwd: dir })
 
-    const wired = JSON.parse(fs.readFileSync(path.join(dir, '.oxlintrc.json'), 'utf8'))
-    if (!wired.extends?.some(e => e.includes('antfu-oxlint-vue'))) {
-      fail(`init did not pick up the installed preset: ${JSON.stringify(wired)}`)
+    // With the preset present init writes JS configs that spread it: a plain
+    // spread carries ignorePatterns across, which `extends` does not.
+    const wired = fs.readFileSync(path.join(dir, 'oxlint.config.mjs'), 'utf8')
+    if (!wired.includes('antfu-oxlint-vue/oxlintrc')) {
+      fail(`init did not pick up the installed preset:\n${wired}`)
     }
-    if (!fs.existsSync(path.join(dir, '.oxfmtrc.json'))) {
-      fail('init did not copy the formatter preset')
+    if (!fs.existsSync(path.join(dir, 'oxfmt.config.mjs'))) {
+      fail('init did not write the formatter config')
     }
 
     step('running `--fix --format-code` with the preset')

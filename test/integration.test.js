@@ -232,3 +232,39 @@ const raw = ''
     await fs.rm(dir, { recursive: true, force: true })
   }
 })
+
+test('lints plain .ts alongside .vue, without preprocessing it', async () => {
+  // This is a drop-in for oxlint, not an add-on: a project should not need a
+  // second linter for its own .ts. Only .vue takes the padding transform --
+  // running a .ts through it would blank the entire file.
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxxx-mixed-'))
+  try {
+    await fs.writeFile(
+      path.join(dir, 'a.ts'),
+      'export const x = 1\nif (x == 2) {}\n',
+    )
+    await fs.writeFile(path.join(dir, 'B.vue'), `<template>
+  <li v-for="i in list">{{ i }}</li>
+</template>
+<script setup>
+const list = [1]
+</script>
+`)
+
+    const diags = await runOxlint(
+      [path.join(dir, 'a.ts'), path.join(dir, 'B.vue')],
+      { cwd: dir, oxlintPath: OXLINT, extraArgs: ['-D', 'eqeqeq'] },
+    )
+
+    assert.ok(
+      diags.some(d => d.filename.endsWith('a.ts') && String(d.rule).includes('eqeqeq')),
+      `the .ts file was not linted: ${diags.map(d => `${d.filename}:${d.rule}`).join(', ')}`,
+    )
+    assert.ok(
+      diags.some(d => d.filename.endsWith('B.vue') && d.rule === 'vue/require-v-for-key'),
+      'the .vue file lost its structural rules',
+    )
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
+  }
+})

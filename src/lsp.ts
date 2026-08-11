@@ -8,10 +8,9 @@ import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { parseJsonc } from './jsonc.js'
 import { preprocess } from './preprocess.js'
 import { spawnableFrom } from './resolve.js'
-import { findConfig, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
+import { findConfig, loadConfig, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
 import { checkTemplate } from './structural.js'
 import type { OxlintConfig } from './types.js'
 
@@ -210,7 +209,7 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
   try {
     const configPath = await findConfig(cwd)
     if (configPath) {
-      const cfg = parseJsonc<OxlintConfig>(await readFile(configPath, 'utf8'))
+      const cfg = await loadConfig(configPath)
       structuralConfig = { ...cfg.rules, ...cfg.settings?.vue?.rules }
     }
   } catch { /* no config is fine */ }

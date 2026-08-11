@@ -3,8 +3,7 @@ import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import { runOxlint } from './run.js'
-import { parseJsonc } from './jsonc.js'
+import { loadConfig, runOxlint } from './run.js'
 import { moduleDir } from './resolve.js'
 import type { Diagnostic, OxlintConfig } from './types.js'
 
@@ -63,7 +62,7 @@ async function buildIgnore(cwd: string): Promise<(abs: string) => boolean> {
     if (seen.has(resolved)) return []
     seen.add(resolved)
     try {
-      const cfg = parseJsonc<OxlintConfig>(await fs.readFile(resolved, 'utf8'))
+      const cfg = await loadConfig(resolved)
       const inherited: string[] = []
       for (const parent of cfg.extends ?? []) {
         inherited.push(
@@ -95,7 +94,16 @@ async function buildIgnore(cwd: string): Promise<(abs: string) => boolean> {
   }
 }
 
-async function collectVueFiles(
+/**
+ * Everything oxlint itself lints, plus `.vue`.
+ *
+ * This tool is a drop-in for oxlint, not an add-on: a project should not have
+ * to run two linters to cover its own source. Only `.vue` needs the padding
+ * transform; the rest is handed to oxlint unchanged.
+ */
+const LINTABLE = /\.(?:vue|[cm]?[jt]sx?)$/
+
+async function collectFiles(
   targets: string[],
   cwd: string,
   isIgnored: (abs: string) => boolean = () => false,
@@ -120,7 +128,7 @@ async function collectVueFiles(
     }
 
     if (stat.isFile()) {
-      if (abs.endsWith('.vue') && !isIgnored(abs)) out.push(abs)
+      if (LINTABLE.test(abs) && !isIgnored(abs)) out.push(abs)
       return
     }
     if (!stat.isDirectory()) return
@@ -243,7 +251,7 @@ async function runWatch(
     if (running) { pending = true; return }
     running = true
     try {
-      const files = await collectVueFiles(roots, cwd, isIgnored)
+      const files = await collectFiles(roots, cwd, isIgnored)
       let diagnostics = await runOxlint(files, { cwd, extraArgs })
       if (quiet) diagnostics = diagnostics.filter(d => d.severity === 'error')
 
@@ -278,7 +286,7 @@ async function runWatch(
   for (const root of roots) {
     try {
       fsWatch(path.resolve(cwd, root), { recursive: true }, (_e, name) => {
-        if (name && !name.endsWith('.vue')) return
+        if (name && !LINTABLE.test(name)) return
         schedule()
       })
     } catch (err) {
@@ -295,24 +303,32 @@ async function runWatch(
 }
 
 /**
- * Write a starter .oxlintrc.json that extends the shipped preset.
+ * Write starter configs.
  *
- * `extends` rather than a copy so the preset keeps improving with upgrades;
- * the local file is only for the project's own overrides.
+ * With the preset package installed these are `.mjs`, which spread it:
+ *
+ *   export default defineConfig({ ...preset, rules: { ...preset.rules } })
+ *
+ * A plain spread carries the whole preset across -- including
+ * `ignorePatterns`, which oxlint does NOT inherit through `extends`. Using
+ * `extends` instead means the first run walks node_modules: 102k diagnostics
+ * on a scratch project. oxfmt has no `extends` at all, so a JS config is the
+ * only way to reference its preset rather than copy the file.
+ *
+ * Without the preset, there is nothing to spread and a plain JSON config is
+ * simpler and works in every runtime.
  */
 async function runInit(cwd: string): Promise<number> {
-  const lintTarget = path.join(cwd, '.oxlintrc.json')
-  const fmtTarget = path.join(cwd, '.oxfmtrc.json')
   const created: string[] = []
   const skipped: string[] = []
 
-  const write = async (target: string, config: unknown): Promise<void> => {
+  const write = async (target: string, contents: string): Promise<void> => {
     try {
       await fs.access(target)
       skipped.push(path.basename(target))
       return
     } catch { /* does not exist -- good */ }
-    await fs.writeFile(target, `${JSON.stringify(config, null, 2)}\n`, 'utf8')
+    await fs.writeFile(target, contents, 'utf8')
     created.push(path.basename(target))
   }
 
@@ -323,43 +339,54 @@ async function runInit(cwd: string): Promise<number> {
   const presetDir = path.join(cwd, 'node_modules', 'antfu-oxlint-vue', 'configs')
   const hasPresets = existsSync(presetDir)
 
-  const extendsList: string[] = []
   if (hasPresets) {
-    extendsList.push('./node_modules/antfu-oxlint-vue/configs/antfu.oxlintrc.json')
-  }
+    await write(path.join(cwd, 'oxlint.config.mjs'), `import { defineConfig } from 'oxlint'
+import preset from 'antfu-oxlint-vue/oxlintrc' with { type: 'json' }
 
-  await write(lintTarget, {
-    $schema: './node_modules/oxlint/configuration_schema.json',
-    ...(extendsList.length ? { extends: extendsList } : {}),
-    // oxlint does not inherit ignorePatterns through `extends`, so a preset
-    // cannot supply it. Without this the first run walks node_modules.
-    ignorePatterns: ['**/node_modules/**', '**/dist/**'],
-    rules: {},
-    settings: { vue: { rules: {} } },
-  })
+export default defineConfig({
+  ...preset,
 
-  // oxfmt has no `extends`, so the formatter preset is copied rather than
-  // referenced. It is short and rarely changes; the alternative is silently
-  // formatting to oxfmt's defaults, which disagree with the lint preset
-  // (double quotes, semicolons) and would make the two fight.
-  let fmtPreset: Record<string, unknown> | null = null
-  if (hasPresets) {
-    try {
-      fmtPreset = parseJsonc<Record<string, unknown>>(
-        await fs.readFile(path.join(presetDir, 'antfu.oxfmtrc.json'), 'utf8'),
-      )
-      fmtPreset.$schema = './node_modules/oxfmt/configuration_schema.json'
-    } catch { /* preset unreadable -- skip the formatter config */ }
+  rules: {
+    ...preset.rules,
+    // Your oxlint rules here.
+  },
+
+  settings: {
+    vue: {
+      rules: {
+        ...preset.settings.vue.rules,
+        // Your template rules here.
+      },
+    },
+  },
+})
+`)
+
+    await write(path.join(cwd, 'oxfmt.config.mjs'), `import preset from 'antfu-oxlint-vue/oxfmtrc' with { type: 'json' }
+
+export default {
+  ...preset,
+  // Your formatting overrides here.
+}
+`)
+  } else {
+    // No preset to spread: JSON is simpler, and works outside Node too.
+    await write(path.join(cwd, '.oxlintrc.json'), `${JSON.stringify({
+      $schema: './node_modules/oxlint/configuration_schema.json',
+      ignorePatterns: ['**/node_modules/**', '**/dist/**'],
+      rules: {},
+      settings: { vue: { rules: {} } },
+    }, null, 2)}\n`)
   }
-  if (fmtPreset) await write(fmtTarget, fmtPreset)
 
   for (const name of skipped) {
     process.stderr.write(`oxlint-vue: ${name} already exists, left alone.\n`)
   }
   if (!created.length) {
     process.stderr.write(
-      'Add this to .oxlintrc.json "extends" to pick up the preset:\n'
-      + '  "./node_modules/antfu-oxlint-vue/configs/antfu.oxlintrc.json"\n',
+      'Nothing to do. To wire the preset into an existing config, spread it:\n'
+      + "  import preset from 'antfu-oxlint-vue/oxlintrc' with { type: 'json' }\n"
+      + '  export default defineConfig({ ...preset })\n',
     )
     return 1
   }
@@ -370,9 +397,8 @@ async function runInit(cwd: string): Promise<number> {
     + `  Fix:    ${C.cyan('npx oxlint-vue src --fix --format-code')}\n`
     + `  Watch:  ${C.cyan('npx oxlint-vue src --watch')}\n`
     + `  CI:     ${C.cyan('npx oxlint-vue src --check-format')}\n\n`
-    + `Override oxlint rules under ${C.dim('"rules"')}, this tool's template\n`
-    + `rules under ${C.dim('"settings.vue.rules"')}, and formatting in\n`
-    + `${C.dim('.oxfmtrc.json')}.\n`,
+    + `Override oxlint rules under ${C.dim('rules')}, template rules under\n`
+    + `${C.dim('settings.vue.rules')}, and formatting in ${C.dim('oxfmt.config.mjs')}.\n`,
   )
 
   if (!hasPresets) {
@@ -381,7 +407,7 @@ async function runInit(cwd: string): Promise<number> {
     // since the difference is invisible until someone compares outputs.
     process.stdout.write(
       `\n${C.dim('Tip: npm i -D antfu-oxlint-vue adds the antfu preset —')}\n`
-      + `${C.dim('     47 lint rules, Vue/Nuxt globals and matching')}\n`
+      + `${C.dim('     101 lint rules, Vue/Nuxt globals and matching')}\n`
       + `${C.dim('     formatting. Re-run init afterwards to wire it up.')}\n`,
     )
   }
@@ -445,10 +471,10 @@ async function main(): Promise<number> {
     return runWatch(roots, cwd, { extraArgs, format, quiet, fix })
   }
 
-  const files = await collectVueFiles(roots, cwd, await buildIgnore(cwd))
+  const files = await collectFiles(roots, cwd, await buildIgnore(cwd))
 
   if (!files.length) {
-    process.stderr.write('oxlint-vue: no .vue files found\n')
+    process.stderr.write('oxlint-vue: no lintable files found\n')
     return 0
   }
 

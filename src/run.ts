@@ -10,6 +10,7 @@ import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 import {
   execFileAsync,
   isExecError,
@@ -122,6 +123,17 @@ export async function runOxlint(
       const abs = path.resolve(cwd, file)
       const source = await fs.readFile(abs, 'utf8')
 
+      // Only .vue needs the padding transform. Anything else is already the
+      // JS/TS oxlint expects, so it is mirrored verbatim -- running it through
+      // preprocess would blank the whole file.
+      if (!abs.endsWith('.vue')) {
+        const virt = path.join(tmpRoot, virtualPathFor(abs, cwd))
+        await fs.mkdir(path.dirname(virt), { recursive: true })
+        await fs.writeFile(virt, source, 'utf8')
+        backMap.set(await realish(virt), abs)
+        return
+      }
+
       let result
       try {
         result = preprocess(source, abs)
@@ -156,11 +168,7 @@ export async function runOxlint(
       // A file outside cwd yields a `../..` relative path, which would escape
       // tmpRoot (and, on macOS, try to mkdir /var). Anchor such files under a
       // dedicated prefix so every virtual file provably stays inside tmpRoot.
-      const rel = path.relative(cwd, abs)
-      const safeRel = rel.startsWith('..') || path.isAbsolute(rel)
-        ? path.join('_external', abs.replace(/^([A-Z]:)?[\\/]/i, ''))
-        : rel
-      const virt = path.join(tmpRoot, `${safeRel}.ts`)
+      const virt = path.join(tmpRoot, `${virtualPathFor(abs, cwd)}.ts`)
       await fs.mkdir(path.dirname(virt), { recursive: true })
       await fs.writeFile(virt, result.code, 'utf8')
       backMap.set(await realish(virt), abs)
@@ -184,7 +192,26 @@ export async function runOxlint(
   }
 }
 
+/**
+ * Where a source file lands inside the mirrored temp tree.
+ *
+ * A file outside cwd yields a `../..` relative path, which would escape
+ * tmpRoot (and, on macOS, try to mkdir /var). Anchor such files under a
+ * dedicated prefix so every virtual file provably stays inside tmpRoot.
+ */
+function virtualPathFor(abs: string, cwd: string): string {
+  const rel = path.relative(cwd, abs)
+  return rel.startsWith('..') || path.isAbsolute(rel)
+    ? path.join('_external', abs.replace(/^([A-Z]:)?[\\/]/i, ''))
+    : rel
+}
+
 const CONFIG_NAMES = [
+  // JS first: `init` writes these when the preset package is present, and a
+  // project that has both means the .mjs to win.
+  'oxlint.config.mjs',
+  'oxlint.config.js',
+  'oxlint.config.ts',
   '.oxlintrc.json',
   'oxlint.json',
   '.oxlintrc',
@@ -196,6 +223,23 @@ const CONFIG_NAMES = [
  * it. oxlint's config allows comments and trailing commas, so a strict
  * JSON.parse would reject valid files -- strip both before parsing.
  */
+/**
+ * Read a config, whichever form it takes.
+ *
+ * A JS config is imported rather than parsed: it may compute its values, and
+ * spreading a preset -- the shape `init` writes -- only resolves at runtime.
+ * `defineConfig` is identity, so the default export is the object itself.
+ */
+export async function loadConfig(resolved: string): Promise<OxlintConfig> {
+  if (/\.(?:m|c)?[jt]s$/.test(resolved)) {
+    const mod = await import(pathToFileURL(resolved).href) as {
+      default?: OxlintConfig
+    }
+    return mod.default ?? {}
+  }
+  return parseJsonc<OxlintConfig>(await fs.readFile(resolved, 'utf8'))
+}
+
 async function readRules(
   configPath: string | null | undefined,
   seen = new Set<string>(),
@@ -208,8 +252,7 @@ async function readRules(
   seen.add(resolved)
 
   try {
-    const raw = await fs.readFile(resolved, 'utf8')
-    const cfg = parseJsonc<OxlintConfig>(raw)
+    const cfg = await loadConfig(resolved)
 
     // oxlint resolves `extends` itself for its own rules, but it never sees
     // ours -- so a preset's `settings.vue.rules` would be lost unless we

@@ -52,6 +52,23 @@ export async function fixFiles(
       const abs = path.resolve(cwd, file)
       const source = await fs.readFile(abs, 'utf8')
 
+      // Plain JS/TS needs no transform and no transplant: oxlint can fix the
+      // file in place, which is also the only way it gets fixes at all.
+      if (!abs.endsWith('.vue')) {
+        try {
+          const bin = spawnableFrom(oxlintPath)
+          await execFileAsync(
+            bin.command,
+            [...bin.args, '--fix', ...configArgs, ...extraArgs, abs],
+            { cwd, maxBuffer: 32 * 1024 * 1024 },
+          )
+        } catch (err) {
+          if (isMissingBinary(err)) throw err
+        }
+        if (await fs.readFile(abs, 'utf8') !== source) results.push(abs)
+        continue
+      }
+
       let pre
       try {
         pre = preprocess(source, abs)

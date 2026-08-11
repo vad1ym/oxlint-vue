@@ -148,7 +148,15 @@ async function onlyDiffersBySafetySemicolons(
   }
 }
 
-const FORMAT_CONFIG_NAMES = ['.oxfmtrc.json', '.oxfmtrc', 'oxfmt.json']
+const FORMAT_CONFIG_NAMES = [
+  // JS first, for the same reason as the lint config.
+  'oxfmt.config.mjs',
+  'oxfmt.config.js',
+  'oxfmt.config.ts',
+  '.oxfmtrc.json',
+  '.oxfmtrc',
+  'oxfmt.json',
+]
 
 /** Walk up from cwd looking for an oxfmt config. */
 export async function findFormatConfig(cwd: string): Promise<string | null> {
