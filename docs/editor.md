@@ -1,13 +1,12 @@
 # Editor setup
 
-```bash
-oxlint-vue --lsp
-```
+Nothing extra to install: the language server ships with the package. You
+point your editor at it and it does the rest -- `oxlint-vue --lsp` is the
+command the editor runs, not one you type.
 
-Nothing extra to install — the server is the same package. It is a **superset,
-not a replacement**: a real `oxlint --lsp` runs inside it, `.ts`/`.js` and
-every protocol method pass through untouched, and `.vue` goes down as the
-virtual file.
+It is a **superset, not a replacement**: a real `oxlint --lsp` runs inside it,
+`.ts`/`.js` and every protocol method pass through untouched, and `.vue` goes
+down as the virtual file.
 
 **Zed** — install the **Oxc** extension, then point it at the proxy:
 

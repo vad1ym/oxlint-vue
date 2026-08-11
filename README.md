@@ -65,12 +65,8 @@ unparseable, and never writes out a file that stopped parsing.
 
 ## Editor
 
-```bash
-oxlint-vue --lsp
-```
-
-A proxy over `oxlint --lsp`: everything non-`.vue` passes through untouched.
-[Setup for Zed, Neovim →](./docs/editor.md)
+Diagnostics in Zed, Neovim and anything else that speaks LSP.
+[Setup →](./docs/editor.md)
 
 ## How it works
 

@@ -168,7 +168,7 @@ Options
       --format-code      format .vue files with oxfmt (template, script, style)
       --check-format     fail if any file is not formatted, changing nothing
   -w, --watch            re-lint on change until interrupted
-      --lsp              run as a language server (stdio) with .vue support
+      --lsp              start the language server (for editors, not humans)
       --quiet            report errors only, suppress warnings
       --max-warnings=<n> exit non-zero if warnings exceed n
   -V, --version          print version
