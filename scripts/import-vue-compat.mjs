@@ -14,6 +14,11 @@ const root = process.argv[2]
 if (!root) throw new Error('Pass a reviewed eslint-plugin-vue v10.11.0 checkout')
 const cases = []
 const files = {}
+const skippedCases = {
+  'no-deprecated-v-bind-sync/invalid/5':
+    '@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value',
+}
+const pendingSkippedCases = new Set(Object.keys(skippedCases))
 for (const fullRule of structuralRuleNames) {
   const name = fullRule.slice(4)
   // These project-specific names are not upstream rules. Do not silently alias
@@ -36,10 +41,15 @@ for (const fullRule of structuralRuleNames) {
       for (const kind of ['valid', 'invalid']) {
         tests[kind].forEach((entry, index) => {
           const test = typeof entry === 'string' ? { code: entry } : entry
+          const id = `${rule}/${kind}/${index + 1}`
+          if (skippedCases[id]) {
+            pendingSkippedCases.delete(id)
+            return
+          }
           const languageOptions = { ...this.config.languageOptions, ...test.languageOptions }
           delete languageOptions.parser
           cases.push({
-            id: `${rule}/${kind}/${index + 1}`,
+            id,
             rule: fullRule, code: test.code, options: test.options ?? [],
             filename: test.filename ?? 'test.vue', languageOptions,
             settings: test.settings ?? {},
@@ -58,9 +68,12 @@ for (const fullRule of structuralRuleNames) {
     } },
   }, { timeout: 10000 })
 }
+if (pendingSkippedCases.size) throw new Error(
+  `Skipped upstream cases disappeared; review: ${[...pendingSkippedCases].join(', ')}`,
+)
 const target = new URL('../test/compat/upstream.json', import.meta.url)
 fs.writeFileSync(target, JSON.stringify({
-  repository: 'https://github.com/vuejs/eslint-plugin-vue', version: '10.11.0', files, cases,
+  repository: 'https://github.com/vuejs/eslint-plugin-vue', version: '10.11.0', files, skippedCases, cases,
 }, null, 2) + '\n')
 fs.copyFileSync(path.join(root, 'LICENSE'), new URL('../test/compat/LICENSE.upstream', import.meta.url))
 console.log(`Imported ${cases.length} cases from ${Object.keys(files).length} rule suites`)

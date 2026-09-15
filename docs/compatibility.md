@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 742 upstream cases, 30 common structural rules | **741 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **648/648** |
-| Four pinned Nuxt components, each checked against all 30 rules | **120/120 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **886/886 comparisons** |
+| 803 upstream cases, 34 common structural rules | **802 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **680/680** |
+| Four pinned Nuxt components, each checked against all 34 rules | **136/136 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **934/934 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures; none are silently excluded. Twenty-two of the twenty-three suites
-currently match on every imported case.
+known failures. One parser-crashing case is explicitly excluded below. Thirty-three
+of the thirty-four suites currently match on every imported case.
 
 **An exact match here means rule identity, finding count, severity and start
 line/column.** It does not mean matching message wording, end ranges, suggestions
@@ -28,8 +28,13 @@ or autofixes. Equal finding counts with different locations are classified as
 in the count. The reference case's original expected count is checked before
 comparison, so a broken parser/configuration cannot pass as an empty result.
 
+One `no-deprecated-v-bind-sync` reference case is explicitly unmeasured because
+`@vue/compiler-sfc` 3.5.41 crashes internally on argumentless
+`v-bind.sync='value'`. The committed corpus records this parser limitation by
+the upstream case ID; regeneration cannot silently add or remove the exception.
+
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 230 are not measured by this structural-rule harness,
+exports 253 rule names; 219 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

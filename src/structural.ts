@@ -459,6 +459,49 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/no-deprecated-v-is',
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) if (dir.type === NodeTypes.DIRECTIVE && dir.name === 'is') report({
+        message: 'v-is is deprecated.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-v-bind-sync',
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) if (dir.type === NodeTypes.DIRECTIVE && dir.name === 'bind'
+        && dir.modifiers.some(modifier => modifier.content === 'sync')) report({
+        message: 'The .sync modifier is deprecated; use v-model with an argument.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-v-on-number-modifiers',
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') continue
+        const modifier = dir.modifiers.find((candidate) => {
+          const number = Number(candidate.content)
+          return Number.isSafeInteger(number) && (number > 9 || number < 0)
+        })
+        if (modifier) report({
+          message: 'Numeric KeyboardEvent.keyCode modifiers are deprecated.', ...loc(modifier),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/no-deprecated-inline-template',
+    severity: 'error',
+    check(node, report) {
+      const attr = findAttr(node, 'inline-template')
+      if (attr) report({ message: 'The inline-template attribute is deprecated.', ...loc(attr) })
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {

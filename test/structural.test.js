@@ -36,6 +36,10 @@ const CASES = [
   ['vue/valid-v-is', '<Component v-is="kind" />', true],
   ['vue/no-deprecated-v-on-native-modifier', '<Component @click.native="go" />', true],
   ['vue/use-v-on-exact', '<button @click="go" @click.ctrl="go" />', true],
+  ['vue/no-deprecated-v-is', '<div v-is="kind" />', true],
+  ['vue/no-deprecated-v-bind-sync', '<Component :value.sync="value" />', true],
+  ['vue/no-deprecated-v-on-number-modifiers', '<input @keyup.13="go" />', true],
+  ['vue/no-deprecated-inline-template', '<Component inline-template />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
