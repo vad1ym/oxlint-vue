@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 49,
-    "missing": 81
+    "partial": 50,
+    "missing": 80
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2063,20 +2063,22 @@
     },
     {
       "name": "order-in-components",
-      "status": "missing",
+      "status": "partial",
       "priority": "P2",
       "categories": [
         "vue3-recommended",
         "vue2-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 45,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/order-in-components.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "this-in-template",

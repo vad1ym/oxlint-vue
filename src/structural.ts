@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentDefinitionOffsets, componentNameFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { componentDefinitionOffsets, componentNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -1261,6 +1261,11 @@ const RULES: Rule[] = [
         else report({ message: 'Attribute is out of order.', ...loc(current.prop) })
       }
     },
+  },
+  {
+    name: 'vue/order-in-components',
+    severity: 'error',
+    check() {},
   },
   {
     name: 'vue/no-deprecated-filter',
@@ -2924,6 +2929,15 @@ export function checkTemplate(
   if (componentFileRule) for (const offset of componentDefinitionOffsets(descriptor, source, filename)) {
     out.push({ filename, rule: componentFileRule.rule.name, severity: componentFileRule.severity,
       ...sourceLoc(source, offset), message: 'There is more than one component in this file.' } as Diagnostic)
+  }
+  const componentOrderRule = active.find(entry => entry.rule.name === 'vue/order-in-components')
+  if (componentOrderRule) {
+    const options = ruleOptions(config?.[componentOrderRule.rule.name])
+    for (const finding of componentOrderFindings(descriptor, source, options.order)) {
+      out.push({ filename, rule: componentOrderRule.rule.name, severity: componentOrderRule.severity,
+        ...sourceLoc(source, finding.offset),
+        message: `The "${finding.name}" property is out of order.` } as Diagnostic)
+    }
   }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')
   const computedInfo = computedRule ? computedPropertyInfo(descriptor) : { names: new Set<string>(), findings: [] }

@@ -102,7 +102,8 @@
     "tests/lib/rules/no-multi-spaces.test.ts": "0580e0cc2caae282687f0c40b6030ed0935c5d77ce1b7700b775be332147b3b6",
     "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976",
     "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70",
-    "tests/lib/rules/attributes-order.test.ts": "74e9b47f05cc0ab505a1c13a76dbefe0bae7551ca141ec02e3bb62d768644e8f"
+    "tests/lib/rules/attributes-order.test.ts": "74e9b47f05cc0ab505a1c13a76dbefe0bae7551ca141ec02e3bb62d768644e8f",
+    "tests/lib/rules/order-in-components.test.ts": "8c7251a675db205bcdb0b9237e06274e206043da8cc0025d16464fbd53e38473"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -33230,6 +33231,654 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "order-in-components/valid/1",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          name: 'app',\n          props: {\n            propA: Number,\n          },\n          ...a,\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/2",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          el,\n          name,\n          parent,\n          functional,\n          delimiters, comments,\n          components, directives, filters,\n          extends: MyComp,\n          mixins,\n          provide, inject,\n          inheritAttrs,\n          model,\n          props, propsData,\n          emits,\n          slots,\n          expose,\n          setup,\n          data,\n          computed,\n          watch,\n          beforeCreate,\n          created,\n          beforeMount,\n          mounted,\n          beforeUpdate,\n          updated,\n          activated,\n          deactivated,\n          beforeUnmount,\n          unmounted,\n          beforeDestroy,\n          destroyed,\n          renderTracked,\n          renderTriggered,\n          errorCaptured,\n          methods,\n          template, render,\n          renderError,\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/3",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {}\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/4",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default 'example-text'\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/5",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n        }\n      ",
+      "options": [],
+      "filename": "test.jsx",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/6",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          computed: {\n            ...mapStates(['foo'])\n          },\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/7",
+      "rule": "vue/order-in-components",
+      "code": "\n        Vue.component('smart-list', {\n          name: 'app',\n          components: {},\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          }\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/8",
+      "rule": "vue/order-in-components",
+      "code": "\n        Vue.component('example')\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/9",
+      "rule": "vue/order-in-components",
+      "code": "\n        const { component } = Vue;\n        component('smart-list', {\n          name: 'app',\n          components: {},\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          }\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/10",
+      "rule": "vue/order-in-components",
+      "code": "\n        new Vue({\n          el: '#app',\n          name: 'app',\n          components: {},\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          }\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/11",
+      "rule": "vue/order-in-components",
+      "code": "\n        new Vue()\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/valid/12",
+      "rule": "vue/order-in-components",
+      "code": "\n      <script setup>\n        defineOptions({\n          name: 'Foo',\n          inheritAttrs: true,\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "order-in-components/invalid/1",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          props: {\n            propA: Number,\n          },\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/2",
+      "rule": "vue/order-in-components",
+      "code": "\n        import { defineComponent } from 'vue'\n        export default defineComponent({\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          props: {\n            propA: Number,\n          },\n        })\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/3",
+      "rule": "vue/order-in-components",
+      "code": "\n        import { defineNuxtComponent } from '#app'\n        export default defineNuxtComponent({\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          props: {\n            propA: Number,\n          },\n        })\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/4",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          render (h) {\n            return (\n              <span>{ this.msg }</span>\n            )\n          },\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          props: {\n            propA: Number,\n          },\n        }\n      ",
+      "options": [],
+      "filename": "test.jsx",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "order-in-components/invalid/5",
+      "rule": "vue/order-in-components",
+      "code": "\n        Vue.component('smart-list', {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          components: {},\n          template: '<div></div>'\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/6",
+      "rule": "vue/order-in-components",
+      "code": "\n        app.component('smart-list', {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          components: {},\n          template: '<div></div>'\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/7",
+      "rule": "vue/order-in-components",
+      "code": "\n        const { component } = Vue;\n        component('smart-list', {\n          name: 'app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          components: {},\n          template: '<div></div>'\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/8",
+      "rule": "vue/order-in-components",
+      "code": "\n        new Vue({\n          name: 'app',\n          el: '#app',\n          data () {\n            return {\n              msg: 'Welcome to Your Vue.js App'\n            }\n          },\n          components: {},\n          template: '<div></div>'\n        })\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "order-in-components/invalid/9",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n            return {\n              isActive: false,\n            };\n          },\n          methods: {\n            toggleMenu() {\n              this.isActive = !this.isActive;\n            },\n            closeMenu() {\n              this.isActive = false;\n            }\n          },\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/10",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          name: 'burger',\n          test: 'ok'\n        };\n      ",
+      "options": [
+        {
+          "order": [
+            "data",
+            "test",
+            "name"
+          ]
+        }
+      ],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/11",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          /** data provider */\n          data() {\n          },\n          /** name of vue component */\n          name: 'burger'\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/12",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          /** data provider */\n          data() {\n          }/*test*/,\n          /** name of vue component */\n          name: 'burger'\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/13",
+      "rule": "vue/order-in-components",
+      "code": "export default {data(){},name:'burger'};",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/14",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: obj.fn(),\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/15",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: new MyClass(),\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/16",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: i++,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/17",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: i = 0,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/18",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: template`${foo}`,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/19",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          [obj.fn()]: 'test',\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/20",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: {test: obj.fn()},\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/21",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: [obj.fn(), 1],\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/22",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: obj.fn().prop,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/23",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: delete obj.prop,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/24",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: fn() + a + b,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/25",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: a ? fn() : null,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/26",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          test: `test ${fn()} ${a}`,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/27",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          computed: {\n            ...mapStates(['foo'])\n          },\n          data() {\n          },\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/28",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          name: 'burger',\n          test: fn(),\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/29",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          data() {\n          },\n          testArray: [1, 2, 3, true, false, 'a', 'b', 'c'],\n          testRegExp: /[a-z]*/,\n          testSpreadElement: [...array],\n          testOperator: (!!(a - b + c * d / e % f)) || (a && b),\n          testArrow: (a) => a,\n          testConditional: a ? b : c,\n          testYield: function* () {},\n          testTemplate: `a:${a},b:${b},c:${c}.`,\n          testNullish: a ?? b,\n          testOptionalChaining: a?.b?.c,\n          name: 'burger',\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/30",
+      "rule": "vue/order-in-components",
+      "code": "\n        <script lang=\"ts\">\n          export default {\n            setup () {},\n            props: {\n              foo: { type: Array as PropType<number[]> },\n            },\n          };\n        </script>\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": {
+            "ts": "@typescript-eslint/parser"
+          }
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/31",
+      "rule": "vue/order-in-components",
+      "code": "\n      <script setup>\n        defineOptions({\n          inheritAttrs: true,\n          name: 'Foo',\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "order-in-components/invalid/32",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          setup,\n          slots,\n          expose,\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "order-in-components/invalid/33",
+      "rule": "vue/order-in-components",
+      "code": "\n        export default {\n          slots,\n          setup,\n          expose,\n        };\n      ",
+      "options": [],
+      "filename": "example.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }

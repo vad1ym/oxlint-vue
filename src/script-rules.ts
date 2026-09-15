@@ -59,6 +59,7 @@ export interface RegisteredComponent { name: string, offset: number }
 export interface RefOperandFinding { method: string, offset: number }
 export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
+export interface ComponentOrderFinding { name: string, offset: number }
 export interface ExplicitEmitInfo {
   declared: Set<string>
   props: Set<string>
@@ -133,6 +134,90 @@ export function componentDefinitionOffsets(descriptor: SFCDescriptor, source: st
     } })
   }
   return definitions.length > 1 ? definitions : []
+}
+
+/** Out-of-order Options API properties for order-in-components. */
+export function componentOrderFindings(descriptor: SFCDescriptor, source: string, configuredOrder?: unknown): ComponentOrderFinding[] {
+  const lifecycle = ['beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeUpdate', 'updated',
+    'activated', 'deactivated', 'beforeUnmount', 'unmounted', 'beforeDestroy', 'destroyed',
+    'renderTracked', 'renderTriggered', 'errorCaptured']
+  const router = ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRouteLeave']
+  const defaults: (string | string[])[] = ['el', 'name', 'key', 'parent', 'functional',
+    ['delimiters', 'comments'], ['components', 'directives', 'filters'], 'extends', 'mixins',
+    ['provide', 'inject'], 'ROUTER_GUARDS', 'layout', 'middleware', 'validate', 'scrollToTop',
+    'transition', 'loading', 'inheritAttrs', 'model', ['props', 'propsData'], 'emits', 'slots',
+    'expose', 'setup', 'asyncData', 'data', 'fetch', 'head', 'computed', 'watch', 'watchQuery',
+    'LIFECYCLE_HOOKS', 'methods', ['template', 'render'], 'renderError']
+  const requested = Array.isArray(configuredOrder) ? configuredOrder as (string | string[])[] : defaults
+  const order = requested.map(group => group === 'LIFECYCLE_HOOKS' ? lifecycle
+    : group === 'ROUTER_GUARDS' ? router : group)
+  const positions = new Map<string, number>()
+  for (const [index, group] of order.entries()) {
+    for (const name of Array.isArray(group) ? group : [group]) positions.set(name, index)
+  }
+  const findings: ComponentOrderFinding[] = []
+  const check = (object: NodePath, offset: number): void => {
+    if (!object.isObjectExpression()) return
+    const properties = (object.get('properties') as NodePath[]).flatMap(property => {
+      const name = componentPropertyName(property)
+      const position = name === null ? undefined : positions.get(name)
+      return name === null || position === undefined ? [] : [{ property, name, position }]
+    })
+    for (const [index, current] of properties.entries()) {
+      const previous = properties.slice(0, index)
+        .filter(candidate => candidate.position > current.position)
+        .toSorted((left, right) => left.position - right.position)[0]
+      if (previous) findings.push({ name: current.name,
+        offset: offset + (current.property.node.start ?? 0) })
+    }
+  }
+  const blocks = [descriptor.script, descriptor.scriptSetup].filter((block): block is NonNullable<typeof block> => Boolean(block))
+  const inputs = blocks.length > 0
+    ? blocks.map(block => ({ content: block.content, lang: block.lang ?? 'js', offset: block.loc.start.offset }))
+    : [{ content: source, lang: 'js', offset: 0 }]
+  for (const input of inputs) {
+    if (!['js', 'jsx', 'ts', 'tsx'].includes(input.lang)) continue
+    let file
+    try { file = babelParse(input.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const componentFactories = new Set<object>()
+    const seen = new Set<object>()
+    traverse(file, { enter(path) {
+      let object: NodePath | undefined
+      if (path.isVariableDeclarator() && path.get('id').isObjectPattern()
+        && path.get('init').isIdentifier({ name: 'Vue' })) {
+        for (const property of path.get('id.properties') as NodePath[]) {
+          if (!property.isObjectProperty() || staticName(property.node.key) !== 'component') continue
+          const value = property.get('value') as NodePath
+          if (!value.isIdentifier()) continue
+          const binding = property.scope.getBinding(value.node.name)
+          if (binding) componentFactories.add(binding)
+        }
+      }
+      if (path.isExportDefaultDeclaration()) object = componentObject(path)
+      else if (path.isCallExpression() && path.node.callee.type === 'MemberExpression'
+        && staticName(path.node.callee.property) === 'component') {
+        object = (path.get('arguments') as NodePath[]).find(argument => argument.isObjectExpression())
+      } else if (path.isCallExpression() && path.node.callee.type === 'Identifier'
+        && path.node.callee.name === 'defineOptions') {
+        const first = (path.get('arguments') as NodePath[])[0]
+        if (first?.isObjectExpression()) object = first
+      } else if (path.isCallExpression() && path.get('callee').isIdentifier()) {
+        const callee = path.get('callee') as NodePath
+        const binding = callee.isIdentifier() ? callee.scope.getBinding(callee.node.name) : undefined
+        if (binding && componentFactories.has(binding)) {
+          object = (path.get('arguments') as NodePath[]).find(argument => argument.isObjectExpression())
+        }
+      } else if (path.isNewExpression() && path.node.callee.type === 'Identifier'
+        && path.node.callee.name === 'Vue') {
+        object = (path.get('arguments') as NodePath[]).find(argument => argument.isObjectExpression())
+      }
+      if (!object || seen.has(object.node)) return
+      seen.add(object.node)
+      check(object, input.offset)
+    } })
+  }
+  return findings
 }
 
 function staticString(path: NodePath | undefined): string | null {

@@ -23,7 +23,7 @@ export function compareCase(entry, severity = 2) {
   if (parserOptions.parser === '@typescript-eslint/parser') parserOptions.parser = tsParser
   const parser = parserKind === 'espree' ? undefined : parserKind === 'typescript' ? tsParser : vueParser
   const messages = linter.verify(code, [{
-    files: ['**/*.{js,ts,vue}'], plugins: { vue }, settings,
+    files: ['**/*.{js,jsx,ts,tsx,vue}'], plugins: { vue }, settings,
     languageOptions: { ...eslintLanguageOptions, ...(parser ? { parser } : {}), parserOptions },
     rules: { [rule]: [severity, ...options] },
   }], { filename })

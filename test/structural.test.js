@@ -40,6 +40,8 @@ const CASES = [
   ['vue/multiline-html-element-content-newline', '<div>content\n</div>', true],
   ['vue/html-indent', '<div>\n<span />\n</div>', true],
   ['vue/attributes-order', '<div @click="go" v-if="ready" />', true],
+  ['vue/order-in-components', '<div />', true,
+    'defineOptions({ data() {}, name: \'ExampleCard\' })'],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],
