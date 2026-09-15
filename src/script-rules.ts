@@ -59,6 +59,228 @@ export interface RegisteredComponent { name: string, offset: number }
 export interface RefOperandFinding { method: string, offset: number }
 export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
+export interface ExplicitEmitInfo {
+  declared: Set<string>
+  props: Set<string>
+  acceptsAny: boolean
+  hasDefinition: boolean
+  templateEmitters: Set<string>
+  findings: { name: string, offset: number }[]
+}
+
+function staticString(path: NodePath | undefined): string | null {
+  if (!path) return null
+  return path.isStringLiteral() ? path.node.value
+    : path.isTemplateLiteral() && path.node.expressions.length === 0
+      ? path.node.quasis[0]?.value.cooked ?? null : null
+}
+
+function memberParts(path: NodePath): { object: NodePath, name: string | null } | undefined {
+  while (path.isParenthesizedExpression()) path = path.get('expression') as NodePath
+  if (!path.isMemberExpression() && !path.isOptionalMemberExpression()) return undefined
+  return { object: path.get('object') as NodePath, name: staticName(path.node.property) }
+}
+
+/** Declared and triggered component events for require-explicit-emits. */
+export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean): ExplicitEmitInfo {
+  const info: ExplicitEmitInfo = { declared: new Set(), props: new Set(), acceptsAny: false,
+    hasDefinition: Boolean(descriptor.scriptSetup), templateEmitters: new Set(['$emit']), findings: [] }
+  const typeDeclarations = new Map<string, NodePath>()
+  const readDeclarations = (value: NodePath | undefined, target: Set<string>): boolean => {
+    if (!value) return false
+    while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+    if (value.isArrayExpression()) {
+      for (const element of value.get('elements') as NodePath[]) {
+        const name = staticString(element)
+        if (name === null) return true
+        else target.add(name)
+      }
+    } else if (value.isObjectExpression()) {
+      for (const property of value.get('properties') as NodePath[]) {
+        const name = componentPropertyName(property)
+        if (name === null) return true
+        else target.add(name)
+      }
+    } else return true
+    return false
+  }
+  const readType = (path: NodePath | undefined, target: Set<string>, seen = new Set<object>()): boolean => {
+    if (!path || seen.has(path.node)) return true
+    seen.add(path.node)
+    if (path.isTSTypeReference()) {
+      const name = path.get('typeName') as NodePath
+      if (!name.isIdentifier()) return true
+      const binding = path.scope.getBinding(name.node.name)
+      const declaration = binding?.path
+      if (declaration?.isTSTypeAliasDeclaration()) return readType(declaration.get('typeAnnotation') as NodePath, target, seen)
+      if (declaration?.isTSInterfaceDeclaration()) return readType(declaration.get('body') as NodePath, target, seen)
+      const local = typeDeclarations.get(name.node.name)
+      if (local?.isTSTypeAliasDeclaration()) return readType(local.get('typeAnnotation') as NodePath, target, seen)
+      if (local?.isTSInterfaceDeclaration()) return readType(local.get('body') as NodePath, target, seen)
+      return true
+    }
+    if (path.isTSParenthesizedType()) return readType(path.get('typeAnnotation') as NodePath, target, seen)
+    if (path.isTSUnionType()) return (path.get('types') as NodePath[]).some(type => readType(type, target, seen))
+    const readEventParameter = (parameter: NodePath | undefined): boolean => {
+      if (!parameter) return true
+      const annotation = parameter.isIdentifier() ? parameter.get('typeAnnotation') as NodePath : parameter
+      const type = annotation?.isTSTypeAnnotation() ? annotation.get('typeAnnotation') as NodePath : annotation
+      const literal = type?.isTSLiteralType() ? type.get('literal') as NodePath : undefined
+      if (literal?.isStringLiteral()) {
+        target.add(literal.node.value)
+        return false
+      }
+      if (type?.isTSUnionType()) return (type.get('types') as NodePath[]).some(member => readEventParameter(member))
+      return true
+    }
+    if (path.isTSFunctionType() || path.isTSCallSignatureDeclaration()) {
+      return readEventParameter((path.get('parameters') as NodePath[])[0])
+    }
+    if (path.isTSTypeLiteral() || path.isTSInterfaceBody()) {
+      let dynamic = false
+      for (const member of path.get('members') as NodePath[]) {
+        if (member.isTSCallSignatureDeclaration()) dynamic ||= readType(member, target, seen)
+        else if (member.isTSPropertySignature()) {
+          const name = member.node.computed ? staticString(member.get('key') as NodePath)
+            : staticName(member.node.key)
+          if (name === null) dynamic = true
+          else target.add(name)
+        }
+      }
+      return dynamic
+    }
+    const literal = path.isTSLiteralType() ? path.get('literal') as NodePath : undefined
+    if (literal?.isStringLiteral()) {
+      target.add(literal.node.value)
+      return false
+    }
+    return true
+  }
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    interface EmitContext { object?: NodePath, declared: Set<string>, props: Set<string>, acceptsAny: boolean }
+    const root: EmitContext = { declared: info.declared, props: info.props, acceptsAny: false }
+    const emitterBindings = new Map<Binding, EmitContext>()
+    const contextBindings = new Map<Binding, EmitContext>()
+    const componentObjects: NodePath[] = []
+    traverse(file, { enter(path) {
+      if ((path.isTSTypeAliasDeclaration() || path.isTSInterfaceDeclaration()) && path.node.id.type === 'Identifier') {
+        typeDeclarations.set(path.node.id.name, path)
+      }
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        if (object) { componentObjects.push(object); root.object = object; info.hasDefinition = true }
+      }
+      if (!path.isCallExpression() || path.node.callee.type !== 'Identifier'
+        || path.node.callee.name !== 'defineEmits') return
+      info.hasDefinition = true
+      const argument = (path.get('arguments') as NodePath[])[0]
+      if (argument) root.acceptsAny ||= readDeclarations(argument, root.declared)
+      else {
+        const parameters = path.get('typeParameters') as NodePath | undefined
+        const type = parameters && (parameters.get('params') as NodePath[])[0]
+        root.acceptsAny ||= type ? readType(type, root.declared) : true
+      }
+      if (path.parentPath?.isVariableDeclarator() && path.parentPath.node.id.type === 'Identifier') {
+        const binding = path.scope.getBinding(path.parentPath.node.id.name)
+        if (binding) {
+          emitterBindings.set(binding, root)
+          info.templateEmitters.add(path.parentPath.node.id.name)
+        }
+      }
+    } })
+    const rootComponents = componentObjects.slice()
+    for (const object of rootComponents) {
+      const components = objectPropertyPath(object, 'components')
+      const value = components?.isObjectProperty() ? pathValue(components) : undefined
+      if (value?.isObjectExpression()) for (const property of value.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const nested = pathValue(property)
+        if (nested.isObjectExpression()) componentObjects.push(nested)
+      }
+    }
+    const contexts = new Map<object, EmitContext>()
+    for (const object of componentObjects) {
+      const context = object === root.object ? root
+        : { object, declared: new Set<string>(), props: new Set<string>(), acceptsAny: false }
+      contexts.set(object.node, context)
+      const emits = objectPropertyPath(object, 'emits')
+      if (emits?.isObjectProperty()) context.acceptsAny ||= readDeclarations(pathValue(emits), context.declared)
+      if (allowProps) {
+        const props = objectPropertyPath(object, 'props')
+        if (props?.isObjectProperty()) context.acceptsAny ||= readDeclarations(pathValue(props), context.props)
+      }
+      const setup = objectPropertyPath(object, 'setup')
+      const fn = setup && (setup.isObjectProperty() || setup.isObjectMethod()) ? pathValue(setup) : undefined
+      if (fn?.isFunction()) {
+        const second = (fn.get('params') as NodePath[])[1]
+        if (second?.isIdentifier()) {
+          const binding = fn.scope.getBinding(second.node.name)
+          if (binding) contextBindings.set(binding, context)
+        } else if (second?.isObjectPattern()) for (const property of second.get('properties') as NodePath[]) {
+          if (!property.isObjectProperty() || staticName(property.node.key) !== 'emit') continue
+          const value = property.get('value') as NodePath
+          if (value.isIdentifier()) {
+            const binding = value.scope.getBinding(value.node.name)
+            if (binding) emitterBindings.set(binding, context)
+          }
+        }
+      }
+    }
+    if (allowProps) traverse(file, { enter(path) {
+      if (!path.isCallExpression()) return
+      if (path.node.callee.type !== 'Identifier' || path.node.callee.name !== 'defineProps') return
+      const argument = (path.get('arguments') as NodePath[])[0]
+      if (argument) root.acceptsAny ||= readDeclarations(argument, root.props)
+      else {
+        const parameters = path.get('typeParameters') as NodePath | undefined
+        const type = parameters && (parameters.get('params') as NodePath[])[0]
+        root.acceptsAny ||= type ? readType(type, root.props) : true
+      }
+    } })
+    const nearestContext = (path: NodePath): EmitContext | undefined => {
+      const owner = path.findParent(parent => parent.isObjectExpression() && contexts.has(parent.node))
+      return owner ? contexts.get(owner.node) : undefined
+    }
+    traverse(file, { enter(path) {
+      if (!path.isCallExpression() && !path.isOptionalCallExpression()) return
+      const first = (path.get('arguments') as NodePath[])[0]
+      const name = staticString(first)
+      if (name === null) return
+      let callee = path.get('callee') as NodePath
+      while (callee.isParenthesizedExpression()) callee = callee.get('expression') as NodePath
+      let context: EmitContext | undefined
+      if (callee.isIdentifier()) {
+        const binding = callee.scope.getBinding(callee.node.name)
+        context = binding ? emitterBindings.get(binding) : undefined
+      } else {
+        const member = memberParts(callee)
+        const receiver = member?.object
+        if (member?.name === '$emit' && receiver) {
+          if (receiver.isThisExpression()) context = nearestContext(path)
+          else if (receiver.isIdentifier()) {
+            const binding = receiver.scope.getBinding(receiver.node.name)
+            const init = binding?.path.isVariableDeclarator() ? binding.path.get('init') as NodePath : undefined
+            if (binding && init?.isThisExpression()) context = nearestContext(binding.path)
+          }
+        }
+        if (member?.name === 'emit' && receiver?.isIdentifier()) {
+          const binding = receiver.scope.getBinding(receiver.node.name)
+          context = binding ? contextBindings.get(binding) : undefined
+        }
+      }
+      if (context && !context.acceptsAny && !context.declared.has(name)
+        && !(allowProps && context.props.has(`on${name.charAt(0).toUpperCase()}${name.slice(1)}`))) {
+        info.findings.push({ name, offset: block.loc.start.offset + (first?.node.start ?? 0) })
+      }
+    } })
+    info.acceptsAny ||= root.acceptsAny
+  }
+  return info
+}
 
 /** Names exposed by Options API groups to the component template. */
 export function componentPublicNames(descriptor: SFCDescriptor): Set<string> {

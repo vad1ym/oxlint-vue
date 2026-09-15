@@ -94,12 +94,15 @@
     "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10",
     "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8",
     "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2",
-    "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e"
+    "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e",
+    "tests/lib/rules/require-explicit-emits.test.ts": "6ca1f2a00fe4aa46ff9ddde69997a9ade4d83fb97821a03964f0499bf5d8e6d6"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
     "require-valid-default-prop/valid/20": "requires the upstream TypeScript project fixture and imported Props2 type information",
-    "require-valid-default-prop/invalid/45": "requires the upstream TypeScript project fixture and imported Props2 type information"
+    "require-valid-default-prop/invalid/45": "requires the upstream TypeScript project fixture and imported Props2 type information",
+    "require-explicit-emits/valid/44": "requires the upstream TypeScript project fixture and imported Emits1 type information",
+    "require-explicit-emits/invalid/33": "requires the upstream TypeScript project fixture and imported Emits1 type information"
   },
   "cases": [
     {
@@ -27053,6 +27056,1130 @@
       "languageOptions": {
         "ecmaVersion": 2018,
         "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/valid/1",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('welcome')\"/>\n      </template>\n      <script>\n      export default {\n        emits: ['welcome']\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/2",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('welcome')\"/>\n      </template>\n      <script>\n      export default {\n        emits: {welcome:null}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/3",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('welcome')\"/>\n      </template>\n      <script>\n      export default {\n        emits: {welcome(){}}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/4",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            this.$emit('welcome')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/5",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            const vm = this\n            vm.$emit('welcome')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/6",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, context) {\n          context.emit('welcome')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/7",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, {emit}) {\n          emit('welcome')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/8",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(props, context) {\n          context.emit = 'foo'\n          context='foo'\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/9",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(props, {emit}) {\n          emit='foo'\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/10",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('welcome')\"/>\n      </template>\n      <script>\n      export default {\n        'emits': ['welcome']\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/11",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: ['welcome']\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/12",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/13",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            $emit('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/14",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            this.bar.$emit('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/15",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, ...context) {\n          context.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/16",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, [emit]) {\n          emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/17",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, {$emit}) {\n          $emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/18",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(context) {\n          context.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/19",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit(foo)\"/>\n        <div @click=\"$emit()\"/>\n        <div @click=\"$emit(1)\"/>\n        <div @click=\"$emit(true)\"/>\n        <div @click=\"$emit(null)\"/>\n        <div @click=\"$emit(/regex/)\"/>\n      </template>\n      <script>\n      export default {\n        emits: ['welcome']\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/20",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, context) {\n          context.emit(foo)\n          context.emit()\n          context.emit(1)\n          context.emit(true)\n          context.emit(null)\n          context.emit(/regex/)\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/21",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            this.$emit(foo)\n            this.$emit()\n            this.$emit(1)\n            this.$emit(true)\n            this.$emit(null)\n            this.$emit(/regex/)\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/22",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, context) {\n          context.fire('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/23",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            this.$fire('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/24",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      function fn() {\n        this.$emit('foo')\n      }\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/25",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup: ((p, context) => {\n          context.emit('foo')\n        })()\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/26",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <button @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        props: ['onFoo'],\n        methods: {\n          fn() { this.$emit('foo') }\n        },\n        setup(p, ctx) {\n          ctx.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/27",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup>\n      defineEmits(['foo'])\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/28",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup>\n      defineEmits({foo:null})\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/29",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      defineEmits<{\n        (e: 'foo'): void\n      }>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/30",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      defineEmits<(e: 'foo') => void>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/31",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n        <div @click=\"$emit('bar')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      defineEmits<(e: 'foo' | 'bar') => void>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/32",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"emit('foo')\"/>\n        <div @click=\"emit('bar')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      const emit = defineEmits<(e: 'foo' | 'bar') => void>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/33",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: unknown,\n        setup(_, {emit}) {\n          emit('bar')\n        },\n        methods: {\n          click() {\n            this.$emit('baz')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/34",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup>\n      const emit = defineEmits(unknown)\n      emit('bar')\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/35",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: {...foo}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/36",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: [foo]\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/37",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: [...foo]\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/38",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <button @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        props: unknown,\n        methods: {\n          fn() { this.$emit('bar') }\n        },\n        setup(p, ctx) {\n          ctx.emit('baz')\n        }\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/39",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup>\n      defineProps(unknown)\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/40",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <button @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        props: [foo],\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/41",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <button @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        props: [...foo],\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/42",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup lang=\"ts\">\n      const emit = defineEmits<{foo: [], bar:[number]}>()\n      emit('foo')\n      emit('bar', 42)\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/valid/43",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup lang=\"ts\">\n      type Emits = {foo: [], bar:[number]}\n      const emit = defineEmits<Emits>()\n      emit('foo')\n      emit('bar', 42)\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-explicit-emits/invalid/1",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/2",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: ['welcome'],\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/3",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: {welcome:null}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/4",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: {welcome(){}}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/5",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            this.$emit('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/6",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        methods: {\n          onClick() {\n            const vm = this\n            vm.$emit('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/7",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, context) {\n          context.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/8",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, {emit}) {\n          emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/9",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        emits: ['welcome'],\n        setup(p, {emit:fire}) {\n          fire('foo')\n          fire('bar')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "require-explicit-emits/invalid/10",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      // @vue/component\n      const Foo = {}\n      export default Foo\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/11",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      // @vue/component\n      const Foo = {emits:{}}\n      export default {\n        emits: {}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/12",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      // @vue/component\n      const Foo = {emits: {}}\n      export default { emits: {} }\n      // @vue/component\n      const Bar = {emits: {}}\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/13",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        components: {\n          // @vue/component\n          Foo: {\n            emits: ['foo'],\n            setup(p, {emit}) {\n              emit('bar')\n            }\n          }\n        },\n        emits: ['bar'],\n        setup(p, context) {\n          context.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "require-explicit-emits/invalid/14",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        components: {\n          // @vue/component\n          Foo: {\n            emits: ['foo'],\n            methods: {\n              onClick() {\n                this.$emit('bar')\n              }\n            }\n          }\n        },\n        emits: ['bar'],\n        methods: {\n          onClick() {\n            this.$emit('foo')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "require-explicit-emits/invalid/15",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        emits: []\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/16",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        name: '',\n        props: {}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/17",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        name: '',\n        watch: {}\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/18",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        name: '',\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/19",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        name: ''\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/20",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        ...foo\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/21",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        methods: {\n          click () {\n            const vm = this\n            vm?.$emit?.('foo')\n            ;(vm?.$emit)?.('bar')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "require-explicit-emits/invalid/22",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script>\n      export default {\n        setup(p, c) {\n          c?.emit?.('foo')\n          ;(c?.emit)?.('bar')\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "require-explicit-emits/invalid/23",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <button @click=\"$emit('foo')\"/>\n      </template>\n      <script>\n      export default {\n        props: ['foo'],\n        methods: {\n          fn() { this.$emit('foo') }\n        },\n        setup(p, ctx) {\n          ctx.emit('foo')\n        }\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "allowProps": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "require-explicit-emits/invalid/24",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('bar')\"/>\n      </template>\n      <script setup>\n      defineEmits(['foo'])\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/25",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('bar')\"/>\n      </template>\n      <script setup>\n      defineEmits({foo:null})\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/26",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('bar')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      defineEmits<{\n        (e: 'foo'): void\n      }>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/27",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('bar')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      defineEmits<(e: 'foo') => void>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/28",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"$emit('foo')\"/>\n      </template>\n      <script setup>\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/29",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup lang=\"ts\">\n      const emit = defineEmits<(e: 'foo') => void>()\n      emit('foo');\n      emit('bar')\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/30",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup>\n      const emit = defineEmits([`foo`])\n      emit(`foo`);\n      emit(`bar`)\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/31",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup lang=\"ts\">\n      const emit = defineEmits<{foo: []}>()\n      emit('foo')\n      emit('bar')\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/32",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <script setup lang=\"ts\">\n      type Emits = {foo: []}\n      const emit = defineEmits<Emits>()\n      emit('foo')\n      emit('bar')\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-explicit-emits/invalid/34",
+      "rule": "vue/require-explicit-emits",
+      "code": "\n      <template>\n        <div @click=\"emit('bar')\"/>\n      </template>\n      <script setup lang=\"ts\">\n      const emit = defineEmits<(e: 'foo') => void>()\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
         "parserKind": "vue"
       },
       "settings": {},

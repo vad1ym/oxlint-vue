@@ -23,7 +23,8 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, componentPublicNames, computedPropertyInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { componentNameFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -60,6 +61,7 @@ interface Annotations {
   __outerLocals?: Set<string>
   __computedNames?: Set<string>
   __scriptNames?: Set<string>
+  __emitInfo?: ExplicitEmitInfo
 }
 
 type AnnotatedElement = ElementNode & Annotations
@@ -858,6 +860,31 @@ const RULES: Rule[] = [
           else seen.add(name)
           cursor = relative + name.length
         }
+      }
+    },
+  },
+  {
+    name: 'vue/require-explicit-emits',
+    severity: 'error',
+    check(node, report) {
+      const context = node as AnyNode & Annotations
+      const info = context.__emitInfo
+      if (!info || !info.hasDefinition || info.acceptsAny) return
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        const free = new Set(freeIdentifiers(ast, info.templateEmitters, context.__locals))
+        visitExpression(ast, candidate => {
+          if (candidate.type !== 'CallExpression' || candidate.callee.type !== 'Identifier'
+            || !free.has(candidate.callee) || candidate.arguments[0]?.type !== 'StringLiteral') return
+          const name = candidate.arguments[0].value
+          if (info.declared.has(name) || info.props.has(`on${name.charAt(0).toUpperCase()}${name.slice(1)}`)) return
+          report({ ...astLoc(exp, candidate.arguments[0], ast),
+            message: `The "${name}" event has been triggered but not declared.` })
+        })
       }
     },
   },
@@ -2510,6 +2537,15 @@ export function checkTemplate(
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
   const templateScriptNames = new Set([...script.bindings, ...script.props.keys(),
     ...script.instanceProps, ...componentPublicNames(descriptor)])
+  const explicitEmitsRule = active.find(entry => entry.rule.name === 'vue/require-explicit-emits')
+  const emitInfo = explicitEmitsRule
+    ? explicitEmitInfo(descriptor, ruleOptions(config?.[explicitEmitsRule.rule.name]).allowProps === true)
+    : undefined
+  if (emitInfo && /<script\b[^>]*\bsetup(?:\s|>|=)/iu.test(source)) emitInfo.hasDefinition = true
+  if (explicitEmitsRule && emitInfo) for (const finding of emitInfo.findings) out.push({ filename,
+    rule: explicitEmitsRule.rule.name, severity: explicitEmitsRule.severity,
+    ...sourceLoc(source, finding.offset),
+    message: `The "${finding.name}" event has been triggered but not declared.` } as Diagnostic)
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')
   const computedInfo = computedRule ? computedPropertyInfo(descriptor) : { names: new Set<string>(), findings: [] }
   if (computedRule) for (const finding of computedInfo.findings) out.push({ filename,
@@ -2777,6 +2813,7 @@ export function checkTemplate(
     context.__depth = depth
     context.__computedNames = computedInfo.names
     context.__scriptNames = templateScriptNames
+    if (emitInfo) context.__emitInfo = emitInfo
     const children = childrenOf(node)
     if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
     for (const { rule, severity } of active) {

@@ -30,6 +30,7 @@ const CASES = [
   ['vue/require-valid-default-prop', '<div />', false],
   ['vue/no-use-computed-property-like-method', '<div />', false],
   ['vue/no-template-shadow', '<div v-for="item in items"><i v-for="item in item" /></div>', true],
+  ['vue/require-explicit-emits', '<button @click="$emit(\'save\')" />', true],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

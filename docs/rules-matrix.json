@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 63,
     "native": 59,
-    "partial": 41,
-    "missing": 90
+    "partial": 42,
+    "missing": 89
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1812,19 +1812,21 @@
     },
     {
       "name": "require-explicit-emits",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 76,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/require-explicit-emits.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "require-prop-types",

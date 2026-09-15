@@ -27,6 +27,10 @@ const skippedCases = {
     'requires the upstream TypeScript project fixture and imported Props2 type information',
   'require-valid-default-prop/invalid/45':
     'requires the upstream TypeScript project fixture and imported Props2 type information',
+  'require-explicit-emits/valid/44':
+    'requires the upstream TypeScript project fixture and imported Emits1 type information',
+  'require-explicit-emits/invalid/33':
+    'requires the upstream TypeScript project fixture and imported Emits1 type information',
 }
 const pendingSkippedCases = new Set(Object.keys(skippedCases).filter(id =>
   !selected.size || selected.has(id.slice(0, id.indexOf('/')))))
