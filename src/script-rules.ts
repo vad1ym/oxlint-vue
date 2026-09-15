@@ -344,6 +344,44 @@ export function componentOptionNameFindings(descriptor: SFCDescriptor, source: s
   return findings
 }
 
+/** Whether component options explicitly disable automatic attribute inheritance. */
+export function componentInheritAttrsDisabled(descriptor: SFCDescriptor): boolean {
+  let disabled = false
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const inspect = (object: NodePath | undefined): void => {
+      if (!object) return
+      const option = objectPropertyPath(object, 'inheritAttrs')
+      if (!option || (!option.isObjectProperty() && !option.isObjectMethod())) return
+      disabled ||= staticBooleanValue(pathValue(option)) === false
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) inspect(componentObject(path))
+      if (path.isCallExpression() && path.node.callee.type === 'Identifier'
+        && path.node.callee.name === 'defineOptions') {
+        const first = (path.get('arguments') as NodePath[])[0]
+        if (first?.isObjectExpression()) inspect(first)
+      }
+    } })
+  }
+  return disabled
+}
+
+function staticBooleanValue(value: NodePath): boolean | undefined {
+  while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+  if (value.isBooleanLiteral()) return value.node.value
+  if (value.isNumericLiteral()) return Boolean(value.node.value)
+  if (value.isStringLiteral()) return Boolean(value.node.value)
+  if (value.isNullLiteral()) return false
+  if (!value.isIdentifier()) return undefined
+  const binding = value.scope.getBinding(value.node.name)
+  const init = binding?.path.isVariableDeclarator() ? binding.path.get('init') as NodePath : undefined
+  return init?.isBooleanLiteral() ? init.node.value : undefined
+}
+
 function staticString(path: NodePath | undefined): string | null {
   if (!path) return null
   return path.isStringLiteral() ? path.node.value

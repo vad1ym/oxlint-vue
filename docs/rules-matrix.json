@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 65,
+    "implemented": 66,
     "native": 59,
     "partial": 53,
-    "missing": 76
+    "missing": 75
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2796,11 +2796,11 @@
     },
     {
       "name": "no-duplicate-attr-inheritance",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 24,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

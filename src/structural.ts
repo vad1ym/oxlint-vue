@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { booleanDefaultFindings, componentDefinitionOffsets, componentNameFindings, componentOptionNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { booleanDefaultFindings, componentDefinitionOffsets, componentInheritAttrsDisabled, componentNameFindings, componentOptionNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -62,6 +62,8 @@ interface Annotations {
   __computedNames?: Set<string>
   __scriptNames?: Set<string>
   __emitInfo?: ExplicitEmitInfo
+  __inheritAttrsDisabled?: boolean
+  __templateRootCount?: number
 }
 
 type AnnotatedElement = ElementNode & Annotations
@@ -1396,6 +1398,22 @@ const RULES: Rule[] = [
             : "Unexpected line breaks before '-->'.",
         })
       }
+    },
+  },
+  {
+    name: 'vue/no-duplicate-attr-inheritance',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const context = node as AnnotatedElement
+      if (context.__inheritAttrsDisabled) return
+      const attrs = node.props.find((prop): prop is DirectiveNode =>
+        prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && !prop.arg
+        && expContent(prop.exp)?.trim() === '$attrs')
+      if (!attrs) return
+      const root = !context.__parentElement
+      if (root && (context.__templateRootCount ?? 0) > 1 && options.checkMultiRootNodes !== true) return
+      report({ ...loc(attrs.exp ?? attrs), message: 'Set "inheritAttrs" to false.' })
     },
   },
   {
@@ -3045,6 +3063,11 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const inheritAttrsDisabled = componentInheritAttrsDisabled(descriptor)
+  const rootElements = (ast?.children ?? []).filter((child): child is ElementNode =>
+    child.type === NodeTypes.ELEMENT)
+  const templateRootCount = rootElements.filter(element =>
+    !findDir(element, 'else') && !findDir(element, 'else-if')).length
   const templateScriptNames = new Set([...script.bindings, ...script.props.keys(),
     ...script.instanceProps, ...componentPublicNames(descriptor)])
   const explicitEmitsRule = active.find(entry => entry.rule.name === 'vue/require-explicit-emits')
@@ -3357,6 +3380,8 @@ export function checkTemplate(
     context.__depth = depth
     context.__computedNames = computedInfo.names
     context.__scriptNames = templateScriptNames
+    context.__inheritAttrsDisabled = inheritAttrsDisabled
+    context.__templateRootCount = templateRootCount
     if (emitInfo) context.__emitInfo = emitInfo
     const children = childrenOf(node)
     if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
