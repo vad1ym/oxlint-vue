@@ -44,6 +44,13 @@ interface Annotations {
   __prevElementHasIf?: boolean
   /** Whether this element is nested below an outer v-for element. */
   __insideVFor?: boolean
+  /** Raw tag name of the containing template element. */
+  __parentTag?: string
+  __parentElement?: ElementNode
+  __firstElementChild?: boolean
+  /** Full SFC source and template-content boundary for root-only checks. */
+  __source?: string
+  __templateContentStart?: number
   /** Identifiers declared by `defineProps` in `<script setup>`. */
   __script?: ScriptAnalysis
   __locals?: Set<string>
@@ -170,6 +177,43 @@ function relativeLoc(node: { loc: AnyNode['loc'] }, relative: number): ReturnTyp
   }
 }
 
+function sourceLoc(source: string, offset: number): ReturnType<typeof loc> {
+  const lines = source.slice(0, offset).split('\n')
+  return { offset, line: lines.length, column: lines.at(-1)!.length + 1 }
+}
+
+interface RawAttribute {
+  name: string
+  start: number
+  valueStart?: number
+}
+
+/** Read attributes from one opening tag without inspecting quoted text or children. */
+function openingAttributes(source: string): RawAttribute[] {
+  const out: RawAttribute[] = []
+  let index = source.indexOf('<') + 1
+  while (index > 0 && index < source.length && !/[\s/>]/.test(source[index]!)) index++
+  while (index < source.length) {
+    while (/\s/.test(source[index] ?? '')) index++
+    if (!source[index] || source[index] === '>' || source.startsWith('/>', index)) break
+    const start = index
+    while (index < source.length && !/[\s=/>]/.test(source[index]!)) index++
+    const name = source.slice(start, index)
+    while (/\s/.test(source[index] ?? '')) index++
+    let valueStart: number | undefined
+    if (source[index] === '=') {
+      index++
+      while (/\s/.test(source[index] ?? '')) index++
+      valueStart = index
+      const quote = source[index] === '"' || source[index] === "'" ? source[index++] : undefined
+      if (quote) while (index < source.length && source[index++] !== quote) { /* scan */ }
+      else while (index < source.length && !/[\s>]/.test(source[index]!)) index++
+    }
+    out.push({ name, start, ...(valueStart === undefined ? {} : { valueStart }) })
+  }
+  return out
+}
+
 function astLoc(exp: NonNullable<DirectiveNode['exp']>, node: import('./ast.js').AstNode, root: import('./ast.js').AstNode): ReturnType<typeof loc> {
   const decodedOffset = Math.max(0, (node.start ?? 0) - (root.type === 'Program' ? 0 : 1))
   if (exp.type !== NodeTypes.SIMPLE_EXPRESSION || exp.content === exp.loc.source) return relativeLoc(exp, decodedOffset)
@@ -205,6 +249,26 @@ function visitExpression(node: import('./ast.js').AstNode, visit: (node: import(
 }
 
 const normalizeComponentName = (name: string): string => name.replace(/-/g, '').toLowerCase()
+
+function kebabComponentName(name: string): string {
+  return name.replace(/([a-z\d])([A-Z])/g, '$1-$2').toLowerCase()
+}
+
+function pascalComponentName(name: string): string {
+  return kebabComponentName(name).split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
+}
+
+function matchesConfiguredName(patterns: unknown, name: string): boolean {
+  if (!Array.isArray(patterns)) return false
+  const candidates = [name, pascalComponentName(name), kebabComponentName(name)]
+  return patterns.some((pattern) => {
+    if (typeof pattern !== 'string') return false
+    const regex = /^\/(.*)\/([a-z]*)$/.exec(pattern)
+    if (!regex) return candidates.includes(pattern)
+    try { return candidates.some(candidate => new RegExp(regex[1]!, regex[2]).test(candidate)) } catch { return false }
+  })
+}
 
 type Ast = import('./ast.js').AstNode
 function splitConditions(ast: Ast, operator: string): Ast[] {
@@ -375,6 +439,46 @@ const RULES: Rule[] = [
   ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
   ...(['if', 'else-if', 'else'] as const).map(conditionalDirectiveRule),
   {
+    name: 'vue/valid-v-pre',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      for (const attr of openingAttributes(node.loc.source)) {
+        if (attr.name !== 'v-pre' && !attr.name.startsWith('v-pre:')
+          && !attr.name.startsWith('v-pre.')) continue
+        const argument = attr.name.indexOf(':')
+        const modifier = attr.name.indexOf('.')
+        if (argument >= 0) report({
+          message: 'v-pre does not accept an argument.', ...relativeLoc(node, attr.start + argument + 1),
+        })
+        if (modifier >= 0) report({
+          message: 'v-pre does not accept modifiers.', ...relativeLoc(node, attr.start + modifier + 1),
+        })
+        if (attr.valueStart !== undefined) report({
+          message: 'v-pre does not accept a value.', ...relativeLoc(node, attr.valueStart),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/no-deprecated-functional-template',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ROOT) return
+      const context = node as RootNode & Annotations
+      if (context.__source === undefined || context.__templateContentStart === undefined) return
+      const beforeContent = context.__source.slice(0, context.__templateContentStart)
+      const openingStart = beforeContent.lastIndexOf('<template')
+      if (openingStart < 0) return
+      const opening = beforeContent.slice(openingStart)
+      const attr = openingAttributes(opening).find(candidate => candidate.name === 'functional')
+      if (attr) report({
+        message: 'Functional templates are deprecated in Vue 3.',
+        ...sourceLoc(context.__source, openingStart + attr.start),
+      })
+    },
+  },
+  {
     name: 'vue/valid-v-memo',
     severity: 'error',
     check(node, report) {
@@ -499,6 +603,136 @@ const RULES: Rule[] = [
     check(node, report) {
       const attr = findAttr(node, 'inline-template')
       if (attr) report({ message: 'The inline-template attribute is deprecated.', ...loc(attr) })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-html-element-is',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT
+        || !(isHTMLTag(node.tag) || isSVGTag(node.tag) || isMathMLTag(node.tag))) return
+      const attr = findAttr(node, 'is')
+      if (attr && !attr.value?.content.startsWith('vue:')) report({
+        message: 'The is attribute on native elements is deprecated.', ...loc(attr),
+      })
+      for (const dir of node.props) if (dir.type === NodeTypes.DIRECTIVE
+        && dir.name === 'bind' && argContent(dir) === 'is') report({
+        message: 'The is binding on native elements is deprecated.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-router-link-tag-prop',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const configured = Array.isArray(options.components)
+        ? options.components.filter((name): name is string => typeof name === 'string')
+        : ['RouterLink']
+      const names = new Set(configured.flatMap((name) => {
+        const kebab = kebabComponentName(name)
+        const pascal = pascalComponentName(name)
+        return [kebab, pascal]
+      }))
+      if (!names.has(node.tag)) return
+      const attr = findAttr(node, 'tag')
+      if (attr) {
+        report({ message: 'The RouterLink tag prop is deprecated.', ...loc(attr) })
+        return
+      }
+      const dir = node.props.find((prop): prop is DirectiveNode =>
+        prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && argContent(prop) === 'tag')
+      if (dir?.arg) report({ message: 'The RouterLink tag prop is deprecated.', ...loc(dir.arg) })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-scope-attribute',
+    severity: 'error',
+    check(node, report) {
+      const attr = findAttr(node, 'scope')
+      if (attr) report({ message: 'The scope attribute is deprecated.', ...loc(attr) })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-slot-scope-attribute',
+    severity: 'error',
+    check(node, report) {
+      const attr = findAttr(node, 'slot-scope')
+      if (attr) report({ message: 'The slot-scope attribute is deprecated.', ...loc(attr) })
+    },
+  },
+  {
+    name: 'vue/no-deprecated-slot-attribute',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const attr = findAttr(node, 'slot')
+      if (attr) {
+        const parentTag = (node as AnnotatedElement).__parentTag
+        const ignored = matchesConfiguredName(options.ignore, node.tag)
+          || parentTag != null && matchesConfiguredName(options.ignoreParents, parentTag)
+        if (!ignored) report({ message: 'The slot attribute is deprecated.', ...loc(attr) })
+      }
+      for (const dir of node.props) if (dir.type === NodeTypes.DIRECTIVE
+        && dir.name === 'bind' && argContent(dir) === 'slot') report({
+        message: 'The slot binding is deprecated.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-useless-template-attributes',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template'
+        || !(node as AnnotatedElement).__parentTag) return
+      const fragmentAttribute = (prop: ElementNode['props'][number]): boolean => {
+        if (prop.type === NodeTypes.ATTRIBUTE) return prop.name === 'slot'
+        if (['if', 'else', 'else-if', 'for', 'slot', 'slot-scope', 'scope'].includes(prop.name)) return true
+        return prop.name === 'bind' && argContent(prop) === 'slot'
+      }
+      if (!node.props.some(fragmentAttribute)) return
+      for (const prop of node.props) {
+        if (fragmentAttribute(prop)) continue
+        if (prop.type === NodeTypes.ATTRIBUTE && prop.name === 'key') continue
+        if (prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && argContent(prop) === 'key') continue
+        report({
+          message: prop.type === NodeTypes.DIRECTIVE
+            ? 'Unexpected useless directive on <template>.'
+            : 'Unexpected useless attribute on <template>.',
+          ...loc(prop),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/valid-template-root',
+    severity: 'error',
+    // The SFC block wrapper is outside compiler-core's template AST. It is
+    // checked once in checkTemplate, where the descriptor is available.
+    check() {},
+  },
+  {
+    name: 'vue/require-toggle-inside-transition',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const context = node as AnnotatedElement
+      const parent = context.__parentElement
+      if (!parent || parent.tag.toLowerCase() !== 'transition' || !context.__firstElementChild) return
+      if (customComponent(node) || node.tag === 'slot') return
+      if (findAttr(parent, 'appear')) return
+      const boundAppear = parent.props.find((prop): prop is DirectiveNode =>
+        prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && argContent(prop) === 'appear')
+      if (boundAppear) {
+        const value = expressionAst(boundAppear.exp)
+        if (!value || value.type !== 'BooleanLiteral' || value.value !== false) return
+      }
+      const additional = Array.isArray(options.additionalDirectives)
+        ? options.additionalDirectives.filter((name): name is string => typeof name === 'string') : []
+      if (['if', 'show', ...additional].some(name => findDir(node, name)) || hasKeyBinding(node)) return
+      report({
+        message: 'The element inside <transition> must control whether it is displayed.', ...loc(node),
+      })
     },
   },
   {
@@ -1028,7 +1262,33 @@ export function checkTemplate(
   // chain a node starts, and which identifiers are props. Attached once here
   // rather than recomputed per rule per node.
   const descriptor = parse(source, { filename }).descriptor
+  if (ast) {
+    const context = ast as RootNode & Annotations
+    context.__source = source
+    if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
+  }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const rootRule = active.find(entry => entry.rule.name === 'vue/valid-template-root')
+  if (rootRule && descriptor.template) {
+    const block = descriptor.template
+    const hasSrc = Object.hasOwn(block.attrs, 'src')
+    const children = ast?.children ?? baseParse(block.content).children
+    const meaningful = children.filter(child => child.loc.source.trim())
+    const emitRoot = (message: string, position: ReturnType<typeof loc>): void => {
+      out.push({ filename, rule: rootRule.rule.name, severity: rootRule.severity, message, ...position } as Diagnostic)
+    }
+    if (hasSrc) {
+      for (const child of meaningful) {
+        const position = ast
+          ? loc(child)
+          : sourceLoc(source, block.loc.start.offset + child.loc.start.offset)
+        emitRoot("A template with a src attribute must be empty.", position)
+      }
+    } else if (!meaningful.length) {
+      const opening = source.slice(0, block.loc.start.offset).lastIndexOf('<template')
+      emitRoot('The template requires a child element.', sourceLoc(source, Math.max(0, opening)))
+    }
+  }
   const propRule = active.find(entry => entry.rule.name === 'vue/no-mutating-props')
   if (propRule) {
     const result = scriptPropMutations(descriptor, ruleOptions(config?.[propRule.rule.name]).shallowOnly === true)
@@ -1046,11 +1306,16 @@ export function checkTemplate(
     }
   }
 
-  const annotate = (children: TemplateChildNode[]): void => {
+  const annotate = (children: TemplateChildNode[], parent?: ElementNode): void => {
     let previousElement: ElementNode | undefined
+    let foundElement = false
     for (let i = 0; i < children.length; i++) {
       const node = children[i]!
       if (node.type !== NodeTypes.ELEMENT) continue
+      ;(node as AnnotatedElement).__parentTag = parent?.tag ?? 'template'
+      if (parent) (node as AnnotatedElement).__parentElement = parent
+      ;(node as AnnotatedElement).__firstElementChild = !foundElement
+      foundElement = true
       ;(node as AnnotatedElement).__prevElementHasIf = previousElement != null
         && Boolean(findDir(previousElement, 'if') || findDir(previousElement, 'else-if'))
       previousElement = node
@@ -1090,7 +1355,7 @@ export function checkTemplate(
     context.__outerLocals = inherited
     context.__insideVFor = insideVFor
     const children = childrenOf(node)
-    if (children.length) annotate(children)
+    if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
     for (const { rule, severity } of active) {
       rule.check(node, (d) => {
         // The `offset` key is always present, holding `undefined` when the node

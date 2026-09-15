@@ -10,6 +10,8 @@
     "tests/lib/rules/valid-v-if.test.ts": "fb8f8c7d143790a40810d69395ec87b69cc2a00381bb81144e2986897a654005",
     "tests/lib/rules/valid-v-else-if.test.ts": "5f4058280dd33477a683f46ccafea7d076870a74cec688b1f0ae876df75c58c1",
     "tests/lib/rules/valid-v-else.test.ts": "ae66dc9ccc0bf01043228db1514d73de15fffbfc28ede021f372c0d6cbb4c20e",
+    "tests/lib/rules/valid-v-pre.test.ts": "f3884ba1b05b75faa002fadb7cfc1adc6d14530e118e11ea3f07cff3c9206bbf",
+    "tests/lib/rules/no-deprecated-functional-template.test.ts": "b9540b07b0d76601b251e9b41ba5b95652cdccbe5cc7e160527acef661a2a6c6",
     "tests/lib/rules/valid-v-memo.test.ts": "186376ae3b4bd1488962413327e27d857164e639bb8938e6562917bb363f9c6c",
     "tests/lib/rules/valid-v-is.test.ts": "77a19e8f38272e0269261d048418298272fd104723191b24ce280b7fad5a2538",
     "tests/lib/rules/no-deprecated-v-on-native-modifier.test.ts": "285c1133aa4d537440a2f2dcccacf973cfee622c8a105dbcc32d697d59adaf98",
@@ -18,6 +20,14 @@
     "tests/lib/rules/no-deprecated-v-bind-sync.test.ts": "a29a64a4d799f958c9a10d1de93b27e40bd6f9ead8242271ebba722b31750a73",
     "tests/lib/rules/no-deprecated-v-on-number-modifiers.test.ts": "13e4472fb9fe5185d788cd7b2cbfc9b1354403cde0381dc27811456e645d149b",
     "tests/lib/rules/no-deprecated-inline-template.test.ts": "bf937c7ef30fef7f43832cecd21f218b90c920a8f3fb1712c67537095287d703",
+    "tests/lib/rules/no-deprecated-html-element-is.test.ts": "cfc9ca2ab8d6f856c447c6aec3895a4cb38951ea309eb3b018dec16d86532517",
+    "tests/lib/rules/no-deprecated-router-link-tag-prop.test.ts": "6557aabd9b731b8b05bb4f9a1e874e0e1cbd2d5af0104f6fb6742682651691d3",
+    "tests/lib/rules/no-deprecated-scope-attribute.test.ts": "9f4a690816c5ec359e2938dd135a07f5857149caf76332fec68e82da185859ba",
+    "tests/lib/rules/no-deprecated-slot-scope-attribute.test.ts": "a984efe19de611031a413b04575d9c4b1a21477e5d2762d6fbf8b88bfb729f36",
+    "tests/lib/rules/no-deprecated-slot-attribute.test.ts": "f79cbc17ac574026e0969c79fcce79f270f3536c714b283a5727a832040b0d27",
+    "tests/lib/rules/no-useless-template-attributes.test.ts": "74ef5fddbd3775462f8f5b5e9237c5dd6a99eb476ea5c0939c553698c05ccff4",
+    "tests/lib/rules/valid-template-root.test.ts": "4dc6eecabe350c344e4a4b167a02f6035e430129be807a484412ab48f0d0c5fc",
+    "tests/lib/rules/require-toggle-inside-transition.test.ts": "377de714df2ba40a12c040bdc266ab11061e4344e765c0b4d30fc419dd1993c0",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -1105,6 +1115,162 @@
       "filename": "empty-value.vue",
       "languageOptions": {
         "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/valid/1",
+      "rule": "vue/valid-v-pre",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-pre/valid/2",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-pre/invalid/1",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre:aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/invalid/2",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre.aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/invalid/3",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre=\"aaa\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/invalid/4",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/invalid/5",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre=\"/**/\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-pre/invalid/6",
+      "rule": "vue/valid-v-pre",
+      "code": "<template><div v-pre=\"\" /></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-functional-template/valid/1",
+      "rule": "vue/no-deprecated-functional-template",
+      "code": "<template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-functional-template/valid/2",
+      "rule": "vue/no-deprecated-functional-template",
+      "code": "<template><div /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-functional-template/valid/3",
+      "rule": "vue/no-deprecated-functional-template",
+      "code": "<template f><div /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-functional-template/invalid/1",
+      "rule": "vue/no-deprecated-functional-template",
+      "code": "<template functional></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-functional-template/invalid/2",
+      "rule": "vue/no-deprecated-functional-template",
+      "code": "<template functional><div /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
       },
       "settings": {},
       "expectedCount": 1
@@ -2857,6 +3023,2048 @@
       "filename": "test.vue",
       "languageOptions": {
         "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-html-element-is/valid/1",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><component is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-html-element-is/valid/2",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><div /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-html-element-is/valid/3",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><Foo is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-html-element-is/valid/4",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><component :is=\"'foo'\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-html-element-is/valid/5",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><div is=\"vue:foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-html-element-is/invalid/1",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><div is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-html-element-is/invalid/2",
+      "rule": "vue/no-deprecated-html-element-is",
+      "code": "<template><div :is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/1",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/2",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link to=\"/\">Home</router-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/3",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink to=\"/\">\n          <div>Home</div>\n        </RouterLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/4",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link to=\"/\">\n          <div>Home</div>\n        </router-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/5",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <NuxtLink to=\"/\">Home</NuxtLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/6",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <nuxt-link to=\"/\">Home</nuxt-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/7",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <NuxtLink to=\"/\">\n          <div>Home</div>\n        </NuxtLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/valid/8",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <nuxt-link to=\"/\">\n          <div>Home</div>\n        </nuxt-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/1",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink tag=\"div\" to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/2",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link tag=\"div\" to=\"/\">Home</router-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/3",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink tag=\"div\" to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "RouterLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/4",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink tag=\"div\" to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "router-link"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/5",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link tag=\"div\" to=\"/\">Home</router-link>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "RouterLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/6",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink :tag=\"someVariable\" to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/7",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link :tag=\"someVariable\" to=\"/\">Home</router-link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/8",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <RouterLink :tag=\"someVariable\" to=\"/\">Home</RouterLink>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "RouterLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/9",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <router-link :tag=\"someVariable\" to=\"/\">Home</router-link>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "RouterLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/10",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <NuxtLink tag=\"div\" to=\"/\">Home</NuxtLink>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "NuxtLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/11",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <nuxt-link tag=\"div\" to=\"/\">Home</nuxt-link>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "NuxtLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/12",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <NuxtLink :tag=\"someVariable\" to=\"/\">Home</NuxtLink>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "NuxtLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-router-link-tag-prop/invalid/13",
+      "rule": "vue/no-deprecated-router-link-tag-prop",
+      "code": "\n      <template>\n        <nuxt-link :tag=\"someVariable\" to=\"/\">Home</nuxt-link>\n      </template>\n      ",
+      "options": [
+        {
+          "components": [
+            "NuxtLink"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/1",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a v-slot:name />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/2",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a #name />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/3",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a v-slot=\"{a}\" />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/4",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a #default=\"{a}\" />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/5",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a slot=\"name\" />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/6",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a slot-scope=\"{a}\" />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/valid/7",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-scope-attribute/invalid/1",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template scope=\"{a}\">\n            <a />\n          </template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-scope-attribute/invalid/2",
+      "rule": "vue/no-deprecated-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"name\" scope=\"{a}\">\n            <a />\n          </template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/1",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <template v-slot:name><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/2",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <template #name><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/3",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <template v-slot=\"{a}\"><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/4",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList v-slot=\"{a}\">\n        <a />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/5",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <template #default=\"{a}\"><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/6",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a slot=\"name\" />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/7",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <template><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/valid/8",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "<template>\n      <LinkList>\n        <a />\n      </LinkList>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/1",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot-scope=\"{a}\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/2",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot-scope><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/3",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <a slot-scope=\"{a}\" />\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/4",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot-scope=\"{a}\" slot=\"foo\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/5",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot-scope=\"{a}\" :slot=\"arg\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/6",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-for=\"x in xs\" slot-scope=\"{a}\" >\n          {{a}}\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-scope-attribute/invalid/7",
+      "rule": "vue/no-deprecated-slot-scope-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template slot-scope=\"{a}\" >\n            {{a}}\n          </template>\n          <div />\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/1",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <template v-slot:name><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/2",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <template #name><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/3",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <template v-slot=\"{a}\"><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/4",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList v-slot=\"{a}\">\n        <a />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/5",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <template #default=\"{a}\"><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/6",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <template><a /></template>\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/7",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <a />\n      </LinkList>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/8",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <one slot=\"one\" />\n        <two slot=\"two\" />\n        <my-component slot=\"my-component-slot\" />\n        <myComponent slot=\"myComponent-slot\" />\n        <MyComponent slot=\"MyComponent-slot\" />\n      </LinkList>\n    </template>",
+      "options": [
+        {
+          "ignore": [
+            "one",
+            "two",
+            "my-component"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/9",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <one slot=\"one\" />\n        <two slot=\"two\" />\n        <my-component slot=\"my-component-slot\" />\n        <myComponent slot=\"myComponent-slot\" />\n        <MyComponent slot=\"MyComponent-slot\" />\n      </LinkList>\n    </template>",
+      "options": [
+        {
+          "ignore": [
+            "/one/",
+            "/^Two$/i",
+            "/^my-.*/i"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/10",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <one slot=\"one\" />\n        <two slot=\"two\" />\n        <my-component slot=\"my-component-slot\" />\n        <myComponent slot=\"myComponent-slot\" />\n        <MyComponent slot=\"MyComponent-slot\" />\n      </LinkList>\n    </template>",
+      "options": [
+        {
+          "ignoreParents": [
+            "LinkList"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/valid/11",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "<template>\n      <LinkList>\n        <one slot=\"one\" />\n        <two slot=\"two\" />\n        <my-component slot=\"my-component-slot\" />\n        <myComponent slot=\"myComponent-slot\" />\n        <MyComponent slot=\"MyComponent-slot\" />\n      </LinkList>\n    </template>",
+      "options": [
+        {
+          "ignoreParents": [
+            "/^Link/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/1",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot ><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/2",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"name\" ><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/3",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"name\" unknown slot-scope=\"{a}\" ><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/4",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"name\" scope=\"{a}\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/5",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"nameFoo\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/6",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template slot=\"f o o\" ><a /></template>\n          <template slot=\"obj.prop\" ><a /></template>\n          <template slot=\"a/b\" ><a /></template>\n          <template slot=\"a=b\" ><a /></template>\n          <template slot=\"a>b\" ><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/7",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template v-bind:slot=name><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/8",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"slot.name\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/9",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"  slotName  \"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/10",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"slot. name\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/11",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"a>b?c:d\"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/12",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"  \"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/13",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot=\"  .error  \"><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/14",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <template :slot><a /></template>\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/15",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <a slot=\"name\" />\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/16",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <LinkList>\n          <a :slot=\"name\" />\n        </LinkList>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/17",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <MyComponent>\n          <template slot=\"foo-bar\">\n            <a/>\n          </template>\n        </MyComponent>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/18",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <MyComponent>\n          <template slot=\"foo_bar\">\n            <a/>\n          </template>\n        </MyComponent>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/19",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <MyComponent>\n          <template slot=\"123\">\n            <a/>\n          </template>\n        </MyComponent>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/20",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <some-component>\n          <template slot=\"some-slot\">\n            This works 1\n          </template>\n\n          <template v-if=\"true\"> <!-- some arbitrary conditional -->\n            <template slot=\"some-slot\">\n              This works 2\n            </template>\n          </template>\n        </some-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/21",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-for=\"x in xs\" slot=\"one\">\n            A\n          </template>\n          <template v-for=\"x in xs\" :slot=\"x\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/22",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template slot=\"one\">\n            A\n          </template>\n          <template slot=\"one\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/23",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-if=\"c\" slot=\"one\">\n            A\n          </template>\n          <template v-else slot=\"one\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/24",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-for=\"x in xs\" :slot=\"x\">\n            A\n          </template>\n          <template v-for=\"x in xs\" :slot=\"x\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/25",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-for=\"x in ys\" :slot=\"x\">\n            A\n          </template>\n          <template v-for=\"x in xs\" :slot=\"x\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/26",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <template v-for=\"(x,y) in xs\" :slot=\"x+y\">\n            A\n          </template>\n          <template v-for=\"x in xs\" :slot=\"x\">\n            B\n          </template>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/27",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <one slot=\"one\">\n            A\n          </one>\n          <two slot=\"two\">\n            B\n          </two>\n        </my-component>\n      </template>",
+      "options": [
+        {
+          "ignore": [
+            "one"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/28",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <one slot=\"one\">\n            A\n          </one>\n          <two slot=\"two\">\n            B\n          </two>\n        </my-component>\n      </template>",
+      "options": [
+        {
+          "ignore": [
+            "/one/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/29",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <one slot=\"one\">\n            A\n          </one>\n          <two slot=\"two\">\n            B\n          </two>\n        </my-component>\n      </template>",
+      "options": [
+        {
+          "ignore": [
+            "/^one$/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/30",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <one slot=\"one\">\n            A\n          </one>\n        </my-component>\n        <my-component2>\n          <two slot=\"two\">\n            B\n          </two>\n        </my-component2>\n      </template>",
+      "options": [
+        {
+          "ignoreParents": [
+            "my-component"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/31",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <one slot=\"one\">\n            A\n          </one>\n        </my-component>\n        <my-component2>\n          <two slot=\"two\">\n            B\n          </two>\n        </my-component2>\n      </template>",
+      "options": [
+        {
+          "ignoreParents": [
+            "/component$/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/32",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <my-component>\n          <slot\n            v-for=\"slot in Object.keys($slots)\"\n            :slot=\"slot\"\n            :name=\"slot\"\n          ></slot>\n        </my-component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-slot-attribute/invalid/33",
+      "rule": "vue/no-deprecated-slot-attribute",
+      "code": "\n      <template>\n        <component :is=\"toggle ? 'my-component' : 'div'\">\n          <div slot=\"named\">\n            Passing in a named slot to a div worked with old syntax\n            But not with new syntax\n          </div>\n        </component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-useless-template-attributes/valid/1",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <template v-if=\"foo\">...</template>\n        <template v-else-if=\"bar\">...</template>\n        <template v-else>...</template>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/2",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <template v-for=\"e in list\">...</template>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/3",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <template v-slot>...</template>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/4",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <CoolButton>\n         <template slot=\"foo\">...</template>\n        </CoolButton>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/5",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <CoolButton>\n         <template slot-scope=\"foo\">...</template>\n        </CoolButton>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/6",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <CoolButton>\n         <template scope=\"foo\">...</template>\n        </CoolButton>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/7",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <!-- ignore -->\n        <template foo=\"a\">...</template>\n        <template :foo=\"a\">...</template>\n        <template v-unknown=\"a\">...</template>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/valid/8",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <div v-if=\"foo\" class=\"heading\">...</div>\n        <div v-for=\"i in foo\" :bar=\"i\">...</div>\n        <div v-slot:foo=\"foo\" ref=\"input\">...</div>\n        <div v-if=\"foo\" @click=\"click\">...</div>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-useless-template-attributes/invalid/1",
+      "rule": "vue/no-useless-template-attributes",
+      "code": "\n      <template>\n        <!-- ✓ GOOD -->\n        <template v-if=\"foo\">...</template>\n        <template v-if=\"foo\">...</template>\n        <template v-else-if=\"foo\">...</template>\n        <template v-else>...</template>\n        <template v-for=\"i in foo\" :key=\"i\">...</template>\n        <template v-slot:foo>...</template>\n        <!-- for Vue<=2.5 -->\n        <template slot=\"foo\">...</template>\n        <template :slot=\"foo\">...</template>\n        <template slot-scope=\"param\">...</template>\n        <!-- for Vue<=2.4 -->\n        <template scope=\"param\">...</template>\n\n        <!-- ✗ BAD -->\n        <template v-if=\"foo\" class=\"heading\">...</template>\n        <template v-for=\"i in foo\" :bar=\"i\">...</template>\n        <template v-slot:foo=\"foo\" ref=\"input\">...</template>\n        <template v-if=\"foo\" @click=\"click\">...</template>\n\n        <!-- Ignore -->\n        <template class=\"heading\">...</template>\n        <template :bar=\"i\">...</template>\n        <template ref=\"input\">...</template>\n        <template @click=\"click\">...</template>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "valid-template-root/valid/1",
+      "rule": "vue/valid-template-root",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/2",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div>abc</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/3",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <div>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/4",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/5",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div v-if=\"foo\">abc</div>\n    <div v-else>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/6",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div v-if=\"foo\">abc</div>\n    <div v-else-if=\"bar\">abc</div>\n    <div v-else>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/7",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <c1 v-if=\"1\" />\n    <c2 v-else-if=\"1\" />\n    <c3 v-else />\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/8",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div v-if=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/9",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div v-if=\"foo\"></div><div v-else-if=\"bar\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/10",
+      "rule": "vue/valid-template-root",
+      "code": "<template src=\"foo.html\"></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/11",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div><textarea/>test</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/12",
+      "rule": "vue/valid-template-root",
+      "code": "<template><table><custom-thead></custom-thead></table></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/13",
+      "rule": "vue/valid-template-root",
+      "code": "<template lang=\"pug\">test</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/14",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div></div><div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/15",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n    <div></div>\n    <div></div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/16",
+      "rule": "vue/valid-template-root",
+      "code": "<template>{{a b c}}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/17",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div></div>aaaaaa</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/18",
+      "rule": "vue/valid-template-root",
+      "code": "<template>aaaaaa<div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/19",
+      "rule": "vue/valid-template-root",
+      "code": "<template><div v-for=\"x in list\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/20",
+      "rule": "vue/valid-template-root",
+      "code": "<template><slot></slot></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/valid/21",
+      "rule": "vue/valid-template-root",
+      "code": "<template><template></template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-template-root/invalid/1",
+      "rule": "vue/valid-template-root",
+      "code": "<template>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-template-root/invalid/2",
+      "rule": "vue/valid-template-root",
+      "code": "<template src=\"foo.html\">abc</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-template-root/invalid/3",
+      "rule": "vue/valid-template-root",
+      "code": "<template src=\"foo.html\"><div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/1",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/2",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div v-if=\"show\" /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/3",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div v-show=\"show\" /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/4",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><div v-if=\"show\" /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/5",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><div v-show=\"show\" /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/6",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><MyComp /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/7",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><component :is=\"component\" /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/8",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><div :is=\"component\" /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/9",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><svg height=\"100\" width=\"100\"><transition><circle v-if=\"show\" /></transition></svg> </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/10",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><svg height=\"100\" width=\"100\"><transition><MyComponent /></transition></svg> </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/11",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><template v-if=\"show\"><div /></template></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/12",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><slot /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/13",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div :key=\"k\" /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/14",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition appear><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/15",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition :appear=\"foo\"><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/16",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition :appear=\"true\"><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/valid/17",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><dialog v-dialog=\"show\" /></transition></template>",
+      "options": [
+        {
+          "additionalDirectives": [
+            "dialog"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/1",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/2",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition><div /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/3",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div /><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/4",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div v-for=\"e in list\" /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/5",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><svg height=\"100\" width=\"100\"><transition><circle /></transition></svg> </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/6",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><template v-for=\"e in list\"><div /></template></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/7",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><Transition>  <div /></Transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/8",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition :appear=\"false\"><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/9",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition @appear=\"isLoaded\"><div /></transition></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/10",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><dialog v-dialog=\"show\" /></transition></template>",
+      "options": [
+        {
+          "additionalDirectives": []
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-toggle-inside-transition/invalid/11",
+      "rule": "vue/require-toggle-inside-transition",
+      "code": "<template><transition><div v-custom=\"show\" /></transition></template>",
+      "options": [
+        {
+          "additionalDirectives": [
+            "dialog"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
       },
       "settings": {},
       "expectedCount": 1

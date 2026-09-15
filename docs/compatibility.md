@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 803 upstream cases, 34 common structural rules | **802 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **680/680** |
-| Four pinned Nuxt components, each checked against all 34 rules | **136/136 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **934/934 comparisons** |
+| 973 upstream cases, 44 common structural rules | **972 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **752/752** |
+| Four pinned Nuxt components, each checked against all 44 rules | **176/176 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1046/1046 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. One parser-crashing case is explicitly excluded below. Thirty-three
-of the thirty-four suites currently match on every imported case.
+known failures. One parser-crashing case is explicitly excluded below. Forty-three
+of the forty-four suites currently match on every imported case.
 
 **An exact match here means rule identity, finding count, severity and start
 line/column.** It does not mean matching message wording, end ranges, suggestions
@@ -34,7 +34,7 @@ One `no-deprecated-v-bind-sync` reference case is explicitly unmeasured because
 the upstream case ID; regeneration cannot silently add or remove the exception.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 219 are not measured by this structural-rule harness,
+exports 253 rule names; 209 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.
