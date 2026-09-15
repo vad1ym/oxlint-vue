@@ -97,7 +97,8 @@
     "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e",
     "tests/lib/rules/require-explicit-emits.test.ts": "6ca1f2a00fe4aa46ff9ddde69997a9ade4d83fb97821a03964f0499bf5d8e6d6",
     "tests/lib/rules/one-component-per-file.test.ts": "75d0580a2b9fccef957215c53e0456bee0cc284f06bd8c2491b2586fd224a999",
-    "tests/lib/rules/v-slot-style.test.ts": "3aa7a15cde9714f51615511aa61c14f1acaba2734d15f1f17fca8ac2c7d4ff4b"
+    "tests/lib/rules/v-slot-style.test.ts": "3aa7a15cde9714f51615511aa61c14f1acaba2734d15f1f17fca8ac2c7d4ff4b",
+    "tests/lib/rules/html-self-closing.test.ts": "42b118fec80bdcc503b9bf088ee0d771576d87d283d8c0da98ebafd7123eb2a8"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -28990,6 +28991,412 @@
       "filename": "test.js",
       "languageOptions": {
         "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/valid/1",
+      "rule": "vue/html-self-closing",
+      "code": "<template><div/></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/2",
+      "rule": "vue/html-self-closing",
+      "code": "<template><img></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/3",
+      "rule": "vue/html-self-closing",
+      "code": "<template><x-test/></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/4",
+      "rule": "vue/html-self-closing",
+      "code": "<template><svg><path/></svg></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/5",
+      "rule": "vue/html-self-closing",
+      "code": "<template><math><mspace/></math></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/6",
+      "rule": "vue/html-self-closing",
+      "code": "<template><div><!-- comment --></div></template>",
+      "options": [
+        {
+          "html": {
+            "normal": "always"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/7",
+      "rule": "vue/html-self-closing",
+      "code": "<template><div a=\">test</div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/8",
+      "rule": "vue/html-self-closing",
+      "code": "<template><div><!--test</div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/9",
+      "rule": "vue/html-self-closing",
+      "code": "<template></template><script></script><docs></docs>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/valid/10",
+      "rule": "vue/html-self-closing",
+      "code": "\n      <template>\n        <div>\n          <p>\n            <Address\n              value=\"\"\n              onchange=\"await setTokenAddress(event.target.value)\"/>\n          </p>\n        </div>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-self-closing/invalid/1",
+      "rule": "vue/html-self-closing",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/2",
+      "rule": "vue/html-self-closing",
+      "code": "<template><img/></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/3",
+      "rule": "vue/html-self-closing",
+      "code": "<template><x-test></x-test></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/4",
+      "rule": "vue/html-self-closing",
+      "code": "<template><svg><path></path></svg></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/5",
+      "rule": "vue/html-self-closing",
+      "code": "<template><math><mspace></mspace></math></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/6",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "always",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/7",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "never",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/8",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "always",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/9",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "never",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/10",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "always"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/11",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "never"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/12",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "always",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/13",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "never",
+          "math": "any",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/14",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "always",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-self-closing/invalid/15",
+      "rule": "vue/html-self-closing",
+      "code": "<template>\n  <div></div>\n  <div/>\n  <img>\n  <img/>\n  <x-test></x-test>\n  <x-test/>\n  <svg><path></path></svg>\n  <svg><path/></svg>\n  <math><mspace></mspace></math>\n  <math><mspace/></math>\n</template>",
+      "options": [
+        {
+          "svg": "any",
+          "math": "never",
+          "html": {
+            "normal": "any",
+            "void": "any",
+            "component": "any"
+          }
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
         "parserKind": "vue"
       },
       "settings": {},

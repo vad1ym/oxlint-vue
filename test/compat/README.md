@@ -3,7 +3,7 @@
 See [the compatibility guide](../../docs/compatibility.md) for the measured
 scope, known gaps, regeneration and baseline review process.
 
-- `upstream.json`: 2151 cases from 96 upstream RuleTester suites, including
+- `upstream.json`: 2176 cases from 97 upstream RuleTester suites, including
   their options, parser configuration and expected finding counts.
 - `LICENSE.upstream`: upstream MIT license for the imported cases.
 - `baseline.json`: exact unresolved differences; changes require review.

@@ -34,6 +34,7 @@ const CASES = [
   ['vue/one-component-per-file', '<div />', true,
     'Vue.component(\'FirstComp\', {}); Vue.component(\'SecondComp\', {})'],
   ['vue/v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>', true],
+  ['vue/html-self-closing', '<div></div>', true],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

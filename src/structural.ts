@@ -18,7 +18,7 @@ import type { Diagnostic, RuleConfig, RulesMap } from './types.js'
  *
  * Node type constants from @vue/compiler-core NodeTypes.
  */
-import { isHTMLTag, isSVGTag, isMathMLTag } from '@vue/shared'
+import { isHTMLTag, isSVGTag, isMathMLTag, isVoidTag } from '@vue/shared'
 import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
@@ -911,6 +911,26 @@ const RULES: Rule[] = [
         const expected = node.tag !== 'template' ? configured.atComponent
           : isDefault ? configured.default : configured.named
         if (actual !== expected) report({ message: `Expected ${expected} v-slot syntax.`, ...loc(prop) })
+      }
+    },
+  },
+  {
+    name: 'vue/html-self-closing',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const html = options.html && typeof options.html === 'object'
+        ? options.html as Record<string, unknown> : {}
+      const mode = node.ns === 1 ? options.svg ?? 'always'
+        : node.ns === 2 ? options.math ?? 'always'
+          : isVoidTag(node.tag) ? html.void ?? 'never'
+            : isHTMLTag(node.tag) ? html.normal ?? 'always' : html.component ?? 'always'
+      if (mode === 'any') return
+      if (mode === 'always' && !node.isSelfClosing && node.children.length === 0) {
+        const relative = isVoidTag(node.tag) ? 0 : node.loc.source.lastIndexOf('</')
+        report({ message: `Require self-closing on <${node.tag}>.`, ...relativeLoc(node, relative) })
+      } else if (mode === 'never' && node.isSelfClosing) {
+        report({ message: `Disallow self-closing on <${node.tag}/>.`, ...relativeLoc(node, node.loc.source.length - 2) })
       }
     },
   },

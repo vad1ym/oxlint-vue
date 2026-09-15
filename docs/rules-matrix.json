@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 43,
-    "missing": 87
+    "partial": 44,
+    "missing": 86
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1632,20 +1632,22 @@
     },
     {
       "name": "html-self-closing",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 25,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-self-closing.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "max-attributes-per-line",
