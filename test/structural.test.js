@@ -89,6 +89,16 @@ const CASES = [
   ['vue/prefer-separate-static-class', '<div :class="\'static\'" />', true],
   ['vue/max-lines-per-block', '<div />', false],
   ['vue/no-restricted-block', '<div />', false],
+  ['vue/no-empty-component-block', '<div />', false],
+  ['vue/enforce-style-attribute', '<div />', false],
+  ['vue/block-lang', '<div />', false],
+  ['vue/padding-line-between-blocks', '<div />', false],
+  ['vue/block-order', '<div />', false],
+  ['vue/block-tag-newline', '<div />', false],
+  ['vue/no-negated-v-if-condition', '<div v-if="!ready" />', false],
+  ['vue/no-literals-in-template', '<p>Hello</p>', false],
+  ['vue/html-closing-bracket-spacing', '<div >x</div>', true],
+  ['vue/html-closing-bracket-newline', '<div\n  id="x">x</div>', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
@@ -143,6 +153,23 @@ test('max-template-depth honors maxDepth', () => {
     'vue/max-template-depth': ['warn', { maxDepth: 1 }],
   })
   assert.ok(rules.includes('vue/max-template-depth'), rules.join(', '))
+})
+
+test('configured SFC block policies inspect top-level blocks', () => {
+  const source = `<style></style><template><div /></template><script lang="ts">const x = 1</script>`
+  const { descriptor } = parse(source, { filename: 'a.vue' })
+  const diagnostics = checkTemplate(descriptor.template.ast, 'a.vue', source, {
+    'vue/no-empty-component-block': 'error',
+    'vue/enforce-style-attribute': 'error',
+    'vue/block-lang': ['error', { script: { lang: 'js' } }],
+    'vue/padding-line-between-blocks': ['error', 'always'],
+    'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+    'vue/block-tag-newline': 'error',
+  })
+  for (const rule of ['no-empty-component-block', 'enforce-style-attribute', 'block-lang',
+    'padding-line-between-blocks', 'block-order', 'block-tag-newline']) {
+    assert.ok(diagnostics.some(item => item.rule === `vue/${rule}`), rule)
+  }
 })
 
 test('this-in-template ignores DOM handler bindings', () => {

@@ -3,9 +3,9 @@
   "oxlintVersion": "1.78.0",
   "counts": {
     "implemented": 55,
-    "native": 55,
-    "partial": 29,
-    "missing": 114
+    "native": 59,
+    "partial": 39,
+    "missing": 100
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -780,7 +780,7 @@
     },
     {
       "name": "no-unused-vars",
-      "status": "missing",
+      "status": "native",
       "priority": "P0",
       "categories": [
         "vue3-essential",
@@ -793,7 +793,9 @@
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-unused-vars.html",
-      "notes": []
+      "notes": [
+        "virtual template and CSS reference tracking plus oxlint no-unused-vars"
+      ]
     },
     {
       "name": "no-use-computed-property-like-method",
@@ -1531,7 +1533,7 @@
     },
     {
       "name": "html-closing-bracket-newline",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
@@ -1544,11 +1546,14 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-closing-bracket-newline.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-closing-bracket-spacing",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
@@ -1561,7 +1566,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-closing-bracket-spacing.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-end-tags",
@@ -1942,7 +1950,7 @@
     },
     {
       "name": "block-order",
-      "status": "missing",
+      "status": "partial",
       "priority": "P2",
       "categories": [
         "vue3-recommended",
@@ -1955,7 +1963,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/block-order.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-lone-template",
@@ -2123,7 +2134,7 @@
     },
     {
       "name": "block-lang",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2133,7 +2144,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/block-lang.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported"
+      ]
     },
     {
       "name": "block-spacing",
@@ -2151,7 +2164,7 @@
     },
     {
       "name": "block-tag-newline",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2161,7 +2174,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/block-tag-newline.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "brace-style",
@@ -2397,7 +2413,7 @@
     },
     {
       "name": "enforce-style-attribute",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2407,7 +2423,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/enforce-style-attribute.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported"
+      ]
     },
     {
       "name": "eqeqeq",
@@ -2497,7 +2515,7 @@
     },
     {
       "name": "jsx-uses-vars",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [
         "base"
@@ -2509,7 +2527,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/jsx-uses-vars.html",
-      "notes": []
+      "notes": [
+        "oxlint JSX reference tracking"
+      ]
     },
     {
       "name": "key-spacing",
@@ -2777,7 +2797,7 @@
     },
     {
       "name": "no-empty-component-block",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2787,11 +2807,14 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-empty-component-block.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-empty-pattern",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2801,7 +2824,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-empty-pattern.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-empty-pattern; options remain unmeasured"
+      ]
     },
     {
       "name": "no-extra-parens",
@@ -2819,7 +2844,7 @@
     },
     {
       "name": "no-implicit-coercion",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2829,7 +2854,9 @@
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-implicit-coercion.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-implicit-coercion; options remain unmeasured"
+      ]
     },
     {
       "name": "no-import-compiler-macros",
@@ -2863,7 +2890,7 @@
     },
     {
       "name": "no-literals-in-template",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2873,7 +2900,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-literals-in-template.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported"
+      ]
     },
     {
       "name": "no-loss-of-precision",
@@ -2939,7 +2968,7 @@
     },
     {
       "name": "no-negated-v-if-condition",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2949,7 +2978,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-negated-v-if-condition.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-potential-component-option-typo",
@@ -3531,7 +3563,7 @@
     },
     {
       "name": "padding-line-between-blocks",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -3541,7 +3573,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/padding-line-between-blocks.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "padding-line-between-tags",

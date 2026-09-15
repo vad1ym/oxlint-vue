@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process'
 import assert from 'node:assert/strict'
 import vue from 'eslint-plugin-vue'
 import { structuralRuleNames } from '../dist/structural.js'
-import { coreProxyRules } from '../dist/core-proxies.js'
+import { coreProxyRules, nativeUtilityRules } from '../dist/core-proxies.js'
 
 const require = createRequire(import.meta.url)
 const enginePackage = require.resolve('oxlint/package.json')
@@ -24,6 +24,10 @@ const rules = Object.entries(vue.rules).map(([name, rule]) => {
   let status = 'missing'
   if (own) {
     status = 'implemented'
+    if (!upstreamCases) {
+      status = 'partial'
+      notes.push('Local generated/unit coverage; upstream suite not yet imported')
+    }
     if (rule.meta.fixable || rule.meta.hasSuggestions) notes.push('Template autofixes/suggestions not implemented')
     if (knownDifferences) notes.push(`${knownDifferences} reviewed upstream case difference`)
     if (name === 'no-template-key') notes.push('Vue 3 conditional template keys intentionally allowed')
@@ -35,6 +39,9 @@ const rules = Object.entries(vue.rules).map(([name, rule]) => {
   } else if (name in coreProxyRules) {
     status = 'native'
     notes.push(`Forwarded to oxlint core rule ${coreProxyRules[name]}; options remain unmeasured`)
+  } else if (name in nativeUtilityRules) {
+    status = 'native'
+    notes.push(nativeUtilityRules[name])
   } else if (name === 'no-parsing-error') {
     status = 'partial'
     notes.push('Compiler parsing diagnostics only; reference options and severity not implemented')

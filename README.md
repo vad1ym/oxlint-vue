@@ -101,6 +101,8 @@ every virtual file parses. [Details →](./docs/internals.md)
 `pnpm compat --json` compares 1661 cases from eslint-plugin-vue 10.11.0 against
 our 83 common structural rules. CI checks the reviewed differences and also
 runs generated scope/layout cases and pinned Nuxt fixtures through real oxlint.
+Ten additional rules have local unit/generated coverage and are marked partial
+until their complete upstream suites are imported.
 See [the compatibility report and limitations](docs/compatibility.md).
 
 Full rule coverage and implementation priorities: [Vue rule inventory](docs/rules-matrix.md).

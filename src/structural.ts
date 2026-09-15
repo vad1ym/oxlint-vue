@@ -47,6 +47,7 @@ interface Annotations {
   /** Raw tag name of the containing template element. */
   __parentTag?: string
   __parentElement?: ElementNode
+  __nextElement?: ElementNode
   __firstElementChild?: boolean
   __depth?: number
   /** Full SFC source and template-content boundary for root-only checks. */
@@ -332,6 +333,37 @@ function relativeLoc(node: { loc: AnyNode['loc'] }, relative: number): ReturnTyp
 function sourceLoc(source: string, offset: number): ReturnType<typeof loc> {
   const lines = source.slice(0, offset).split('\n')
   return { offset, line: lines.length, column: lines.at(-1)!.length + 1 }
+}
+
+interface RawBlockTag {
+  type: string
+  start: number
+  openEnd: number
+  closeStart: number
+  attrs: string
+  content: string
+}
+
+function topLevelBlockTags(source: string): RawBlockTag[] {
+  const blocks: RawBlockTag[] = []
+  const stack: { type: string, start: number, openEnd: number, attrs: string, topLevel: boolean }[] = []
+  for (const match of source.matchAll(/<\s*(\/?)\s*([\w-]+)([^<>]*?)(\/?)>/gu)) {
+    const closing = match[1] === '/'
+    const type = match[2]!
+    if (closing) {
+      const open = stack.pop()
+      if (open?.topLevel) blocks.push({ ...open, type: open.type, closeStart: match.index,
+        content: source.slice(open.openEnd, match.index) })
+      continue
+    }
+    const openEnd = match.index + match[0].length
+    const topLevel = stack.length === 0
+    if (match[4] === '/') {
+      if (topLevel) blocks.push({ type, start: match.index, openEnd, closeStart: openEnd,
+        attrs: match[3] ?? '', content: '' })
+    } else stack.push({ type, start: match.index, openEnd, attrs: match[3] ?? '', topLevel })
+  }
+  return blocks.toSorted((a, b) => a.start - b.start)
 }
 
 interface RawAttribute {
@@ -1593,6 +1625,110 @@ const RULES: Rule[] = [
     check() { /* SFC blocks are checked before the template AST walk. */ },
   },
   {
+    name: 'vue/no-empty-component-block',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/enforce-style-attribute',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/block-lang',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/padding-line-between-blocks',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/block-order',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/block-tag-newline',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/no-negated-v-if-condition',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || options.configured !== true) return
+      const directive = findDir(node, 'if')
+      const ast = expressionAst(directive?.exp)
+      const negated = ast?.type === 'UnaryExpression' && ast.operator === '!'
+        || ast?.type === 'BinaryExpression' && (ast.operator === '!=' || ast.operator === '!==')
+      const next = (node as AnnotatedElement).__nextElement
+      const hasElse = Boolean(next && findDir(next, 'else'))
+      if (directive && negated && hasElse) {
+        report({ ...loc(directive.exp!), message: 'Unexpected negated condition in v-if.' })
+      }
+    },
+  },
+  {
+    name: 'vue/no-literals-in-template',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || options.configured !== true) return
+      const ignores = Array.isArray(options.ignores) ? options.ignores : []
+      for (const directive of node.props) {
+        if (directive.type !== NodeTypes.DIRECTIVE || directive.name !== 'bind') continue
+        const argument = argContent(directive)
+        if (argument === 'class' || argument === 'style' || argument && configuredNameMatch(argument, ignores)) continue
+        const ast = expressionAst(directive.exp)
+        if (ast && ['ObjectExpression', 'ArrayExpression', 'FunctionExpression', 'ArrowFunctionExpression'].includes(ast.type)) {
+          report({ ...loc(directive.exp!), message: `Unexpected ${ast.type.replace('Expression', '').toLowerCase()} literal in template.` })
+        }
+      }
+    },
+  },
+  {
+    name: 'vue/html-closing-bracket-spacing',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const source = node.loc.source
+      const openingEnd = source.indexOf('>')
+      if (openingEnd < 0) return
+      const selfClosing = source[openingEnd - 1] === '/'
+      const bracketStart = selfClosing ? openingEnd - 1 : openingEnd
+      const previous = source[bracketStart - 1] ?? ''
+      if (source.slice(0, bracketStart).match(/\s*$/u)?.[0].includes('\n')) return
+      const mode = selfClosing ? options.selfClosingTag ?? 'always' : options.startTag ?? 'never'
+      if ((mode === 'always' && !/\s/u.test(previous)) || (mode === 'never' && /\s/u.test(previous))) {
+        report({ ...relativeLoc(node, mode === 'never' ? bracketStart - 1 : bracketStart), message: 'Unexpected spacing before the closing bracket.' })
+      }
+    },
+  },
+  {
+    name: 'vue/html-closing-bracket-newline',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const source = node.loc.source
+      const openingEnd = source.indexOf('>')
+      if (openingEnd < 0) return
+      const selfClosing = source[openingEnd - 1] === '/'
+      const bracketStart = selfClosing ? openingEnd - 1 : openingEnd
+      const before = source.slice(0, bracketStart)
+      const multiline = before.includes('\n')
+      const selfOptions = options.selfClosingTag && typeof options.selfClosingTag === 'object'
+        ? options.selfClosingTag as Record<string, unknown> : {}
+      const mode = selfClosing && typeof selfOptions[multiline ? 'multiline' : 'singleline'] === 'string'
+        ? selfOptions[multiline ? 'multiline' : 'singleline']
+        : options[multiline ? 'multiline' : 'singleline'] ?? (multiline ? 'always' : 'never')
+      const newlineBefore = /\n\s*$/u.test(before)
+      if ((mode === 'always' && !newlineBefore) || (mode === 'never' && newlineBefore)) {
+        report({ ...relativeLoc(node, bracketStart), message: 'Unexpected line break before the closing bracket.' })
+      }
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {
@@ -2147,16 +2283,7 @@ export function checkTemplate(
   if (restrictedBlockRule) {
     const options = ruleOptions(config?.[restrictedBlockRule.rule.name])
     if (options.configured) {
-      const topLevelBlocks: { type: string, start: number }[] = []
-      const stack: string[] = []
-      for (const match of source.matchAll(/<\s*(\/?)\s*([\w-]+)(?:\s[^<>]*?)?(\/?)>/gu)) {
-        const closing = match[1] === '/'
-        const type = match[2]!
-        if (closing) { stack.pop(); continue }
-        if (!stack.length) topLevelBlocks.push({ type, start: match.index })
-        if (match[3] !== '/') stack.push(type)
-      }
-      for (const block of topLevelBlocks) {
+      for (const block of topLevelBlockTags(source)) {
         const item = optionList(options).find(candidate => patternMatches(block.type,
         typeof candidate === 'string' ? candidate
           : candidate && typeof candidate === 'object' ? (candidate as { element?: unknown }).element : undefined))
@@ -2167,6 +2294,72 @@ export function checkTemplate(
             ...sourceLoc(source, block.start), message } as Diagnostic)
         }
       }
+    }
+  }
+  const rawBlocks = topLevelBlockTags(source)
+  const emitBlock = (ruleName: string, block: RawBlockTag, message: string): void => {
+    const entry = active.find(item => item.rule.name === ruleName)
+    if (!entry || ruleOptions(config?.[ruleName]).configured !== true) return
+    out.push({ filename, rule: ruleName, severity: entry.severity, ...sourceLoc(source, block.start), message } as Diagnostic)
+  }
+  for (const block of rawBlocks) {
+    if (['template', 'script', 'style'].includes(block.type)
+      && !block.content.trim() && !/\bsrc\s*=\s*(["'])[^"']+\1/u.test(block.attrs)) {
+      emitBlock('vue/no-empty-component-block', block, `<${block.type}> is empty.`)
+    }
+  }
+  const styleRule = active.find(entry => entry.rule.name === 'vue/enforce-style-attribute')
+  if (styleRule && ruleOptions(config?.[styleRule.rule.name]).configured === true) {
+    const options = ruleOptions(config?.[styleRule.rule.name])
+    const allow = Array.isArray(options.allow) ? options.allow.map(String) : ['scoped']
+    for (const block of rawBlocks.filter(item => item.type === 'style')) {
+      const kind = /\bscoped\b/u.test(block.attrs) ? 'scoped' : /\bmodule\b/u.test(block.attrs) ? 'module' : 'plain'
+      if (!allow.includes(kind)) out.push({ filename, rule: styleRule.rule.name, severity: styleRule.severity,
+        ...sourceLoc(source, block.start), message: `${kind} style blocks are not allowed.` } as Diagnostic)
+    }
+  }
+  const langRule = active.find(entry => entry.rule.name === 'vue/block-lang')
+  if (langRule && ruleOptions(config?.[langRule.rule.name]).configured === true) {
+    const options = ruleOptions(config?.[langRule.rule.name])
+    for (const block of rawBlocks) {
+      const blockOption = options[block.type]
+      if (!blockOption || typeof blockOption !== 'object') continue
+      const setting = blockOption as { lang?: unknown, allowNoLang?: unknown }
+      const match = block.attrs.match(/\blang\s*=\s*["']([^"']+)["']/u)
+      const allowed = Array.isArray(setting.lang) ? setting.lang.map(String)
+        : typeof setting.lang === 'string' ? [setting.lang] : []
+      if ((!match && setting.allowNoLang === false) || (match && !allowed.includes(match[1]!))) {
+        emitBlock(langRule.rule.name, block, `Unexpected language for <${block.type}>.`)
+      }
+    }
+  }
+  const paddingRule = active.find(entry => entry.rule.name === 'vue/padding-line-between-blocks')
+  if (paddingRule && ruleOptions(config?.[paddingRule.rule.name]).configured === true) {
+    const mode = ruleOptions(config?.[paddingRule.rule.name]).mode ?? 'always'
+    for (let index = 1; index < rawBlocks.length; index++) {
+      const previous = rawBlocks[index - 1]!
+      const block = rawBlocks[index]!
+      const between = source.slice(previous.closeStart, block.start)
+      const blank = /\n\s*\n/u.test(between)
+      if (mode === 'always' ? !blank : blank) emitBlock(paddingRule.rule.name, block, 'Unexpected padding between blocks.')
+    }
+  }
+  const orderRule = active.find(entry => entry.rule.name === 'vue/block-order')
+  if (orderRule && ruleOptions(config?.[orderRule.rule.name]).configured === true) {
+    const options = ruleOptions(config?.[orderRule.rule.name])
+    const order = Array.isArray(options.order) ? options.order.map(String) : ['script', 'template', 'style']
+    let previous = -1
+    for (const block of rawBlocks) {
+      const current = order.indexOf(block.type)
+      if (current >= 0 && current < previous) emitBlock(orderRule.rule.name, block, `<${block.type}> is out of order.`)
+      if (current >= 0) previous = Math.max(previous, current)
+    }
+  }
+  const tagNewlineRule = active.find(entry => entry.rule.name === 'vue/block-tag-newline')
+  if (tagNewlineRule && ruleOptions(config?.[tagNewlineRule.rule.name]).configured === true) {
+    for (const block of rawBlocks) {
+      if (block.content && !block.content.startsWith('\n')) emitBlock(tagNewlineRule.rule.name, block, `Expected a line break after <${block.type}>.`)
+      if (block.content && !block.content.endsWith('\n')) emitBlock(tagNewlineRule.rule.name, block, `Expected a line break before </${block.type}>.`)
     }
   }
   const rootRule = active.find(entry => entry.rule.name === 'vue/valid-template-root')
@@ -2219,6 +2412,7 @@ export function checkTemplate(
       foundElement = true
       ;(node as AnnotatedElement).__prevElementHasIf = previousElement != null
         && Boolean(findDir(previousElement, 'if') || findDir(previousElement, 'else-if'))
+      if (previousElement) (previousElement as AnnotatedElement).__nextElement = node
       previousElement = node
       if (!findDir(node, 'if')) continue
       // Walk forward over the v-else-if branches that continue this chain.

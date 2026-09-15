@@ -15,8 +15,16 @@ test('upstream compatibility: every difference must match the reviewed baseline'
 })
 
 test('every structural rule is mapped or explicitly identified as project-specific', () => {
+  const locallyCovered = [
+    'vue/block-lang', 'vue/block-order', 'vue/block-tag-newline',
+    'vue/enforce-style-attribute', 'vue/html-closing-bracket-newline',
+    'vue/html-closing-bracket-spacing', 'vue/no-empty-component-block',
+    'vue/no-literals-in-template', 'vue/no-negated-v-if-condition',
+    'vue/padding-line-between-blocks',
+  ]
   assert.deepEqual(structuralRuleNames.toSorted(), [
     ...new Set(corpus.cases.map(c => c.rule)),
+    ...locallyCovered,
     'vue/no-target-blank', 'vue/require-v-for-with-index-key',
   ].toSorted())
 })

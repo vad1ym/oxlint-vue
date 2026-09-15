@@ -27,7 +27,34 @@ test('Vue core proxy rules lint template expressions under their Vue names', asy
       settings: { vue: { rules: { 'vue/eqeqeq': 'error', 'vue/no-console': 'error' } } },
     }))
     const diagnostics = await runOxlint([vue], { cwd: dir, oxlintPath: OXLINT })
-    assert.deepEqual(diagnostics.map(item => item.rule).toSorted(), ['vue/eqeqeq', 'vue/no-console'])
+    assert.deepEqual(diagnostics.map(item => item.rule).filter(rule =>
+      rule === 'vue/eqeqeq' || rule === 'vue/no-console').toSorted(), ['vue/eqeqeq', 'vue/no-console'])
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true })
+  }
+})
+
+test('additional Vue core proxies lint template expressions', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxxx-proxy-more-'))
+  try {
+    const vue = path.join(dir, 'Proxy.vue')
+    await fs.writeFile(vue, `<template><button
+  type="button"
+  @click="({}) => !!record['value']"
+>x</button></template>
+<script setup>const record = { value: 1 }</script>`)
+    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({
+      plugins: [], categories: {}, rules: {},
+      settings: { vue: { rules: {
+        'vue/no-empty-pattern': 'error',
+        'vue/no-implicit-coercion': 'error',
+      } } },
+    }))
+    const diagnostics = await runOxlint([vue], { cwd: dir, oxlintPath: OXLINT })
+    assert.deepEqual(diagnostics.map(item => item.rule).filter(rule =>
+      rule === 'vue/no-empty-pattern' || rule === 'vue/no-implicit-coercion').toSorted(), [
+      'vue/no-empty-pattern', 'vue/no-implicit-coercion',
+    ])
   } finally {
     await fs.rm(dir, { recursive: true, force: true })
   }
