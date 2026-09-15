@@ -3,10 +3,15 @@ import fs from 'node:fs'
 import test from 'node:test'
 import { corpus, compareCase, classify, compareCorpus } from './compat/runner.js'
 import { generatedCases } from './compat/generated.js'
-import { realCases } from './compat/real.js'
+import { canonicalFixtureContent, realCases } from './compat/real.js'
 import { structuralRuleNames } from '../dist/structural.js'
 
 const baseline = JSON.parse(fs.readFileSync(new URL('./compat/baseline.json', import.meta.url), 'utf8'))
+
+test('fixture provenance canonicalizes Windows line endings', () => {
+  assert.equal(canonicalFixtureContent('one\r\ntwo\r\n'), 'one\ntwo\n')
+  assert.equal(canonicalFixtureContent('one\ntwo\n'), 'one\ntwo\n')
+})
 
 test('upstream compatibility: every difference must match the reviewed baseline', () => {
   const report = compareCorpus()
