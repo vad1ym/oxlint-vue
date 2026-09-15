@@ -1,6 +1,6 @@
 {
   "referenceVersion": "10.11.0",
-  "oxlintVersion": "1.78.0",
+  "oxlintVersion": "1.83.0",
   "counts": {
     "implemented": 55,
     "native": 59,
