@@ -79,3 +79,15 @@ for `<template>`; everything else never reaches template expressions:
 
 Nothing is ported here: after padding the expression is ordinary JS, so all 849
 oxlint rules plus plugins apply. Run `pnpm compare <project>` to reproduce.
+
+## Semantic checks
+
+`vue/no-mutating-props` resolves top-level `defineProps` declarations, including
+runtime props, inline/local types, `withDefaults` and destructured aliases. In
+template expressions it checks assignments, updates, deletion, `v-model` and
+common array mutations. Loop, slot and callback locals do not inherit prop
+identity. Imported type members and arbitrary aliases are not type-resolved.
+
+`vue/no-dupe-v-else-if` compares expression ASTs. Whitespace and comments outside
+literals do not matter; string, template-literal and regexp contents do. Template
+comments may separate branches without breaking the conditional chain.

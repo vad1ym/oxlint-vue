@@ -251,3 +251,42 @@ test('local settings override the extended preset', async () => {
     await fs.rm(dir, { recursive: true, force: true })
   }
 })
+
+for (const [template, script, expected] of [
+  ['<button @click="props.title = \'x\'"/>', 'const props = defineProps({title:String})', true],
+  ['<button @click="props[\'title\']++"/>', 'const props = defineProps<{title:number}>()', true],
+  ['<button @click="user.name = \'x\'"/>', 'defineProps({user:Object})', true],
+  ['<button @click="rows.push(1)"/>', 'defineProps({rows:Array})', true],
+  ['<button @click="({title} = incoming)"/>', 'defineProps({title:String})', true],
+  ['<input v-model="title"/>', 'defineProps({title:String})', true],
+  ['<button @click="renamed++"/>', 'const {count: renamed = 0} = withDefaults(defineProps<{count:number}>(), {count: 0})', true],
+  ['<button @click="count++"/>', 'interface Props { count: number }; defineProps<Props>()', true],
+  ['<button @click="local = 1"/>', 'defineProps({title:String}); const config={local:0}; let local=0', false],
+  ['<button @click="local = 1"/>', 'defineProps<{nested: {local:number}}>(); let local=0', false],
+  ['<button @click="title = 1"/>', 'defineProps({title:String}); let title=0', false],
+  ['<button @click="items.map(title => title++)"/>', 'defineProps({title:Number})', false],
+  ['<div v-for="title in titles" :key="title"><button @click="title++"/></div>', 'defineProps({title:Number})', false],
+  ['<Comp #default="{title}"><button @click="title++"/></Comp>', 'defineProps({title:Number})', false],
+  ['<button @click="props = replacement"/>', 'const props=defineProps({title:String})', false],
+  ['<button @click="other[title] = 1"/>', 'defineProps({title:String})', false],
+  ['<button @click="props.title == other"/>', 'const props=defineProps({title:String})', false],
+  ['<button @click="label = \'props.title = 1\'"/>', 'const props=defineProps({title:String})', false],
+]) {
+  test(`prop AST: ${template} / ${script}`, () => {
+    assert.equal(checkWithProps(template, script).rules.includes('vue/no-mutating-props'), expected)
+  })
+}
+
+for (const [first, second, expected] of [
+  ["label === 'a b'", "label === 'ab'", false],
+  ["label === 'a b'", 'label === "a b"', true],
+  ['a && b', '(a)  && /* same */ b', true],
+  ['`a b ${value}`', '`ab ${value}`', false],
+  ['/a b/.test(value)', '/ab/.test(value)', false],
+  ['a || b', 'a && b', false],
+]) {
+  test(`condition AST: ${first} / ${second}`, () => {
+    const template = `<i v-if="${first.replaceAll('"', '&quot;')}"/><!-- comment --><i v-else-if="${second.replaceAll('"', '&quot;')}"/>`
+    assert.equal(check(template).rules.includes('vue/no-dupe-v-else-if'), expected)
+  })
+}

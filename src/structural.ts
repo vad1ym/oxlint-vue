@@ -18,7 +18,10 @@ import type { Diagnostic, RuleConfig, RulesMap } from './types.js'
  *
  * Node type constants from @vue/compiler-core NodeTypes.
  */
-import { ElementTypes, NodeTypes } from '@vue/compiler-core'
+import { analyzeScript } from './script-analysis.js'
+import type { ScriptAnalysis } from './script-analysis.js'
+import { bindingNames, expressionAst, expressionKey, staticName } from './ast.js'
+import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
 
 /** Any node the walker may hand a rule. */
 type AnyNode = RootNode | TemplateChildNode
@@ -35,7 +38,9 @@ interface Annotations {
   /** The `v-else-if` siblings that continue the chain this node opens. */
   __siblings?: ElementNode[]
   /** Identifiers declared by `defineProps` in `<script setup>`. */
-  __propNames?: Set<string>
+  __script?: ScriptAnalysis
+  __locals?: Set<string>
+  __outerLocals?: Set<string>
 }
 
 type AnnotatedElement = ElementNode & Annotations
@@ -89,43 +94,6 @@ function stripLiterals(text: string): string {
     out += c
   }
   return out
-}
-
-/** Collapse whitespace so `a && b` and `a&&b` compare equal. */
-function normalise(expression: unknown): string {
-  return String(expression).replace(/\s+/g, '')
-}
-
-/**
- * Names declared by `defineProps` in <script setup>.
- *
- * Read straight off the source text rather than parsed: this only needs the
- * identifier list, and both the type-literal and runtime forms expose it
- * plainly. A miss costs a rule that stays quiet, never a false positive.
- */
-function definedPropNames(scriptContent: string | undefined): Set<string> {
-  const names = new Set<string>()
-  if (!scriptContent) return names
-
-  const call = scriptContent.match(/defineProps\s*(<|\()/)
-  if (!call || call.index === undefined) return names
-  const from = call.index + call[0].length - 1
-
-  if (scriptContent[from] === '<') {
-    // defineProps<{ a: string; b?: number }>()
-    const close = scriptContent.indexOf('>(', from)
-    const body = scriptContent.slice(from + 1, close < 0 ? undefined : close)
-    for (const m of body.matchAll(/([A-Za-z_$][\w$]*)\s*\??\s*:/g)) {
-      names.add(m[1]!)
-    }
-    return names
-  }
-
-  // defineProps({ a: String }) or defineProps(['a', 'b'])
-  const body = scriptContent.slice(from)
-  for (const m of body.matchAll(/([A-Za-z_$][\w$]*)\s*:/g)) names.add(m[1]!)
-  for (const m of body.matchAll(/['"]([A-Za-z_$][\w$]*)['"]/g)) names.add(m[1]!)
-  return names
 }
 
 /** The props array is only present on elements; other nodes have none. */
@@ -421,12 +389,14 @@ const RULES: Rule[] = [
       if (!findDir(node, 'if')) return
       const seen = new Set<string>()
       const first = findDir(node, 'if')
-      if (first?.exp) seen.add(normalise(expContent(first.exp)))
+      const firstKey = expressionKey(first?.exp)
+      if (firstKey) seen.add(firstKey)
 
       for (const sib of (node as AnnotatedElement).__siblings ?? []) {
         const elif = findDir(sib, 'else-if')
         if (!elif?.exp) continue
-        const key = normalise(expContent(elif.exp))
+        const key = expressionKey(elif.exp)
+        if (!key) continue
         if (seen.has(key)) {
           report({
             ...loc(elif),
@@ -445,23 +415,53 @@ const RULES: Rule[] = [
     severity: 'error',
     check(node, report) {
       if (node.type !== NodeTypes.ELEMENT) return
-      const propNames = (node as AnnotatedElement).__propNames
-      if (!propNames?.size) return
-      for (const p of node.props) {
-        if (p.type !== NodeTypes.DIRECTIVE || !p.exp
-          || p.exp.type !== NodeTypes.SIMPLE_EXPRESSION) {
-          continue
-        }
-        const text = stripLiterals(String(p.exp.content))
-        // `prop = x`, `prop += x`, `prop++` -- assignment to a prop binding.
-        const m = text.match(
-          /(^|[^\w$.])([A-Za-z_$][\w$]*)\s*(?:=(?!=)|[+\-*/%]=|\+\+|--)/,
-        )
-        if (!m || !propNames.has(m[2]!)) continue
-        report({
-          ...loc(p),
-          message: `Unexpected mutation of prop '${m[2]}'.`,
-          help: 'Props are read-only; emit an event or use a local copy.',
+      const context = node as AnnotatedElement
+      const script = context.__script
+      if (!script || (!script.props.size && !script.propObjects.size)) return
+      for (const prop of node.props) {
+        if (prop.type !== NodeTypes.DIRECTIVE) continue
+        const ast = expressionAst(prop.exp)
+        if (!ast) continue
+        const locals = prop.name === 'if' ? context.__outerLocals : context.__locals
+        const reported = new Set<string>()
+        walkIdentifiers(ast, (id, _parent, ancestors) => {
+          if (locals?.has(id.name)) return
+          const isObject = script.propObjects.has(id.name)
+          const propName = script.props.get(id.name)
+          if (!isObject && !propName) return
+          let target: import('./ast.js').AstNode = id
+          let depth = ancestors.length - 1
+          let member = false
+          while (depth >= 0) {
+            const parent = ancestors[depth]!
+            if ((parent.type === 'MemberExpression' || parent.type === 'OptionalMemberExpression') && parent.object === target) {
+              member = true
+              target = parent
+              depth--
+            } else if (parent.type === 'ObjectProperty' && parent.value === target
+              || parent.type === 'ObjectPattern' || parent.type === 'ArrayPattern'
+              || parent.type === 'RestElement' && parent.argument === target) {
+              target = parent
+              depth--
+            } else break
+          }
+          if (isObject && !member) return
+          const parent = ancestors[depth]
+          const mutation = (parent?.type === 'AssignmentExpression' && parent.left === target)
+            || (parent?.type === 'UpdateExpression' && parent.argument === target)
+            || (parent?.type === 'UnaryExpression' && parent.operator === 'delete' && parent.argument === target)
+            || (prop.name === 'model' && target === ast)
+            || (parent?.type === 'CallExpression' && parent.callee === target
+              && target.type === 'MemberExpression'
+              && (!target.computed || target.property.type === 'StringLiteral')
+              && ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin'].includes(staticName(target.property) ?? ''))
+          if (!mutation || reported.has(id.name)) return
+          reported.add(id.name)
+          report({
+            ...loc(prop),
+            message: `Unexpected mutation of prop '${propName ?? id.name}'.`,
+            help: 'Props are read-only; emit an event or use a local copy.',
+          })
         })
       }
     },
@@ -571,19 +571,18 @@ export function checkTemplate(
   // Some rules need context the node itself does not carry: the v-else-if
   // chain a node starts, and which identifiers are props. Attached once here
   // rather than recomputed per rule per node.
-  const propNames = definedPropNames(scriptContent)
+  const script = analyzeScript(scriptContent)
 
   const annotate = (children: TemplateChildNode[]): void => {
     for (let i = 0; i < children.length; i++) {
       const node = children[i]!
       if (node.type !== NodeTypes.ELEMENT) continue
-      ;(node as AnnotatedElement).__propNames = propNames
       if (!findDir(node, 'if')) continue
       // Walk forward over the v-else-if branches that continue this chain.
       const chain: ElementNode[] = []
       for (let j = i + 1; j < children.length; j++) {
         const sib = children[j]!
-        if (sib.type === NodeTypes.TEXT && !sib.content.trim()) continue
+        if (sib.type === NodeTypes.COMMENT || (sib.type === NodeTypes.TEXT && !sib.content.trim())) continue
         if (sib.type !== NodeTypes.ELEMENT) break
         if (findDir(sib, 'else-if')) { chain.push(sib); continue }
         break
@@ -592,8 +591,22 @@ export function checkTemplate(
     }
   }
 
-  const walk = (node: AnyNode | undefined): void => {
+  const walk = (node: AnyNode | undefined, inherited = new Set<string>()): void => {
     if (!node) return
+    const locals = new Set(inherited)
+    if (node.type === NodeTypes.ELEMENT) {
+      for (const prop of node.props) {
+        if (prop.type !== NodeTypes.DIRECTIVE) continue
+        const loop = prop.forParseResult
+        const expressions = prop.name === 'for' && loop ? [loop.value, loop.key, loop.index]
+          : prop.name === 'slot' ? [prop.exp] : []
+        for (const exp of expressions) for (const name of bindingNames(exp)) locals.add(name)
+      }
+      const context = node as AnnotatedElement
+      context.__script = script
+      context.__locals = locals
+      context.__outerLocals = inherited
+    }
     const children = childrenOf(node)
     if (children.length) annotate(children)
     for (const { rule, severity } of active) {
@@ -610,7 +623,7 @@ export function checkTemplate(
         } as Diagnostic)
       })
     }
-    for (const child of children) walk(child)
+    for (const child of children) walk(child, locals)
     // Directive bodies of <template v-slot> live in children already.
   }
 
