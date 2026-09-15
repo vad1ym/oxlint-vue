@@ -50,6 +50,8 @@
     "tests/lib/rules/first-attribute-linebreak.test.ts": "126dc1147e7e7a37eab120dc98a18dfe2ba5d52bdf99da9f5a5d136513b40ddc",
     "tests/lib/rules/html-quotes.test.ts": "d4924763033177acbf34c5d9d928e1834215049fe080906ce86cb15709efce6d",
     "tests/lib/rules/attribute-hyphenation.test.ts": "3551335ac2ce8ef6953e0e05e84d3dbbda4b3e7fe2bc2dcbeb29ad39420f75bd",
+    "tests/lib/rules/v-on-event-hyphenation.test.ts": "eb041b0de1adbf47be0e82435a31ad5cf974d5bfaad548de5ef49760d86da105",
+    "tests/lib/rules/v-bind-style.test.ts": "57a51981c9900b42e4b3e61e5c4857785039790b4ea265576a4e37586b90d6fd",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -9758,6 +9760,951 @@
           "ignoreTags": [
             "CustomComponent"
           ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/1",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n    <template>\n        <VueComponent @custom-event=\"onEvent\"/>\n    </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/2",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n    <template>\n        <VueComponent :customEvent=\"onEvent\"/>\n    </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/3",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n    <template>\n        <VueComponent v-on=\"events\"/>\n    </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/4",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n    <template>\n        <div v-on:unknownEvent=\"onEvent\"/>\n    </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/5",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:customEvent=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/6",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:customEvent=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignore": [
+            "custom"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/7",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:custom-event=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignore": [
+            "custom-event"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/8",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:custom-event=\"events\"/>\n          <custom-component v-on:custom-event=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignoreTags": [
+            "/^Vue/",
+            "custom-component"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/valid/9",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:customEvent=\"events\"/>\n          <custom-component v-on:customEvent=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "ignoreTags": [
+            "/^Vue/",
+            "custom-component"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/1",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent @customEvent=\"onEvent\"/>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/2",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent @customEvent=\"onEvent\"/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/3",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n          <VueComponent v-on:custom-event=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/4",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent @update:modelValue=\"foo\"/>\n        <VueComponent @update:model-value=\"foo\"/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/5",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent @update:modelValue=\"foo\"/>\n        <VueComponent @update:model-value=\"foo\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/6",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent @upDate:modelValue=\"foo\"/>\n        <VueComponent @up-date:modelValue=\"foo\"/>\n        <VueComponent @upDate:model-value=\"foo\"/>\n        <VueComponent @up-date:model-value=\"foo\"/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/7",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent @upDate:modelValue=\"foo\"/>\n        <VueComponent @up-date:modelValue=\"foo\"/>\n        <VueComponent @upDate:model-value=\"foo\"/>\n        <VueComponent @up-date:model-value=\"foo\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "autofix": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/8",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent v-on:custom-event=\"events\"/>\n        <CustomComponent v-on:custom-event=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "autofix": true,
+          "ignoreTags": [
+            "CustomComponent"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-on-event-hyphenation/invalid/9",
+      "rule": "vue/v-on-event-hyphenation",
+      "code": "\n      <template>\n        <VueComponent v-on:customEvent=\"events\"/>\n        <CustomComponent v-on:customEvent=\"events\"/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "autofix": true,
+          "ignoreTags": [
+            "CustomComponent"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2019
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/valid/1",
+      "rule": "vue/v-bind-style",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/2",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/3",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/4",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/5",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo=\"foo\"></div></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "ignore"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/6",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo.prop=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/7",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/8",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo.prop=\"foo\"></div></template>",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/9",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo=\"foo\"></div></template>",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/10",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo=\"foo\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/11",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo=\"foo\" /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/12",
+      "rule": "vue/v-bind-style",
+      "code": "\n      <template>\n      <div :foo.prop=\"foo\" />\n      <div .foo=\"foo\" />\n      </template>\n      ",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/13",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo.prop=\"foo\" /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/14",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo-bar=\"fooBar\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/15",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/16",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/17",
+      "rule": "vue/v-bind-style",
+      "code": "\n      <template>\n      <div :foo.prop />\n      <div .foo />\n      </template>\n      ",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/18",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo.prop /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/19",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo-bar/></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/valid/20",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo-bar=\"foo_bar\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-bind-style/invalid/1",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/2",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo=\"foo\"></div></template>",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/3",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/4",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo=\"foo\"></div></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/5",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo.sync=\"foo\"></div></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/6",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo.prop=\"foo\"></div></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/7",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo.sync.prop=\"foo\"></div></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/8",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo /></template>",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/9",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo /></template>",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/10",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/11",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/12",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo.prop /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/13",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/14",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "v-bind-style/invalid/15",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo-bar /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/16",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo_bar /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/17",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo=\"foo\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/18",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo_bar=\"foo_bar\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/19",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div v-bind:foo=\"foo\" /></template>",
+      "options": [
+        "longform",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/20",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo.prop=\"foo\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/21",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div .foo=\"foo\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-bind-style/invalid/22",
+      "rule": "vue/v-bind-style",
+      "code": "<template><div :foo-bar=\"fooBar\" /></template>",
+      "options": [
+        "shorthand",
+        {
+          "sameNameShorthand": "always"
         }
       ],
       "filename": "test.vue",

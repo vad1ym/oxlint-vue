@@ -177,6 +177,10 @@ function configuredNameMatch(value: string, patterns: unknown): boolean {
   })
 }
 
+function kebabToCamel(value: string): string {
+  return value.replace(/-([a-z])/gu, (_, char: string) => char.toUpperCase())
+}
+
 function customComponent(node: ElementNode, ignoreElementNamespaces = false): boolean {
   const native = node.tag === 'slot' || (ignoreElementNamespaces
     ? isHTMLTag(node.tag) || isSVGTag(node.tag) || isMathMLTag(node.tag)
@@ -1137,6 +1141,56 @@ const RULES: Rule[] = [
         if (invalid) report({
           message: hyphenated ? `Attribute ${name} must be hyphenated.` : `Attribute ${name} cannot be hyphenated.`,
           ...loc(prop),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/v-on-event-hyphenation',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node)) return
+      const secondary = options.secondary && typeof options.secondary === 'object'
+        ? options.secondary as Record<string, unknown> : {}
+      if (configuredNameMatch(node.tag, secondary.ignoreTags)) return
+      const ignored = Array.isArray(secondary.ignore)
+        ? secondary.ignore.filter((value): value is string => typeof value === 'string') : []
+      const hyphenated = options.mode !== 'never'
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') continue
+        const name = argContent(dir)
+        if (!name || ignored.some(value => name.includes(value))) continue
+        const invalid = hyphenated ? name.toLowerCase() !== name : name.includes('-')
+        if (invalid) report({
+          message: hyphenated ? `Event ${name} must be hyphenated.` : `Event ${name} cannot be hyphenated.`,
+          ...loc(dir),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/v-bind-style',
+    severity: 'warning',
+    check(node, report, options) {
+      const secondary = options.secondary && typeof options.secondary === 'object'
+        ? options.secondary as Record<string, unknown> : {}
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'bind' || !dir.arg) continue
+        const raw = dir.loc.source
+        const name = argContent(dir)
+        const exp = dir.exp?.loc.source
+        const shorthand = !raw.includes('=')
+        const sameName = shorthand || Boolean(name && exp && kebabToCamel(name) === kebabToCamel(exp))
+        if (secondary.sameNameShorthand !== 'ignore' && sameName) {
+          if (secondary.sameNameShorthand === 'always' ? !shorthand
+            : secondary.sameNameShorthand === 'never' && shorthand) report({
+            message: shorthand ? 'Do not use same-name shorthand.' : 'Use same-name shorthand.', ...loc(dir),
+          })
+        }
+        const shorthandStyle = raw.startsWith(':') || raw.startsWith('.')
+        const preferShorthand = options.mode !== 'longform'
+        if (shorthandStyle !== preferShorthand) report({
+          message: preferShorthand ? 'Use : instead of v-bind:.' : 'Use v-bind: instead of shorthand.', ...loc(dir),
         })
       }
     },

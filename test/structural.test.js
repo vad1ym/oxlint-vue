@@ -72,6 +72,8 @@ const CASES = [
   ['vue/first-attribute-linebreak', '<div id="a"\n  class="b" />', true],
   ['vue/html-quotes', "<div id='a' />", true],
   ['vue/attribute-hyphenation', '<MyComp myProp="value" />', true],
+  ['vue/v-on-event-hyphenation', '<MyComp @myEvent="go" />', true],
+  ['vue/v-bind-style', '<div v-bind:id="id" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

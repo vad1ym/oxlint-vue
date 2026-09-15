@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 46,
     "native": 46,
-    "partial": 21,
-    "missing": 140
+    "partial": 23,
+    "missing": 138
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1852,36 +1852,40 @@
     },
     {
       "name": "v-bind-style",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 42,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/v-bind-style.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "v-on-event-hyphenation",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 18,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/v-on-event-hyphenation.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "v-on-style",
