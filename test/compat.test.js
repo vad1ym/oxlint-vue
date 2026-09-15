@@ -16,7 +16,7 @@ test('fixture provenance canonicalizes Windows line endings', () => {
 test('upstream compatibility: every difference must match the reviewed baseline', () => {
   const report = compareCorpus()
   assert.deepEqual(report.differences, baseline, 'Run pnpm compat --json and inspect regressions/resolved entries')
-  assert.equal(report.cases, 2464, 'Review corpus changes explicitly; do not silently shrink the denominator')
+  assert.equal(report.cases, 2497, 'Review corpus changes explicitly; do not silently shrink the denominator')
 })
 
 test('every structural rule is mapped or explicitly identified as project-specific', () => {

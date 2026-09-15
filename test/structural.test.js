@@ -42,6 +42,8 @@ const CASES = [
   ['vue/attributes-order', '<div @click="go" v-if="ready" />', true],
   ['vue/order-in-components', '<div />', true,
     'defineOptions({ data() {}, name: \'ExampleCard\' })'],
+  ['vue/no-boolean-default', '<div />', true,
+    'defineProps({ active: { type: Boolean, default: true } })'],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

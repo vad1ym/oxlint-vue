@@ -60,6 +60,7 @@ export interface RefOperandFinding { method: string, offset: number }
 export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
 export interface ComponentOrderFinding { name: string, offset: number }
+export interface BooleanDefaultFinding { offset: number }
 export interface ExplicitEmitInfo {
   declared: Set<string>
   props: Set<string>
@@ -215,6 +216,97 @@ export function componentOrderFindings(descriptor: SFCDescriptor, source: string
       if (!object || seen.has(object.node)) return
       seen.add(object.node)
       check(object, input.offset)
+    } })
+  }
+  return findings
+}
+
+/** Boolean prop defaults rejected by no-boolean-default. */
+export function booleanDefaultFindings(descriptor: SFCDescriptor, source: string,
+  mode: unknown): BooleanDefaultFinding[] {
+  const findings: BooleanDefaultFinding[] = []
+  const realBlocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const blocks = realBlocks.length ? realBlocks.map(block => ({ content: block.content,
+    offset: block.loc.start.offset })) : [{ content: source, offset: 0 }]
+  for (const block of blocks) {
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const aliases = new Map<string, AstNode>()
+    traverse(file, { enter(path) {
+      if (path.isTSTypeAliasDeclaration()) aliases.set(path.node.id.name, path.node.typeAnnotation)
+      if (path.isTSInterfaceDeclaration()) aliases.set(path.node.id.name, path.node.body)
+    } })
+    const report = (value: NodePath, types: string[]): void => {
+      if (types.length !== 1 || types[0] !== 'Boolean') return
+      while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+      if (mode === 'default-false' && value.isBooleanLiteral({ value: false })) return
+      findings.push({ offset: block.offset + (value.node.start ?? 0) })
+    }
+    const runtimeDefinitions = (props: NodePath): Map<string, string[]> => {
+      const definitions = new Map<string, string[]>()
+      if (!props.isObjectExpression()) return definitions
+      for (const property of props.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = componentPropertyName(property)
+        if (name === null) continue
+        let config = property.get('value') as NodePath
+        while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(config.node.type)) config = config.get('expression') as NodePath
+        const type = config.isObjectExpression() ? objectPropertyPath(config, 'type') : undefined
+        const types = propTypes(type ? pathValue(type) : config)
+        definitions.set(name, types)
+        const defaultProperty = config.isObjectExpression() ? objectPropertyPath(config, 'default') : undefined
+        if (defaultProperty) report(pathValue(defaultProperty), types)
+      }
+      return definitions
+    }
+    const typedDefinitions = (call: NodePath): Map<string, string[]> => {
+      const node = call.node as AstNode & { typeParameters?: { params?: AstNode[] }, typeArguments?: { params?: AstNode[] } }
+      let root = node.typeParameters?.params?.[0] ?? node.typeArguments?.params?.[0]
+      if (root?.type === 'TSTypeReference' && root.typeName.type === 'Identifier') root = aliases.get(root.typeName.name)
+      const members = root?.type === 'TSTypeLiteral' ? root.members
+        : root?.type === 'TSInterfaceBody' ? root.body : []
+      const definitions = new Map<string, string[]>()
+      for (const member of members) {
+        if (member.type !== 'TSPropertySignature') continue
+        const name = staticName(member.key)
+        if (name !== null) definitions.set(name, inferTsTypes(member.typeAnnotation?.typeAnnotation, aliases))
+      }
+      return definitions
+    }
+    const assignedDefaults = (definitions: Map<string, string[]>, defaults?: NodePath,
+      destructure?: NodePath): void => {
+      if (defaults?.isObjectExpression()) for (const property of defaults.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+        const name = componentPropertyName(property)
+        if (name !== null) report(pathValue(property), definitions.get(name) ?? [])
+      }
+      if (destructure?.isObjectPattern()) for (const property of destructure.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = staticName(property.node.key)
+        const value = property.get('value') as NodePath
+        if (name !== null && value.isAssignmentPattern()) report(value.get('right') as NodePath,
+          definitions.get(name) ?? [])
+      }
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        const props = object && objectPropertyPath(object, 'props')
+        if (props?.isObjectProperty()) runtimeDefinitions(pathValue(props))
+      }
+      if (!path.isCallExpression() || path.node.callee.type !== 'Identifier'
+        || path.node.callee.name !== 'defineProps') return
+      const runtime = (path.get('arguments') as NodePath[])[0]
+      const parent = path.parentPath
+      const wrapped = parent?.isCallExpression() && parent.node.callee.type === 'Identifier'
+        && parent.node.callee.name === 'withDefaults'
+      const declarator = (wrapped ? parent.parentPath : parent)?.isVariableDeclarator()
+        ? (wrapped ? parent!.parentPath : parent) : undefined
+      const defaults = wrapped ? (parent!.get('arguments') as NodePath[])[1] : undefined
+      const id = declarator?.isVariableDeclarator() ? declarator.get('id') as NodePath : undefined
+      const definitions = runtime ? runtimeDefinitions(runtime) : typedDefinitions(path)
+      assignedDefaults(definitions, defaults, id)
     } })
   }
   return findings

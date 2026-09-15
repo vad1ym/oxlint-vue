@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentDefinitionOffsets, componentNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { booleanDefaultFindings, componentDefinitionOffsets, componentNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -1264,6 +1264,11 @@ const RULES: Rule[] = [
   },
   {
     name: 'vue/order-in-components',
+    severity: 'error',
+    check() {},
+  },
+  {
+    name: 'vue/no-boolean-default',
     severity: 'error',
     check() {},
   },
@@ -2937,6 +2942,16 @@ export function checkTemplate(
       out.push({ filename, rule: componentOrderRule.rule.name, severity: componentOrderRule.severity,
         ...sourceLoc(source, finding.offset),
         message: `The "${finding.name}" property is out of order.` } as Diagnostic)
+    }
+  }
+  const booleanDefaultRule = active.find(entry => entry.rule.name === 'vue/no-boolean-default')
+  if (booleanDefaultRule) {
+    const mode = ruleOptions(config?.[booleanDefaultRule.rule.name]).mode
+    for (const finding of booleanDefaultFindings(descriptor, source, mode)) {
+      out.push({ filename, rule: booleanDefaultRule.rule.name, severity: booleanDefaultRule.severity,
+        ...sourceLoc(source, finding.offset),
+        message: mode === 'default-false' ? 'Boolean prop should only be defaulted to false.'
+          : 'Boolean prop should not set a default (Vue defaults it to false).' } as Diagnostic)
     }
   }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')

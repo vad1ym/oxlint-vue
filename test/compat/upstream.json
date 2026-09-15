@@ -103,7 +103,8 @@
     "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976",
     "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70",
     "tests/lib/rules/attributes-order.test.ts": "74e9b47f05cc0ab505a1c13a76dbefe0bae7551ca141ec02e3bb62d768644e8f",
-    "tests/lib/rules/order-in-components.test.ts": "8c7251a675db205bcdb0b9237e06274e206043da8cc0025d16464fbd53e38473"
+    "tests/lib/rules/order-in-components.test.ts": "8c7251a675db205bcdb0b9237e06274e206043da8cc0025d16464fbd53e38473",
+    "tests/lib/rules/no-boolean-default.test.ts": "0d64a2d2d43e3bbf5c9e35c5060d1f133b44fb2d545fc03f45be38954eb5f078"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -33876,6 +33877,528 @@
         "ecmaVersion": 2020,
         "sourceType": "module",
         "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/valid/1",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/2",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/3",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/4",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const props = {};\n        export default {\n          props: {\n            ...props,\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/5",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const props = {};\n        export default {\n          props: {\n            ...props,\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/6",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const props = {};\n        export default {\n          props: {\n            ...props,\n            enabled: Boolean\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/7",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/8",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/9",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/10",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              default: false,\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/11",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: data\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/12",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: data\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/13",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: data\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/14",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/15",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/16",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        const data = {};\n        export default {\n          props: {\n            enabled: {\n              ...data\n            }\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/17",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      defineProps({\n        foo: {\n          type:Boolean\n        }\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/18",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      defineProps({\n        foo: {\n          type:Boolean,\n          default: false\n        }\n      })\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/19",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: boolean\n      }\n      withDefaults(defineProps<Props>(), {\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/20",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: boolean\n      }\n      withDefaults(defineProps<Props>(), {\n        foo: false\n      })\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/21",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: boolean | string\n      }\n      withDefaults(defineProps<Props>(), {\n        foo: false\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/22",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: string\n      }\n      withDefaults(defineProps<Props>(), {\n        foo: false\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/valid/23",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      const {foo = false} = defineProps({foo: Boolean})\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-boolean-default/invalid/1",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              default: true,\n            }\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/2",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              default: null,\n            }\n          }\n        }\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/3",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              default: false,\n            }\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/4",
+      "rule": "vue/no-boolean-default",
+      "code": "\n        export default {\n          props: {\n            enabled: {\n              type: Boolean,\n              default: true,\n            }\n          }\n        }\n      ",
+      "options": [
+        "no-default"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/5",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      defineProps({\n        foo: {\n          type:Boolean,\n          default: false\n        }\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/6",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      defineProps({\n        foo: {\n          type:Boolean,\n          default: true\n        }\n      })\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/7",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: boolean\n      }\n      withDefaults(defineProps<Props>(), {\n        foo: false\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/8",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo: boolean\n      }\n      withDefaults(defineProps<Props>(), {\n        foo: true\n      })\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/9",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      const {foo = false} = defineProps({foo: Boolean})\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-boolean-default/invalid/10",
+      "rule": "vue/no-boolean-default",
+      "code": "\n      <script setup>\n      const {foo = true} = defineProps({foo: Boolean})\n      </script>\n      ",
+      "options": [
+        "default-false"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
       },
       "settings": {},
       "expectedCount": 1

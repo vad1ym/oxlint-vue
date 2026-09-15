@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 64,
+    "implemented": 65,
     "native": 59,
     "partial": 50,
-    "missing": 80
+    "missing": 79
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2728,11 +2728,11 @@
     },
     {
       "name": "no-boolean-default",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 33,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
