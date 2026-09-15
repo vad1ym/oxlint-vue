@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 16,
+    "implemented": 20,
     "native": 46,
     "partial": 8,
-    "missing": 183
+    "missing": 179
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -45,7 +45,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-arrow-functions-in-watch.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -64,7 +64,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-async-in-computed-properties.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -102,7 +102,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-computed-properties-in-data.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -120,7 +120,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-data-object-declaration.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -138,7 +138,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-delete-set.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -156,7 +156,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-destroyed-lifecycle.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -206,7 +206,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-events-api.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -288,7 +288,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-model-definition.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -306,7 +306,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-props-default-this.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -452,7 +452,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-deprecated-vue-config-keycodes.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -471,7 +471,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-dupe-keys.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -526,7 +526,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-export-in-script-setup.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -544,7 +544,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-expose-after-await.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -562,7 +562,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-lifecycle-after-await.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -636,7 +636,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-reserved-component-names.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -655,7 +655,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-reserved-keys.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -674,7 +674,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-reserved-props.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -693,7 +693,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/no-shared-component-data.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -712,7 +712,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-side-effects-in-computed-properties.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -884,7 +884,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-watch-after-await.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -902,7 +902,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/prefer-import-from-vue.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -938,7 +938,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/require-prop-type-constructor.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -957,7 +957,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-render-return.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -975,7 +975,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-slots-as-functions.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1044,7 +1044,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/return-in-computed-property.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1063,7 +1063,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/return-in-emits-validator.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1116,7 +1116,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/valid-define-emits.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1134,7 +1134,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/valid-define-options.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1153,7 +1153,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/valid-define-props.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1172,7 +1172,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/valid-next-tick.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1228,14 +1228,14 @@
     },
     {
       "name": "valid-v-else",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 18,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1245,14 +1245,14 @@
     },
     {
       "name": "valid-v-else-if",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 18,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1296,14 +1296,14 @@
     },
     {
       "name": "valid-v-if",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 10,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1329,13 +1329,13 @@
     },
     {
       "name": "valid-v-memo",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 14,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1495,7 +1495,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/component-definition-name-casing.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1752,7 +1752,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/prop-name-casing.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1771,7 +1771,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-default-prop.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1806,7 +1806,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-prop-types.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1960,7 +1960,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/no-multiple-slot-args.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -1979,7 +1979,7 @@
       "nativeFix": "fixable_suggestion",
       "url": "https://eslint.vuejs.org/rules/no-required-prop-with-default.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2288,7 +2288,7 @@
       "nativeFix": "pending",
       "url": "https://eslint.vuejs.org/rules/define-emits-declaration.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2318,7 +2318,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/define-props-declaration.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2334,7 +2334,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/define-props-destructuring.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2576,7 +2576,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/max-props.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2634,7 +2634,7 @@
       "nativeFix": "fixable_fix",
       "url": "https://eslint.vuejs.org/rules/next-tick-style.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -2806,7 +2806,7 @@
       "nativeFix": "fixable_dangerous_fix",
       "url": "https://eslint.vuejs.org/rules/no-import-compiler-macros.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -3202,7 +3202,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/no-this-in-before-route-enter.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -3660,7 +3660,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-default-export.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -3676,7 +3676,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-direct-export.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {
@@ -3790,7 +3790,7 @@
       "nativeFix": "none",
       "url": "https://eslint.vuejs.org/rules/require-typed-ref.html",
       "notes": [
-        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+        "Available in oxlint; options and broader wrapper behavior remain unmeasured"
       ]
     },
     {

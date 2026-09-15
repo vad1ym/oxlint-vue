@@ -29,6 +29,10 @@ const CASES = [
   ['vue/valid-v-show', '<div v-show />', true],
   ['vue/valid-v-once', '<div v-once="value" />', true],
   ['vue/valid-v-cloak', '<div v-cloak="value" />', true],
+  ['vue/valid-v-if', '<div v-if />', true],
+  ['vue/valid-v-else-if', '<div v-else-if="value" />', true],
+  ['vue/valid-v-else', '<div v-else />', true],
+  ['vue/valid-v-memo', '<div v-memo="{}" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

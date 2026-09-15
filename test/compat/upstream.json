@@ -7,6 +7,10 @@
     "tests/lib/rules/valid-v-show.test.ts": "617b7daa76de6386e4d99adab8c61343242ef0ad7e97ef81f4baa20874b87d45",
     "tests/lib/rules/valid-v-once.test.ts": "b5cad2887d385378136c981f7fb03597fb6523419a2ee4258f24e5d9c1921d8f",
     "tests/lib/rules/valid-v-cloak.test.ts": "833bb19c95d781366a03228783fbeff16420add60c116b04daf84d8beef71731",
+    "tests/lib/rules/valid-v-if.test.ts": "fb8f8c7d143790a40810d69395ec87b69cc2a00381bb81144e2986897a654005",
+    "tests/lib/rules/valid-v-else-if.test.ts": "5f4058280dd33477a683f46ccafea7d076870a74cec688b1f0ae876df75c58c1",
+    "tests/lib/rules/valid-v-else.test.ts": "ae66dc9ccc0bf01043228db1514d73de15fffbfc28ede021f372c0d6cbb4c20e",
+    "tests/lib/rules/valid-v-memo.test.ts": "186376ae3b4bd1488962413327e27d857164e639bb8938e6562917bb363f9c6c",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -539,6 +543,726 @@
       "filename": "empty-value.vue",
       "languageOptions": {
         "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/valid/1",
+      "rule": "vue/valid-v-if",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-if/valid/2",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-if/valid/3",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div v-if=\".\"></div></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-if/valid/4",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div v-if=\"/**/\"></div></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-if/invalid/1",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if=\"foo\" v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/invalid/2",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if=\"foo\" v-else-if=\"bar\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/invalid/3",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if:aaa=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/invalid/4",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if.aaa=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/invalid/5",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-if/invalid/6",
+      "rule": "vue/valid-v-if",
+      "code": "<template><div><div v-if=\"\"></div></div></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/valid/1",
+      "rule": "vue/valid-v-else-if",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/valid/2",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/valid/3",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if=\"foo\"></div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/valid/4",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template>\n    <c1 v-if=\"1\" />\n    <c2 v-else-if=\"1\" />\n    <c3 v-else />\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/valid/5",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div v-if=\"foo\"></div><div v-else-if=\".\"></div></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/valid/6",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div v-if=\"foo\"></div><div v-else-if=\"/**/\"></div></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else-if/invalid/1",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><template v-else-if=\"foo\"><div></div></template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/2",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div v-else-if=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/3",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/4",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div></div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/5",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div if=\"foo\"></div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/6",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div></div><div v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/7",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if=\"foo\" v-if=\"bar\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/8",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if=\"foo\" v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/9",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if:aaa=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/10",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if.aaa=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/11",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else-if/invalid/12",
+      "rule": "vue/valid-v-else-if",
+      "code": "<template><div v-if=\"foo\"></div><div v-else-if=\"\"></div></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/valid/1",
+      "rule": "vue/valid-v-else",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else/valid/2",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else/valid/3",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else-if=\"foo\"></div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else/valid/4",
+      "rule": "vue/valid-v-else",
+      "code": "<template>\n    <c1 v-if=\"1\" />\n    <c2 v-else-if=\"1\" />\n    <c3 v-else />\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-else/invalid/1",
+      "rule": "vue/valid-v-else",
+      "code": "<template><template v-else><div></div></template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/2",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div v-else></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/3",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/4",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div></div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/5",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div if=\"foo\"></div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/6",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div></div><div v-else></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/7",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else v-if=\"bar\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/8",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else v-else-if=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/9",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else:aaa></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/10",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else.aaa></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/11",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div><div v-if=\"foo\"></div><div v-else=\"foo\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/12",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div v-if=\"foo\"></div><div v-else=\".\"></div></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/13",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div v-if=\"foo\"></div><div v-else=\"/**/\"></div></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-else/invalid/14",
+      "rule": "vue/valid-v-else",
+      "code": "<template><div v-if=\"foo\"></div><div v-else=\"\"></div></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-memo/valid/1",
+      "rule": "vue/valid-v-memo",
+      "code": "test",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/2",
+      "rule": "vue/valid-v-memo",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/3",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\"[x]\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/4",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\"x\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/5",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\"x?y:z\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/6",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/7",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\"/**/\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/valid/8",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-for=\"i in items\" v-memo=\"[x]\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-memo/invalid/1",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo:aaa=\"x\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-memo/invalid/2",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo.aaa=\"x\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-memo/invalid/3",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-memo/invalid/4",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-memo=\"\" /></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-memo/invalid/5",
+      "rule": "vue/valid-v-memo",
+      "code": "\n      <template>\n        <div v-memo=\"{x}\" />\n        <div v-memo=\"a ? {b}: c+d\" />\n        <div v-memo=\"(a,{b},c(),d+1)\" />\n        <div v-memo=\"()=>42\" />\n        <div v-memo=\"a=42\" />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 6
+    },
+    {
+      "id": "valid-v-memo/invalid/6",
+      "rule": "vue/valid-v-memo",
+      "code": "<template><div v-for=\"i in items\"><div v-memo=\"[x]\" /></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2021
       },
       "settings": {},
       "expectedCount": 1

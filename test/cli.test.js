@@ -19,6 +19,9 @@ async function fixture(fn) {
   } finally { await fs.rm(dir, { recursive: true, force: true }) }
 }
 
+const nativeExportDiagnostic = diagnostics =>
+  diagnostics.find(d => d.rule.includes('no-export-in-script-setup'))
+
 test('all config spellings preserve a known diagnostic and exit status', async () => {
   await fixture(async (dir, run) => {
     for (const args of [[], ['-c', '.oxlintrc.json'], ['--config', '.oxlintrc.json'], ['--config=.oxlintrc.json'], ['--', '-c', '.oxlintrc.json'], ['--', '--config=.oxlintrc.json'], ['--', '-c', path.join(dir, '.oxlintrc.json')]]) {
@@ -51,6 +54,32 @@ test('explicit config governs structural rules and file collection too', async (
       assert.equal(result.status, 0, result.stdout + result.stderr)
       assert.match(result.stdout, /1 file\(s\)/)
     }
+  })
+})
+
+test('config and CLI severity govern native SFC rules', async () => {
+  await fixture(async (dir, run) => {
+    await fs.writeFile(
+      path.join(dir, 'src/A.vue'),
+      '<script setup>export const exposed = 1</script>\n',
+    )
+    const rule = 'vue/no-export-in-script-setup'
+    for (const [severity, expected] of [['off', undefined], ['warn', 'warning'], ['error', 'error']]) {
+      await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({ rules: { [rule]: severity } }))
+      const result = run('src', '--format=json')
+      const diagnostics = JSON.parse(result.stdout)
+      assert.equal(
+        nativeExportDiagnostic(diagnostics)?.severity,
+        expected,
+        `${severity}: status=${result.status} stdout=${result.stdout} stderr=${result.stderr}`,
+      )
+    }
+
+    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({ rules: { [rule]: 'off' } }))
+    let result = run('src', '--format=json', '--', '-W', rule)
+    assert.equal(nativeExportDiagnostic(JSON.parse(result.stdout))?.severity, 'warning')
+    result = run('src', '--format=json', '--', '-D', rule, '-A', rule)
+    assert.ok(!nativeExportDiagnostic(JSON.parse(result.stdout)))
   })
 })
 

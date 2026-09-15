@@ -11,10 +11,10 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 611 upstream cases, 23 common structural rules | **610 exact matches (99.8%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **464/464** |
-| Four pinned Nuxt components, each checked against all 23 rules | **92/92 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **674/674 comparisons** |
+| 671 upstream cases, 27 common structural rules | **670 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **584/584** |
+| Four pinned Nuxt components, each checked against all 27 rules | **108/108 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **810/810 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and

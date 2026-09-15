@@ -40,6 +40,10 @@ type AnyNode = RootNode | TemplateChildNode
 interface Annotations {
   /** The `v-else-if` siblings that continue the chain this node opens. */
   __siblings?: ElementNode[]
+  /** Whether the preceding element sibling carries v-if or v-else-if. */
+  __prevElementHasIf?: boolean
+  /** Whether this element is nested below an outer v-for element. */
+  __insideVFor?: boolean
   /** Identifiers declared by `defineProps` in `<script setup>`. */
   __script?: ScriptAnalysis
   __locals?: Set<string>
@@ -246,9 +250,113 @@ function simpleDirectiveRule(name: string, requiresValue: boolean): Rule {
   }
 }
 
+function directiveValueLoc(dir: DirectiveNode): ReturnType<typeof loc> {
+  const equals = dir.loc.source.indexOf('=')
+  return equals < 0 ? loc(dir) : relativeLoc(dir, equals + 1)
+}
+
+function conditionalDirectiveRule(name: 'if' | 'else-if' | 'else'): Rule {
+  return {
+    name: `vue/valid-v-${name}`,
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const context = node as AnnotatedElement
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== name) continue
+        const otherIf = findDir(node, 'if')
+        const otherElseIf = findDir(node, 'else-if')
+        const otherElse = findDir(node, 'else')
+
+        if (name !== 'if' && !context.__prevElementHasIf) report({
+          message: `'v-${name}' must be preceded by an element with v-if or v-else-if.`,
+          ...loc(dir),
+        })
+        if (name === 'if' && otherElse) report({
+          message: 'v-if and v-else cannot exist on the same element.', ...loc(dir),
+        })
+        if (name === 'if' && otherElseIf) report({
+          message: 'v-if and v-else-if cannot exist on the same element.', ...loc(dir),
+        })
+        if (name === 'else-if' && otherIf) report({
+          message: 'v-else-if and v-if cannot exist on the same element.', ...loc(dir),
+        })
+        if (name === 'else-if' && otherElse) report({
+          message: 'v-else-if and v-else cannot exist on the same element.', ...loc(dir),
+        })
+        if (name === 'else' && otherIf) report({
+          message: 'v-else and v-if cannot exist on the same element.', ...loc(dir),
+        })
+        if (name === 'else' && otherElseIf) report({
+          message: 'v-else and v-else-if cannot exist on the same element.', ...loc(dir),
+        })
+        if (dir.arg) report({ message: `'v-${name}' does not accept an argument.`, ...loc(dir.arg) })
+        if (dir.modifiers[0]) report({ message: `'v-${name}' does not accept modifiers.`, ...loc(dir.modifiers[0]) })
+        if (name === 'else') {
+          if (dir.loc.source.includes('=')) report({
+            message: 'v-else does not accept a value.', ...directiveValueLoc(dir),
+          })
+        } else if (!dir.exp?.loc.source) report({
+          message: `'v-${name}' requires a value.`, ...loc(dir),
+        })
+      }
+    },
+  }
+}
+
+function invalidMemoExpression(node: Ast): boolean {
+  return ['ObjectExpression', 'ClassExpression', 'ArrowFunctionExpression',
+    'FunctionExpression', 'StringLiteral', 'NumericLiteral', 'BooleanLiteral',
+    'NullLiteral', 'BigIntLiteral', 'DecimalLiteral', 'RegExpLiteral',
+    'TemplateLiteral', 'UnaryExpression', 'BinaryExpression', 'UpdateExpression']
+    .includes(node.type)
+}
+
+function checkMemoExpression(root: Ast, report: Report, exp: NonNullable<DirectiveNode['exp']>): void {
+  const pending = [root]
+  while (pending.length) {
+    const node = pending.pop()!
+    if (invalidMemoExpression(node)) {
+      report({ message: 'v-memo requires its value to be an array.', ...astLoc(exp, node, root) })
+    } else if (node.type === 'AssignmentExpression') {
+      pending.push(node.right)
+    } else if (node.type === 'TSAsExpression' || node.type === 'TSTypeAssertion'
+      || node.type === 'TypeCastExpression') {
+      pending.push(node.expression)
+    } else if (node.type === 'SequenceExpression') {
+      const last = node.expressions.at(-1)
+      if (last) pending.push(last)
+    } else if (node.type === 'ConditionalExpression') {
+      pending.push(node.alternate, node.consequent)
+    }
+  }
+}
+
 const RULES: Rule[] = [
   ...['html', 'text', 'show'].map(name => simpleDirectiveRule(name, true)),
   ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
+  ...(['if', 'else-if', 'else'] as const).map(conditionalDirectiveRule),
+  {
+    name: 'vue/valid-v-memo',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'memo') continue
+        if ((node as AnnotatedElement).__insideVFor) report({
+          message: 'v-memo does not work inside v-for.', ...loc(dir),
+        })
+        if (dir.arg) report({ message: 'v-memo does not accept an argument.', ...loc(dir.arg) })
+        if (dir.modifiers[0]) report({ message: 'v-memo does not accept modifiers.', ...loc(dir.modifiers[0]) })
+        if (!dir.exp?.loc.source) {
+          report({ message: 'v-memo requires a value.', ...loc(dir) })
+          continue
+        }
+        const expression = expressionAst(dir.exp)
+        if (expression && expression.type !== 'Program') checkMemoExpression(expression, report, dir.exp)
+      }
+    },
+  },
   {
     name: 'vue/require-v-for-key',
     severity: 'error',
@@ -795,9 +903,13 @@ export function checkTemplate(
   }
 
   const annotate = (children: TemplateChildNode[]): void => {
+    let previousElement: ElementNode | undefined
     for (let i = 0; i < children.length; i++) {
       const node = children[i]!
       if (node.type !== NodeTypes.ELEMENT) continue
+      ;(node as AnnotatedElement).__prevElementHasIf = previousElement != null
+        && Boolean(findDir(previousElement, 'if') || findDir(previousElement, 'else-if'))
+      previousElement = node
       if (!findDir(node, 'if')) continue
       // Walk forward over the v-else-if branches that continue this chain.
       const chain: ElementNode[] = []
@@ -812,7 +924,11 @@ export function checkTemplate(
     }
   }
 
-  const walk = (node: AnyNode | undefined, inherited = new Set<string>()): void => {
+  const walk = (
+    node: AnyNode | undefined,
+    inherited = new Set<string>(),
+    insideVFor = false,
+  ): void => {
     if (!node) return
     const locals = new Set(inherited)
     if (node.type === NodeTypes.ELEMENT) {
@@ -828,6 +944,7 @@ export function checkTemplate(
     context.__script = script
     context.__locals = locals
     context.__outerLocals = inherited
+    context.__insideVFor = insideVFor
     const children = childrenOf(node)
     if (children.length) annotate(children)
     for (const { rule, severity } of active) {
@@ -844,7 +961,9 @@ export function checkTemplate(
         } as Diagnostic)
       }, ruleOptions(config?.[rule.name]))
     }
-    for (const child of children) walk(child, locals)
+    const childInsideVFor = insideVFor
+      || node.type === NodeTypes.ELEMENT && Boolean(findDir(node, 'for'))
+    for (const child of children) walk(child, locals, childInsideVFor)
     // Directive bodies of <template v-slot> live in children already.
   }
 

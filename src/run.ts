@@ -101,7 +101,7 @@ export async function runOxlint(
 
   const { args: virtualArgs, configPath } = await resolveLintConfig(cwd, extraArgs)
   const vueSettings = await readVueSettings(configPath)
-  const structuralConfig = vueSettings.rules
+  const structuralConfig = applyCliVueRuleSeverities(vueSettings.rules, virtualArgs)
   const strictTemplates = opts.strictTemplates ?? vueSettings.strictTemplates
 
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-vue-'))
@@ -185,7 +185,13 @@ export async function runOxlint(
       // and knows the block is `<script setup>`, so SFC-aware rules that the
       // virtual .ts cannot express (vue/no-export-in-script-setup and friends)
       // fire here. Positions are already correct, so no rebinding is needed.
-      runNativePass(oxlintPath, files.filter(file => !invalidSfcFiles.has(path.resolve(cwd, file))), cwd, virtualArgs),
+      runNativePass(
+        oxlintPath,
+        files.filter(file => !invalidSfcFiles.has(path.resolve(cwd, file))),
+        cwd,
+        virtualArgs,
+        structuralConfig,
+      ),
     ])
 
     if (virtualResult.status === 'rejected') throw virtualResult.reason
@@ -374,16 +380,65 @@ const NATIVE_ONLY_RULES = [
   'vue/require-default-export',
 ]
 
+/**
+ * Apply CLI rule switches to the Vue rules we execute outside oxlint's main
+ * virtual-file pass. Oxlint accumulates these switches from left to right, so
+ * the last matching `all` or exact rule selector wins.
+ */
+function applyCliVueRuleSeverities(rules: RulesMap, args: string[]): RulesMap {
+  const result = { ...rules }
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!
+    let severity: 'off' | 'warn' | 'error' | undefined
+    let selector: string | undefined
+    if (arg === '-A' || arg === '--allow') {
+      severity = 'off'
+      selector = args[++i]
+    } else if (arg === '-W' || arg === '--warn') {
+      severity = 'warn'
+      selector = args[++i]
+    } else if (arg === '-D' || arg === '--deny') {
+      severity = 'error'
+      selector = args[++i]
+    } else {
+      const match = arg.match(/^--(allow|warn|deny)=(.+)$/)
+      if (match) {
+        severity = match[1] === 'allow' ? 'off' : match[1] === 'warn' ? 'warn' : 'error'
+        selector = match[2]
+      }
+    }
+    if (!severity || !selector) continue
+    if (selector === 'all') {
+      // Global switches are oxlint switches. They govern the native rules,
+      // while local structural rules remain under settings.vue.rules.
+      for (const rule of NATIVE_ONLY_RULES) result[rule] = severity
+    } else if (selector.startsWith('vue/')) {
+      result[selector] = severity
+    }
+  }
+  return result
+}
+
+function configuredSeverity(config: RulesMap, rule: string): 'off' | 'warn' | 'error' {
+  const raw = config[rule]
+  const value = Array.isArray(raw) ? raw[0] : raw
+  if (value === 'off' || value === 'allow' || value === 0 || value === false) return 'off'
+  if (value === 'warn' || value === 'warning' || value === 1) return 'warn'
+  return 'error'
+}
+
 /** Lint the real .vue files for rules that need a true SFC parse. */
 async function runNativePass(
   oxlintPath: string,
   files: string[],
   cwd: string,
   baseArgs: string[],
+  vueRules: RulesMap,
 ): Promise<Diagnostic[]> {
   if (!files.length) return []
 
-  // Drop any user -D/-W/-A: this pass must report only NATIVE_ONLY_RULES.
+  // The native pass must report only NATIVE_ONLY_RULES. Their final explicit
+  // switches below preserve config and CLI severity after allowing everything.
   const configOnly: string[] = []
   for (let i = 0; i < baseArgs.length; i++) {
     const a = baseArgs[i]!
@@ -397,7 +452,10 @@ async function runNativePass(
     '--vue-plugin',
     '-A',
     'all',
-    ...NATIVE_ONLY_RULES.flatMap(r => ['-D', r]),
+    ...NATIVE_ONLY_RULES.flatMap((rule) => {
+      const severity = configuredSeverity(vueRules, rule)
+      return [severity === 'off' ? '-A' : severity === 'warn' ? '-W' : '-D', rule]
+    }),
     ...files,
   ]
 
@@ -426,12 +484,12 @@ async function runNativePass(
   return diagnostics
 }
 
-/** Drop duplicate diagnostics (same file, position and rule). */
+/** Drop duplicate diagnostics without collapsing distinct problems at one token. */
 function dedupe(diagnostics: Diagnostic[]): Diagnostic[] {
   const seen = new Set<string>()
   const out: Diagnostic[] = []
   for (const d of diagnostics) {
-    const key = `${d.filename}:${d.line}:${d.column}:${d.rule}`
+    const key = `${d.filename}:${d.line}:${d.column}:${d.rule}:${d.message}`
     if (seen.has(key)) continue
     seen.add(key)
     out.push(d)
