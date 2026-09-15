@@ -83,6 +83,12 @@ const CASES = [
   ['vue/no-multiple-template-root', '<div /><span />', false],
   ['vue/no-restricted-v-on', '<div @click="go" />', false],
   ['vue/no-restricted-v-bind', '<div :v-test="value" />', true],
+  ['vue/no-restricted-static-attribute', '<div foo="bar" />', false],
+  ['vue/no-restricted-class', '<div class="forbidden" />', false],
+  ['vue/no-duplicate-class-names', '<div class="one one" />', true],
+  ['vue/prefer-separate-static-class', '<div :class="\'static\'" />', true],
+  ['vue/max-lines-per-block', '<div />', false],
+  ['vue/no-restricted-block', '<div />', false],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

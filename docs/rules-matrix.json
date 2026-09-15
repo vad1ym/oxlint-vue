@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 51,
+    "implemented": 55,
     "native": 55,
-    "partial": 27,
-    "missing": 120
+    "partial": 29,
+    "missing": 114
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2583,11 +2583,11 @@
     },
     {
       "name": "max-lines-per-block",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 5,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -2761,17 +2761,19 @@
     },
     {
       "name": "no-duplicate-class-names",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 47,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-duplicate-class-names.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-empty-component-block",
@@ -2979,11 +2981,11 @@
     },
     {
       "name": "no-restricted-block",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 5,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3007,11 +3009,11 @@
     },
     {
       "name": "no-restricted-class",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 17,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3091,11 +3093,11 @@
     },
     {
       "name": "no-restricted-static-attribute",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 18,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3599,17 +3601,19 @@
     },
     {
       "name": "prefer-separate-static-class",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 28,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/prefer-separate-static-class.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "prefer-single-event-payload",

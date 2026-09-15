@@ -182,6 +182,121 @@ function kebabToCamel(value: string): string {
   return value.replace(/-([a-z])/gu, (_, char: string) => char.toUpperCase())
 }
 
+function optionList(options: Record<string, unknown>): unknown[] {
+  return Array.isArray(options.rawOptions) ? options.rawOptions : []
+}
+
+function patternMatches(value: string, pattern: unknown): boolean {
+  return configuredNameMatch(value, [pattern])
+}
+
+interface StaticClassValue {
+  value: string
+  node: import('./ast.js').AstNode
+}
+
+interface ClassFragment extends StaticClassValue {
+  unconditional: boolean
+  parent?: import('./ast.js').AstNode
+}
+
+/** Static class fragments that Vue can determine without evaluating runtime state. */
+function staticClassValues(node: import('./ast.js').AstNode, textOnly = false): StaticClassValue[] {
+  node = unwrap(node)
+  if (node.type === 'StringLiteral') return [{ value: node.value, node }]
+  if (node.type === 'TemplateLiteral') {
+    return [
+      ...node.quasis.map(quasi => ({ value: quasi.value.cooked ?? '', node: quasi as import('./ast.js').AstNode })),
+      ...node.expressions.flatMap(exp => staticClassValues(exp, true)),
+    ]
+  }
+  if (node.type === 'BinaryExpression' && node.operator === '+') {
+    return [...staticClassValues(node.left, true), ...staticClassValues(node.right, true)]
+  }
+  if (textOnly) return []
+  if (node.type === 'ArrayExpression') {
+    return node.elements.flatMap(element => element && element.type !== 'SpreadElement'
+      ? staticClassValues(element) : [])
+  }
+  if (node.type === 'ObjectExpression') {
+    return node.properties.flatMap(property => {
+      if (property.type !== 'ObjectProperty') return []
+      const name = staticName(property.key)
+      return name === null ? [] : [{ value: name, node: property.key }]
+    })
+  }
+  if (node.type === 'ConditionalExpression') {
+    return [...staticClassValues(node.consequent), ...staticClassValues(node.alternate)]
+  }
+  if (node.type === 'LogicalExpression') {
+    return [...staticClassValues(node.left), ...staticClassValues(node.right)]
+  }
+  return []
+}
+
+function classNames(value: string): string[] {
+  return value.split(/\s+/u).filter(Boolean)
+}
+
+function classValueLoc(
+  exp: NonNullable<DirectiveNode['exp']>,
+  node: import('./ast.js').AstNode,
+  root: import('./ast.js').AstNode,
+): ReturnType<typeof loc> {
+  if (node.type === 'TemplateElement') return relativeLoc(exp, Math.max(0, (node.start ?? 1) - 2))
+  return (node.start ?? 0) <= 1 ? loc(exp) : astLoc(exp, node, root)
+}
+
+function classFragments(
+  node: import('./ast.js').AstNode,
+  unconditional = true,
+  parent?: import('./ast.js').AstNode,
+): ClassFragment[] {
+  node = unwrap(node)
+  if (node.type === 'StringLiteral') return [{ value: node.value, node, unconditional, ...(parent ? { parent } : {}) }]
+  if (node.type === 'TemplateLiteral') return [
+    ...node.quasis.map(quasi => ({ value: quasi.value.raw, node: quasi as import('./ast.js').AstNode, unconditional, parent: node })),
+    ...node.expressions.flatMap(exp => classFragments(exp, unconditional, node)),
+  ]
+  if (node.type === 'ArrayExpression') return node.elements.flatMap(element =>
+    element && element.type !== 'SpreadElement' ? classFragments(element, unconditional, node) : [])
+  if (node.type === 'ObjectExpression') return node.properties.flatMap(property => {
+    if (property.type !== 'ObjectProperty') return []
+    const name = staticName(property.key)
+    return name === null ? [] : [{ value: name, node: property.key, unconditional: false, parent: node }]
+  })
+  if (node.type === 'ConditionalExpression') return [
+    ...classFragments(node.consequent, false, node), ...classFragments(node.alternate, false, node),
+  ]
+  if (node.type === 'BinaryExpression' && node.operator === '+') return [
+    ...classFragments(node.left, unconditional, node), ...classFragments(node.right, unconditional, node),
+  ]
+  if (node.type === 'LogicalExpression') return [
+    ...classFragments(node.left, unconditional, node), ...classFragments(node.right, false, node),
+  ]
+  return []
+}
+
+function separateStaticClassValues(node: import('./ast.js').AstNode): StaticClassValue[] {
+  node = unwrap(node)
+  if (node.type === 'StringLiteral') return [{ value: node.value, node }]
+  if (node.type === 'TemplateLiteral') return node.quasis.flatMap((quasi, index) => {
+    const value = quasi.value.cooked ?? ''
+    const bounded = (index === 0 || /^\s/u.test(value))
+      && (index === node.expressions.length || /\s$/u.test(value))
+    return value.trim() && bounded ? [{ value: value.trim().replace(/\s+/gu, ' '), node: quasi as import('./ast.js').AstNode }] : []
+  })
+  if (node.type === 'ArrayExpression') return node.elements.flatMap(element =>
+    element && element.type !== 'SpreadElement' ? separateStaticClassValues(element) : [])
+  if (node.type === 'ObjectExpression') return node.properties.flatMap(property => {
+    if (property.type !== 'ObjectProperty' || property.computed && property.key.type !== 'StringLiteral'
+      || property.value.type !== 'BooleanLiteral' || property.value.value !== true) return []
+    const name = staticName(property.key)
+    return name === null ? [] : [{ value: name, node: property.key }]
+  })
+  return []
+}
+
 function directiveRestrictionMatches(
   item: unknown, name: string | undefined, modifiers: string[], tag: string,
 ): boolean {
@@ -1364,6 +1479,120 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/no-restricted-static-attribute',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const restrictions = optionList(options)
+      if (!restrictions.length) return
+      for (const prop of node.props) {
+        if (prop.type !== NodeTypes.ATTRIBUTE) continue
+        const value = prop.value?.content
+        const matched = restrictions.some(item => {
+          if (typeof item === 'string') return patternMatches(prop.name, item)
+          if (!item || typeof item !== 'object') return false
+          const rule = item as { key?: unknown, value?: unknown, element?: unknown }
+          if (!patternMatches(prop.name, rule.key)) return false
+          if (rule.value === true && value !== undefined && value !== prop.name) return false
+          if (typeof rule.value === 'string' && (value === undefined || !patternMatches(value, rule.value))) return false
+          return rule.element === undefined || patternMatches(node.tag, rule.element)
+        })
+        if (matched) report({ ...loc(prop), message: `Using static attribute '${prop.name}' is not allowed.` })
+      }
+    },
+  },
+  {
+    name: 'vue/no-restricted-class',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const restrictions = optionList(options)
+      if (!restrictions.length) return
+      const staticClass = findAttr(node, 'class')
+      for (const name of classNames(staticClass?.value?.content ?? '')) {
+        if (configuredNameMatch(name, restrictions)) report({ ...loc(staticClass!.value!), message: `'${name}' class is not allowed.` })
+      }
+      const binding = node.props.find(p => p.type === NodeTypes.DIRECTIVE
+        && p.name === 'bind' && argContent(p) === 'class') as DirectiveNode | undefined
+      const ast = expressionAst(binding?.exp)
+      if (!binding || !ast) return
+      for (const value of staticClassValues(ast)) {
+        for (const name of classNames(value.value)) {
+          if (configuredNameMatch(name, restrictions)) report({ ...classValueLoc(binding.exp!, value.node, ast), message: `'${name}' class is not allowed.` })
+        }
+      }
+    },
+  },
+  {
+    name: 'vue/no-duplicate-class-names',
+    severity: 'warning',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const staticNames = new Set<string>()
+      const staticClass = findAttr(node, 'class')
+      const inspect = (value: string, position: ReturnType<typeof loc>): Set<string> => {
+        const local = new Set<string>()
+        const duplicates = new Set<string>()
+        for (const name of classNames(value)) {
+          if (local.has(name)) duplicates.add(name)
+          local.add(name)
+        }
+        if (duplicates.size) report({ ...position, message: `Duplicate class name${duplicates.size > 1 ? 's' : ''} ${[...duplicates].map(name => `'${name}'`).join(', ')}.` })
+        return local
+      }
+      if (staticClass?.value) for (const name of inspect(staticClass.value.content, loc(staticClass.value))) staticNames.add(name)
+      const binding = node.props.find(p => p.type === NodeTypes.DIRECTIVE
+        && p.name === 'bind' && argContent(p) === 'class') as DirectiveNode | undefined
+      const ast = expressionAst(binding?.exp)
+      if (!binding || !ast) return
+      const collected = new Map<string, ClassFragment>()
+      const reported = new Set<string>()
+      for (const fragment of classFragments(ast)) {
+        const position = classValueLoc(binding.exp!, fragment.node, ast)
+        const names = inspect(fragment.value, position)
+        const intersection = [...names].filter(name => staticNames.has(name) && !reported.has(name))
+        if (intersection.length) {
+          report({ ...loc(node), message: `Duplicate class name${intersection.length > 1 ? 's' : ''} ${intersection.map(name => `'${name}'`).join(', ')}.` })
+          for (const name of intersection) reported.add(name)
+        }
+        for (const name of names) {
+          const previous = collected.get(name)
+          const sameJoinedParent = previous?.parent === fragment.parent
+            && (fragment.parent?.type === 'BinaryExpression' || fragment.parent?.type === 'TemplateLiteral')
+          if (previous && (previous.unconditional || fragment.unconditional || sameJoinedParent) && !reported.has(name)) {
+            report({ ...classValueLoc(binding.exp!, previous.parent ?? previous.node, ast), message: `Duplicate class name '${name}'.` })
+            reported.add(name)
+          } else if (!previous) collected.set(name, fragment)
+        }
+      }
+    },
+  },
+  {
+    name: 'vue/prefer-separate-static-class',
+    severity: 'warning',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const binding = node.props.find(p => p.type === NodeTypes.DIRECTIVE
+        && p.name === 'bind' && argContent(p) === 'class') as DirectiveNode | undefined
+      const ast = expressionAst(binding?.exp)
+      if (!binding || !ast) return
+      for (const value of separateStaticClassValues(ast)) {
+        const name = value.value.trim().replace(/\s+/gu, ' ')
+        if (name) report({ ...classValueLoc(binding.exp!, value.node, ast), message: `Static class "${name}" should be in a static class attribute.` })
+      }
+    },
+  },
+  {
+    name: 'vue/max-lines-per-block',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
+    name: 'vue/no-restricted-block',
+    severity: 'warning',
+    check() { /* SFC blocks are checked before the template AST walk. */ },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {
@@ -1896,6 +2125,50 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const blocks = [descriptor.template, descriptor.script, descriptor.scriptSetup, ...descriptor.styles, ...descriptor.customBlocks]
+    .filter(block => block !== null)
+  const maxLinesRule = active.find(entry => entry.rule.name === 'vue/max-lines-per-block')
+  if (maxLinesRule) {
+    const options = ruleOptions(config?.[maxLinesRule.rule.name])
+    if (options.configured) for (const block of blocks) {
+      const limit = typeof options[block.type] === 'number' ? options[block.type] as number : undefined
+      if (limit === undefined) continue
+      let lines = block.loc.end.line - block.loc.start.line - 1
+      if (options.skipBlankLines === true) lines -= block.content.split('\n').slice(1, -1).filter(line => !line.trim()).length
+      if (lines > limit) {
+        const opening = source.slice(0, block.loc.start.offset).lastIndexOf(`<${block.type}`)
+        out.push({ filename, rule: maxLinesRule.rule.name, severity: maxLinesRule.severity,
+          ...sourceLoc(source, Math.max(0, opening)),
+          message: `Block has too many lines (${lines}). Maximum allowed is ${limit}.` } as Diagnostic)
+      }
+    }
+  }
+  const restrictedBlockRule = active.find(entry => entry.rule.name === 'vue/no-restricted-block')
+  if (restrictedBlockRule) {
+    const options = ruleOptions(config?.[restrictedBlockRule.rule.name])
+    if (options.configured) {
+      const topLevelBlocks: { type: string, start: number }[] = []
+      const stack: string[] = []
+      for (const match of source.matchAll(/<\s*(\/?)\s*([\w-]+)(?:\s[^<>]*?)?(\/?)>/gu)) {
+        const closing = match[1] === '/'
+        const type = match[2]!
+        if (closing) { stack.pop(); continue }
+        if (!stack.length) topLevelBlocks.push({ type, start: match.index })
+        if (match[3] !== '/') stack.push(type)
+      }
+      for (const block of topLevelBlocks) {
+        const item = optionList(options).find(candidate => patternMatches(block.type,
+        typeof candidate === 'string' ? candidate
+          : candidate && typeof candidate === 'object' ? (candidate as { element?: unknown }).element : undefined))
+        if (item !== undefined) {
+          const message = item && typeof item === 'object' && typeof (item as { message?: unknown }).message === 'string'
+            ? (item as { message: string }).message : `Using <${block.type}> is not allowed.`
+          out.push({ filename, rule: restrictedBlockRule.rule.name, severity: restrictedBlockRule.severity,
+            ...sourceLoc(source, block.start), message } as Diagnostic)
+        }
+      }
+    }
+  }
   const rootRule = active.find(entry => entry.rule.name === 'vue/valid-template-root')
   if (rootRule && descriptor.template) {
     const block = descriptor.template

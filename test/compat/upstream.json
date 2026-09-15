@@ -61,6 +61,12 @@
     "tests/lib/rules/no-multiple-template-root.test.ts": "8cb6fb7afa2c4d6967736cb0f6a330cf2bcecdb729550c9a0036730f40a671d6",
     "tests/lib/rules/no-restricted-v-on.test.ts": "8c6f8c6c808c4ead80a37dbb48788fa5f0ab9c97c10259e3214e5b68a90f6943",
     "tests/lib/rules/no-restricted-v-bind.test.ts": "12801c6bfb6750852531a57f3bf931cd8a514791b35be1e9c7ba16f5189cf987",
+    "tests/lib/rules/no-restricted-static-attribute.test.ts": "8adb7463ff6e7413d6b0ffb2bfd80e61598e62ce2d468dddfd4cb1fb1ccbe139",
+    "tests/lib/rules/no-restricted-class.test.ts": "2b7e5174ba4c2bca4c65bb34503f5945d72c0c209ec3f3189adfe252c38fde84",
+    "tests/lib/rules/no-duplicate-class-names.test.ts": "24ab20e6faacb19537de8995749f7fd71c5dd3d5e3079d5a50aa565cf529340b",
+    "tests/lib/rules/prefer-separate-static-class.test.ts": "2fc89892ff7871b754421f4929a271712ecb8dbd571e4b7bf884904c4587c7dc",
+    "tests/lib/rules/max-lines-per-block.test.ts": "472718bfe7cba5d7205217ce104f6f76c5e0bfc09cc53dbcd5b7572ef6808af9",
+    "tests/lib/rules/no-restricted-block.test.ts": "e4d46791cbf61d12cc2e4bb8c773655326148716aab57b503bbeacf609add0af",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -12954,6 +12960,1669 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/1",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/2",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/3",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/4",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div v-model=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/5",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/6",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/7",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "key": "foo",
+          "value": "bar"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/valid/8",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\"></div><input bar></template>",
+      "options": [
+        {
+          "key": "foo",
+          "element": "input"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/1",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/2",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"bar\" bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/3",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\" bar=\"bar\"></div></template>",
+      "options": [
+        "/^f/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/4",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"bar\" bar=\"foo\"></div></template>",
+      "options": [
+        "foo",
+        "bar"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/5",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"bar\" bar></div></template>",
+      "options": [
+        {
+          "key": "/^(foo|bar)$/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/6",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo=\"foo\" /><div foo=\"bar\" /></template>",
+      "options": [
+        {
+          "key": "foo",
+          "value": "bar"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/7",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "<template><div foo v bar /><div foo=\"foo\" vv=\"foo\" bar=\"vfoo\" /><div vvv=\"foo\" bar=\"vv\" /></template>",
+      "options": [
+        "/^vv/",
+        {
+          "key": "foo",
+          "value": true
+        },
+        {
+          "key": "bar",
+          "value": "/^vv/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/8",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "\n      <template>\n        <div foo />\n        <MyButton foo bar />\n      </template>",
+      "options": [
+        {
+          "key": "foo",
+          "element": "/^My/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/9",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "\n      <template>\n        <div foo=\"x\" />\n      </template>",
+      "options": [
+        "/^f/",
+        {
+          "key": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-static-attribute/invalid/10",
+      "rule": "vue/no-restricted-static-attribute",
+      "code": "\n      <template>\n        <div foo=\"x\" />\n      </template>",
+      "options": [
+        {
+          "key": "foo",
+          "message": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/valid/1",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class=\"allowed\">Content</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/2",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class>Content</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/3",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class>Content</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/4",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class=\"allowed\"\">Content</div></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/5",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"'allowed' + forbidden\">Content</div></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/6",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div @class=\"forbidden\">Content</div></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/7",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"'' + {forbidden: true}\">Content</div></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/valid/8",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class=\"allowed\">Content</div></template>",
+      "options": [
+        "/^for(bidden|gotten)/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-class/invalid/1",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class=\"forbidden allowed\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/2",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"'forbidden' + ' ' + 'allowed' + someVar\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/3",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"{'forbidden': someBool, someVar: true}\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/4",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"{forbidden: someBool}\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/5",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"`forbidden ${someVar}`\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/6",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"'forbidden'\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/7",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"['forbidden', 'allowed']\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/8",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div :class=\"['allowed forbidden', someString]\" /></template>",
+      "options": [
+        "forbidden"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-class/invalid/9",
+      "rule": "vue/no-restricted-class",
+      "code": "<template><div class=\"forbidden allowed\" /></template>",
+      "options": [
+        "/^for(bidden|gotten)/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/valid/1",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "no-classes.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/2",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\"></div></template>",
+      "options": [],
+      "filename": "one-class.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/3",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo bar baz\"></div></template>",
+      "options": [],
+      "filename": "multiple-different-classes.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/4",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"'foo bar baz'\"></div></template>",
+      "options": [],
+      "filename": "no-duplicate-class-in-directive-string.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/5",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"`foo bar baz`\"></div></template>",
+      "options": [],
+      "filename": "no-duplicate-class-in-directive-literal.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/6",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"{ 'foo bar baz': true }\"></div></template>",
+      "options": [],
+      "filename": "no-duplicate-class-in-directive-object.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/7",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"{ 'foo': true, 'foo bar': true }\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-in-different-directive-object-keys.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/8",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive ? 'foo' : 'bar'\"></div></template>",
+      "options": [],
+      "filename": "class-conditional-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/9",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive ? 'foo' : 'foo'\"></div></template>",
+      "options": [],
+      "filename": "class-conditional-duplicate-expression-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/10",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<div :class=\"{ 'foo bar': isActive, 'foo': isAnotherActive }\"></div>",
+      "options": [],
+      "filename": "class-object-duplicate-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/11",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"[isActive1 && { 'foo': isActive2, 'bar': isActive3 }, isActive4 && 'bar']\"></div></template>",
+      "options": [],
+      "filename": "class-non-intersecting-conditions.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/12",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"[isActive1 && 'foo', isActive2 && 'foo']\"></div></template>",
+      "options": [],
+      "filename": "class-multiple-logical-non-intersecting.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/valid/13",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"[isActive1 && ('foo' + ' bar'), isActive2 && 'foo']\"></div></template>",
+      "options": [],
+      "filename": "class-binary-in-logical-non-intersecting.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/1",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo foo\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/2",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo bar foo baz bar\"></div></template>",
+      "options": [],
+      "filename": "multiple-duplicate-classes.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/3",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"'foo foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-in-directive-string.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/4",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"`foo foo`\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-in-directive-literal.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/5",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"{ 'foo foo': true }\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-directive-object-key.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/6",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"{ 'foo foo bar': true, 'bar bar baz': true }\"></div></template>",
+      "options": [],
+      "filename": "multiple-duplicate-class-directive-object-keys.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/7",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo foo']\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-directive-array-item.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/8",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo foo', 'bar bar baz']\"></div></template>",
+      "options": [],
+      "filename": "multiple-duplicate-classes-directive-array-items.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/9",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo foo', { 'bar bar baz': true }]\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-in-mixed-directive.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/10",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive ? 'foo foo' : 'bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-conditional-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/11",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"'foo foo ' + ' bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-binary-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/12",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo foo     bar\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-preserved-spaces-1.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/13",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo bar    baz foo\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-preserved-spaces-2.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/14",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo bar foo     baz\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-preserved-spaces-3.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/15",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"'foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-string.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/16",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"`foo`\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-literal.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/17",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"'foo bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/18",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo bar\" :class=\"'foo bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-multiple-duplicates.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/19",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"['foo', 'bar']\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-array.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/20",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"{ 'foo': true }\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-object.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/21",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"['foo', { 'bar': true }]\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-mixed.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/22",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"'foo ' + 'bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-binary.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/23",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div class=\"foo\" :class=\"isActive ? 'foo' : 'bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-attribute-conditional.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/24",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo', 'foo']\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-node-array.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/25",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"'foo ' + 'foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-node-binary.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/26",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo', { 'foo': true }]\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-cross-node-mixed.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/27",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive && 'foo foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-logical-expression-and.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/28",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive || 'foo foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-logical-expression-or.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/29",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive ?? 'foo foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-logical-expression-nullish-coalescing.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/30",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive ?? isAnotherActive ?? 'foo foo'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-nested-logical-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/31",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"['foo', isActive ?? 'bar bar']\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-logical-expression-in-array.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/32",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isAnotherActive ? isActive ?? 'foo foo' : 'bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-logical-expression-in-conditional.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/33",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive && 'bar' + ' bar'\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-binary-in-logical-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-duplicate-class-names/invalid/34",
+      "rule": "vue/no-duplicate-class-names",
+      "code": "<template><div :class=\"isActive && `foo ${bar} foo`\"></div></template>",
+      "options": [],
+      "filename": "duplicate-class-template-literal-in-logical-expression.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/valid/1",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/2",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"dynamicClass\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/3",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`dynamic-class-${foo}`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/4",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`${foo}-dynamic-class`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/5",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"'dynamic-class-' + foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/6",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" :class=\"dynamicClass\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/7",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" :class=\"[dynamicClass]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/8",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" :class=\"{'dynamic-class': foo}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/9",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" :class=\"{foo, [computedName]: true}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/valid/10",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div class=\"static-class\" :class=\"[dynamicClass, {'dynamic-class': foo}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/1",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div v-bind:class=\"'static-class'\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/2",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"'static-class'\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/3",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`static-class`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/4",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`form-item input ${isDisabled ? 'disabled' : ''}`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/5",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`${dynamicClass} static-class`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/6",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"`${start} static-class ${end}`\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/7",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class='\"static-class\"' /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/8",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"['static-class']\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/9",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"{'static-class': true}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/10",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"{foo: true}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/11",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"{['static-class']: true}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/12",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"['static-class', dynamicClass]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/13",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"[dynamicClass, otherDynamicClass, 'static-class']\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/14",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"{'static-class': true, 'dynamic-class': foo}\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/15",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"[{'dynamic-class': foo, 'static-class': true}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/16",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "<template><div :class=\"[dynamicClass, {staticClass: true}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/17",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "\n        <template>\n          <div\n            class=\"other-class\"\n            other-attribute\n            :class=\"[\n              {'dynamic-class-a': foo, 'static-class': true},\n              dynamicClassB,\n            ]\" />\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-separate-static-class/invalid/18",
+      "rule": "vue/prefer-separate-static-class",
+      "code": "\n        <template>\n          <div\n            class=\"other-class-a other-class-b\"\n            other-attribute\n            :class=\"[\n              'static-class-a',\n              {'static-class-b': true, 'dynamic-class-a': foo},\n              dynamicClassB,\n            ]\" />\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "max-lines-per-block/valid/1",
+      "rule": "vue/max-lines-per-block",
+      "code": "\n      <script>\n        console.log(1)\n      </script>\n      <template>\n        <div></div>\n      </template>\n      ",
+      "options": [
+        {
+          "template": 1
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-lines-per-block/valid/2",
+      "rule": "vue/max-lines-per-block",
+      "code": "\n      <template>\n\n        <div></div>\n      </template>\n      ",
+      "options": [
+        {
+          "template": 1,
+          "skipBlankLines": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-lines-per-block/valid/3",
+      "rule": "vue/max-lines-per-block",
+      "code": "\n      <template>\n        <div>\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "script": 1,
+          "style": 1
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-lines-per-block/invalid/1",
+      "rule": "vue/max-lines-per-block",
+      "code": "\n      <template>\n\n        <div></div>\n      </template>\n      ",
+      "options": [
+        {
+          "template": 1
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-lines-per-block/invalid/2",
+      "rule": "vue/max-lines-per-block",
+      "code": "\n      <script>\n\n        const a = 1\n        console.log(a)\n      </script>\n      ",
+      "options": [
+        {
+          "script": 1,
+          "skipBlankLines": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-block/valid/1",
+      "rule": "vue/no-restricted-block",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-block/valid/2",
+      "rule": "vue/no-restricted-block",
+      "code": "<style>.foo {}</style>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-block/invalid/1",
+      "rule": "vue/no-restricted-block",
+      "code": "<style>.foo {}</style><foo></foo>",
+      "options": [
+        "style",
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-block/invalid/2",
+      "rule": "vue/no-restricted-block",
+      "code": "<forbidden-block></forbidden-block>\n      <block-forbidden></block-forbidden>",
+      "options": [
+        "/forbidden/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-block/invalid/3",
+      "rule": "vue/no-restricted-block",
+      "code": "<style>.foo {}</style>\n      <forbidden-block></forbidden-block>\n      <block-forbidden></block-forbidden>",
+      "options": [
+        {
+          "element": "style",
+          "message": "Do not use <style> block in this project."
+        },
+        {
+          "element": "/forbidden/",
+          "message": "Do not use blocks that include `forbidden` in their name."
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 3
     },
     {
       "id": "require-v-for-key/valid/1",
