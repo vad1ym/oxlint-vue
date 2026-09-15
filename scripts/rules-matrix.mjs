@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process'
 import assert from 'node:assert/strict'
 import vue from 'eslint-plugin-vue'
 import { structuralRuleNames } from '../dist/structural.js'
+import { coreProxyRules } from '../dist/core-proxies.js'
 
 const require = createRequire(import.meta.url)
 const enginePackage = require.resolve('oxlint/package.json')
@@ -31,6 +32,9 @@ const rules = Object.entries(vue.rules).map(([name, rule]) => {
   } else if (nativeRule) {
     status = 'native'
     notes.push('Available in oxlint; options and broader wrapper behavior remain unmeasured')
+  } else if (name in coreProxyRules) {
+    status = 'native'
+    notes.push(`Forwarded to oxlint core rule ${coreProxyRules[name]}; options remain unmeasured`)
   } else if (name === 'no-parsing-error') {
     status = 'partial'
     notes.push('Compiler parsing diagnostics only; reference options and severity not implemented')

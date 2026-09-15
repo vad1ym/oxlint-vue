@@ -13,6 +13,26 @@ const execFileAsync = promisify(execFile)
 const ROOT = path.resolve(import.meta.dirname, '..')
 const OXLINT = resolveBin('oxlint', ROOT, import.meta.url)
 
+test('Vue core proxy rules lint template expressions under their Vue names', async () => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxxx-proxy-'))
+  try {
+    const vue = path.join(dir, 'Proxy.vue')
+    await fs.writeFile(vue, `<template><button
+  type="button"
+  @click="console.log(value == 1)"
+>x</button></template>
+<script setup>const value = 1</script>`)
+    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({
+      plugins: [], categories: {}, rules: {},
+      settings: { vue: { rules: { 'vue/eqeqeq': 'error', 'vue/no-console': 'error' } } },
+    }))
+    const diagnostics = await runOxlint([vue], { cwd: dir, oxlintPath: OXLINT })
+    assert.deepEqual(diagnostics.map(item => item.rule).toSorted(), ['vue/eqeqeq', 'vue/no-console'])
+  } finally {
+    await fs.rm(dir, { recursive: true, force: true })
+  }
+})
+
 /**
  * A virtual file that fails to parse silently disables every rule for that
  * SFC -- the worst failure mode, because the tool reports success. So we assert

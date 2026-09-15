@@ -3,9 +3,9 @@
   "oxlintVersion": "1.78.0",
   "counts": {
     "implemented": 46,
-    "native": 46,
+    "native": 55,
     "partial": 23,
-    "missing": 138
+    "missing": 129
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2411,7 +2411,7 @@
     },
     {
       "name": "eqeqeq",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2421,7 +2421,9 @@
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/eqeqeq.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule eqeqeq; options remain unmeasured"
+      ]
     },
     {
       "name": "func-call-spacing",
@@ -2697,7 +2699,7 @@
     },
     {
       "name": "no-console",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2707,11 +2709,13 @@
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-console.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-console; options remain unmeasured"
+      ]
     },
     {
       "name": "no-constant-condition",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2721,7 +2725,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-constant-condition.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-constant-condition; options remain unmeasured"
+      ]
     },
     {
       "name": "no-custom-modifiers-on-v-model",
@@ -2869,7 +2875,7 @@
     },
     {
       "name": "no-loss-of-precision",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2879,7 +2885,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-loss-of-precision.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-loss-of-precision; options remain unmeasured"
+      ]
     },
     {
       "name": "no-multiple-objects-in-class",
@@ -2913,7 +2921,7 @@
     },
     {
       "name": "no-negated-condition",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -2923,7 +2931,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-negated-condition.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-negated-condition; options remain unmeasured"
+      ]
     },
     {
       "name": "no-negated-v-if-condition",
@@ -3179,7 +3189,7 @@
     },
     {
       "name": "no-sparse-arrays",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -3189,7 +3199,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-sparse-arrays.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-sparse-arrays; options remain unmeasured"
+      ]
     },
     {
       "name": "no-static-inline-styles",
@@ -3349,7 +3361,7 @@
     },
     {
       "name": "no-useless-concat",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -3359,7 +3371,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-useless-concat.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule no-useless-concat; options remain unmeasured"
+      ]
     },
     {
       "name": "no-useless-mustaches",
@@ -3483,7 +3497,7 @@
     },
     {
       "name": "object-shorthand",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -3493,7 +3507,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/object-shorthand.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule object-shorthand; options remain unmeasured"
+      ]
     },
     {
       "name": "operator-linebreak",
@@ -3609,7 +3625,7 @@
     },
     {
       "name": "prefer-template",
-      "status": "missing",
+      "status": "native",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
@@ -3619,7 +3635,9 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/prefer-template.html",
-      "notes": []
+      "notes": [
+        "Forwarded to oxlint core rule prefer-template; options remain unmeasured"
+      ]
     },
     {
       "name": "prefer-true-attribute-shorthand",

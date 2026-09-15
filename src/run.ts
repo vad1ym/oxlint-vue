@@ -24,6 +24,7 @@ import { isTemplateUsedBinding } from './template-usage.js'
 import { preprocessingDiagnostics } from './preprocess-diagnostics.js'
 import { preprocess } from './preprocess.js'
 import { checkTemplate } from './structural.js'
+import { coreProxyRules } from './core-proxies.js'
 
 /** Options accepted by {@link runOxlint}. */
 export interface RunOptions {
@@ -177,9 +178,15 @@ export async function runOxlint(
 
     // Both children must exit before cleanup or returning an error: the native
     // pass may still hold the caller's source directory open on Windows.
+    const configuredProxies = Object.entries(coreProxyRules).filter(([vueRule]) =>
+      Object.hasOwn(structuralConfig, `vue/${vueRule}`))
+    const proxyArgs = configuredProxies.flatMap(([vueRule, coreRule]) => {
+      const severity = configuredSeverity(structuralConfig, `vue/${vueRule}`)
+      return [severity === 'off' ? '-A' : severity === 'warn' ? '-W' : '-D', coreRule]
+    })
     const [virtualResult, nativeResult] = await Promise.allSettled([
       backMap.size
-        ? invokeOxlint(oxlintPath, tmpRoot, virtualArgs, backMap, cwd)
+        ? invokeOxlint(oxlintPath, tmpRoot, [...virtualArgs, ...proxyArgs], backMap, cwd)
         : [],
       // Second pass: oxlint natively on the real .vue files. It reads <script>
       // and knows the block is `<script setup>`, so SFC-aware rules that the
@@ -196,7 +203,15 @@ export async function runOxlint(
 
     if (virtualResult.status === 'rejected') throw virtualResult.reason
     if (nativeResult.status === 'rejected') throw nativeResult.reason
-    const virtual = virtualResult.value
+    const enabledProxy = new Map<string, string>(configuredProxies
+      .filter(([vueRule]) => configuredSeverity(structuralConfig, `vue/${vueRule}`) !== 'off')
+      .map(([vueRule, coreRule]) => [coreRule, `vue/${vueRule}`]))
+    const virtual = virtualResult.value.map(diagnostic => {
+      const parenthesized = diagnostic.rule.match(/^[^(]+\(([^)]+)\)$/u)
+      const bare = parenthesized?.[1] ?? diagnostic.rule.replace(/^eslint\//u, '')
+      const alias = enabledProxy.get(bare)
+      return alias ? { ...diagnostic, rule: alias } : diagnostic
+    })
     const native = nativeResult.value
 
     return dedupe([...virtual, ...native, ...structural]).filter(d => {
