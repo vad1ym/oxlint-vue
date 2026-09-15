@@ -7,6 +7,7 @@ import { rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { isTemplateUsedBinding } from './template-usage.js'
 import { preprocess } from './preprocess.js'
 import { spawnableFrom } from './resolve.js'
 import { findConfig, loadConfig, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
@@ -199,6 +200,7 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
   })
 
   /** uri -> structural diagnostics for the version we last preprocessed. */
+  const preprocessedByUri = new Map<string, ReturnType<typeof preprocess>>()
   const structuralByUri = new Map<string, LspDiagnostic[]>()
   /** Virtual files written next to real sources; removed on close and exit. */
   const virtualFiles = new Set<string>()
@@ -236,10 +238,12 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
     try {
       result = preprocess(text, filename)
     } catch {
+      preprocessedByUri.delete(uri)
       structuralByUri.set(uri, [])
       return text
     }
 
+    preprocessedByUri.set(uri, result)
     const structural: LspDiagnostic[] = []
     if (result.descriptor.template?.ast) {
       for (const d of checkTemplate(
@@ -313,6 +317,7 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
         }
       } else if (msg.method === 'textDocument/didClose') {
         structuralByUri.delete(uri)
+        preprocessedByUri.delete(uri)
         try {
           dropVirtual(`${fileURLToPath(uri)}${VIRTUAL_SUFFIX}`)
         } catch { /* uri was not a path */ }
@@ -346,7 +351,13 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
         // here as a filter. Without it every template expression shows up as
         // `no-unused-expressions` in the editor.
         msg.params.diagnostics = [
-          ...(msg.params.diagnostics ?? []).filter(d => !isArtefact(d)),
+          ...(msg.params.diagnostics ?? []).filter(d => {
+            if (isArtefact(d)) return false
+            const pre = preprocessedByUri.get(real)
+            return !pre || !/(?:^|[/(])no-unused-vars\)?$/.test(String(d.code))
+              || !isTemplateUsedBinding(pre.code, pre.templateUsedBindings,
+                d.range.start.line + 1, d.range.start.character + 1, true)
+          }),
           ...(structuralByUri.get(real) ?? []),
         ]
       }

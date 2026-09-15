@@ -9,8 +9,9 @@ import type {
 import type { PreprocessResult } from './types.js'
 // NodeTypes is a real enum, so the magic numbers (`node.type === 1`) that the
 // JavaScript version carried around become named constants.
-import { ElementTypes, NodeTypes } from '@vue/compiler-core'
+import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
 import { parse } from '@vue/compiler-sfc'
+import { templateUsedBindings } from './template-usage.js'
 
 /**
  * Padding-based SFC -> virtual TS transform.
@@ -199,7 +200,7 @@ export function preprocess(
     )
   }
 
-  return { code, descriptor, parseErrors, hasScript: scripts.length > 0 }
+  return { code, descriptor, parseErrors, hasScript: scripts.length > 0, templateUsedBindings: templateUsedBindings(descriptor) }
 }
 
 /** Built-in directives resolve to no user binding. */
@@ -522,7 +523,6 @@ function extractTemplate(
       ? [
           { prefix: ';(', suffix: ');' },
           { prefix: '(', suffix: ');' },
-          { prefix: '(', suffix: ')' },
         ]
       : [
           { prefix: ';(', suffix: ');' },
@@ -536,6 +536,10 @@ function extractTemplate(
     for (let i = start; i < end; i++) chars[i] = source[i]!
 
     for (const w of wrappers) {
+      let overlaps = false
+      for (let at = start - w.prefix.length; at < start; at++) overlaps ||= written.has(at)
+      for (let at = end; at < end + w.suffix.length; at++) overlaps ||= written.has(at)
+      if (overlaps) continue
       if (wrapExpression(chars, { start, end, slotStart, slotEnd, ...w })) {
         claim(start - w.prefix.length, end + w.suffix.length)
         out.push({ start, end })
@@ -565,10 +569,8 @@ function extractTemplate(
    *   v-for="item in items"  ->  items.map(item=>{        ... })
    *   v-slot="{ row }"       ->  (({ row })=>{            ... })
    *
-   * Both the iterated source and the binding pattern keep their ORIGINAL
-   * offsets, so `no-unused-vars` on the loop variable and `no-undef` on the
-   * source point at the right place in the .vue file. The closing `})` is
-   * parked in the element's closing tag, which is padding by then.
+   * The opener is synthetic; ordinary body expressions retain their offsets.
+   * Park the closer after every expression, including same-element attributes.
    */
   function emitScope(
     prop: DirectiveNode,
@@ -577,13 +579,18 @@ function extractTemplate(
   ): void {
     const dirStart = prop.loc.start.offset
     const dirEnd = prop.loc.end.offset
+    if (chars[dirStart - 1] === ' ' && !written.has(dirStart - 1)) {
+      chars[dirStart - 1] = ';'
+      claim(dirStart - 1, dirStart)
+    }
 
     if (prop.name === 'for') {
       const r = prop.forParseResult
       if (!r?.source || !r.value) return
 
       const srcText = source.slice(r.source.loc.start.offset, r.source.loc.end.offset)
-      const valText = source.slice(r.value.loc.start.offset, r.value.loc.end.offset)
+      const aliases = [r.value, r.key, r.index].filter((exp): exp is NonNullable<typeof exp> => !!exp)
+      const valText = aliases.map(exp => source.slice(exp.loc.start.offset, exp.loc.end.offset)).join(',')
 
       // `v-for="i in 5"` would yield `5.map(...)`, where `5.` is a malformed
       // number. Any non-identifier source is also safer parenthesised.
@@ -593,17 +600,35 @@ function extractTemplate(
       const valSafe = IDENTIFIER.test(valText.trim()) ? valText : `(${valText})`
 
       const open = `${srcSafe}.map(${valSafe}=>{`
+      if (deferred.length) {
+        // Prefer opening the scope before the first deferred expression. This
+        // keeps its full syntax and diagnostics at the original offsets.
+        const first = Math.min(...deferred.map(exp => exp!.loc.start.offset)) - 1
+        for (let at = node.loc.start.offset; at + open.length <= first; at++) {
+          if (canWrite(chars, at, open.length, first)
+            && chars.slice(at, at + open.length).every((c, i) => c === ' ' && !written.has(at + i))) {
+            writeAt(chars, at, open, first)
+            claim(at, at + open.length)
+            for (const exp of deferred) emitExpression(exp)
+            if (closeScope(node, dirEnd) === null) {
+              throw new Error('not enough trailing padding to close v-for scope')
+            }
+            return
+          }
+        }
+      }
       // Parenthesising costs up to 4 extra characters, which may no longer fit
       // in the directive's own span; fall back to padding rather than corrupt.
       if (!writeAt(chars, dirStart, open, dirEnd)) {
         blankRegion(chars, dirStart, dirEnd)
         return
       }
-      if (!closeScope(node, dirEnd)) {
+      const closeAt = closeScope(node, dirEnd)
+      if (closeAt === null) {
         blankRegion(chars, dirStart, dirEnd)
         return
       }
-      emitDeferred(deferred, dirStart + open.length, node)
+      emitDeferred(deferred, dirStart + open.length, closeAt)
       out.push({ start: dirStart, end: dirEnd, kind: 'v-for' })
       return
     }
@@ -612,7 +637,7 @@ function extractTemplate(
       const expText = source.slice(prop.exp.loc.start.offset, prop.exp.loc.end.offset)
       const open = `((${expText})=>{`
       if (!writeAt(chars, dirStart, open, dirEnd)) return
-      if (!closeScope(node, dirEnd)) {
+      if (closeScope(node, dirEnd) === null) {
         blankRegion(chars, dirStart, dirEnd)
         return
       }
@@ -626,56 +651,62 @@ function extractTemplate(
    * These are expressions written to the left of their own `v-for`
    * (`<component :is="node" v-for="(node) in list">`). Emitting them in place
    * would put the use before the binding; emitting them here, just inside
-   * `map(node => {`, matches what Vue actually does. Only bare identifiers are
-   * re-emitted: a full expression rarely fits, and the identifier alone is
-   * what `no-unused-vars` needs on both ends.
+   * `map(node => {`, records their uses. When the opener could not be moved,
+   * extract free references from the expression AST, excluding property keys
+   * and callback locals. Full expression emission is preferred above.
    */
   function emitDeferred(
     deferred: DirectiveNode['exp'][],
     from: number,
-    node: ElementNode,
+    limit: number,
   ): void {
     if (!deferred.length) return
 
-    const names = deferred
-      .map(e => (e?.type === NodeTypes.SIMPLE_EXPRESSION ? e.content.trim() : ''))
-      .filter(n => n && IDENTIFIER.test(n))
-    if (!names.length) return
-
-    const text = `${[...new Set(names)].join(';')};`
-    // The body runs from just past the opener to the element's end; the closer
-    // was parked at its tail, so scan forward for a free run before it.
-    const limit = node.loc.end.offset
-    for (let at = from; at + text.length <= limit; at++) {
-      if (canWrite(chars, at, text.length, limit)
-        && !written.has(at)
-        && chars.slice(at, at + text.length).every(c => c === ' ')) {
-        writeAt(chars, at, text, at + text.length)
-        claim(at, at + text.length)
-        return
+    const names = new Set<string>()
+    for (const exp of deferred) {
+      if (exp?.type !== NodeTypes.SIMPLE_EXPRESSION) continue
+      if (exp.ast) walkIdentifiers(exp.ast, id => names.add(id.name))
+      else if (IDENTIFIER.test(exp.content.trim())) names.add(exp.content.trim())
+    }
+    for (const name of names) {
+      const text = `${name};`
+      for (let at = from; at + text.length <= limit; at++) {
+        if (canWrite(chars, at, text.length, limit)
+          && chars.slice(at, at + text.length).every((c, i) => c === ' ' && !written.has(at + i))) {
+          writeAt(chars, at, text, at + text.length)
+          claim(at, at + text.length)
+          break
+        }
       }
     }
   }
 
   /**
    * Park a scope closer in the element's trailing padding. Prefers the closing
-   * tag (`</p>`), falling back to the self-closing `/>`. Returns false when
+   * tag (`</p>`), falling back to the self-closing `/>`. Returns null when
    * there is genuinely no room, so the caller can back the whole thing out.
    */
-  function closeScope(node: ElementNode, notBefore: number, closer = '});'): boolean {
+  function closeScope(node: ElementNode, notBefore: number): number | null {
     const end = node.loc.end.offset
-    const start = Math.max(notBefore, node.loc.start.offset)
+    // Never close before an expression on this element or inside a child.
+    let start = Math.max(notBefore, node.loc.start.offset)
+    for (let at = end - 1; at >= start; at--) {
+      if (written.has(at)) { start = at + 1; break }
+    }
     // Scan backwards for a run of padding wide enough to hold the closer.
-    for (let at = end - closer.length; at >= start; at--) {
-      let free = true
-      for (let i = 0; i < closer.length; i++) {
-        if (chars[at + i] !== ' ') { free = false; break }
-      }
-      if (free) {
-        writeAt(chars, at, closer, at + closer.length)
-        return true
+    for (const closer of ['});', '})']) {
+      for (let at = end - closer.length; at >= start; at--) {
+        let free = true
+        for (let i = 0; i < closer.length; i++) {
+          if (chars[at + i] !== ' ') { free = false; break }
+        }
+        if (free) {
+          writeAt(chars, at, closer, at + closer.length)
+          claim(at, at + closer.length)
+          return at
+        }
       }
     }
-    return false
+    return null
   }
 }

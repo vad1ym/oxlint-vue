@@ -83,8 +83,10 @@ stays where it was, everything else becomes spaces, and template expressions
 keep their original offsets. So an offset in the virtual file is an offset in
 the `.vue`: no source maps, no diagnostic translation.
 
-Scope is not modelled by hand. `v-for="item in items"` is emitted as
-`items.map(item => {…})`, and oxlint's own analyser resolves the binding.
+Loop scopes use real JavaScript: `v-for="item in items"` is emitted as
+`items.map(item => {…})`, and oxlint's analyser resolves the binding. Vue AST
+usage tracking also accounts for template assignments and CSS `v-bind()` in
+`no-unused-vars`.
 
 Verified on 4726 real `.vue` files: the invariant holds on every one, and
 every virtual file parses. [Details →](./docs/internals.md)

@@ -20,6 +20,7 @@ import {
 } from './exec.js'
 import { parseJsonc } from './jsonc.js'
 import { resolveBin, spawnableFrom } from './resolve.js'
+import { isTemplateUsedBinding } from './template-usage.js'
 import { preprocess } from './preprocess.js'
 import { checkTemplate } from './structural.js'
 
@@ -103,6 +104,7 @@ export async function runOxlint(
   /** virtual absolute path -> original absolute path */
   const backMap = new Map<string, string>()
   const structural: Diagnostic[] = []
+  const preprocessed = new Map<string, ReturnType<typeof preprocess>>()
 
   try {
     await Promise.all(files.map(async (file) => {
@@ -134,6 +136,8 @@ export async function runOxlint(
         })
         return
       }
+
+      preprocessed.set(abs, result)
 
       // Structural checks run on the template AST, which padding discards.
       if (result.descriptor.template?.ast) {
@@ -171,7 +175,11 @@ export async function runOxlint(
       runNativePass(oxlintPath, files, cwd, virtualArgs),
     ])
 
-    return dedupe([...virtual, ...native, ...structural])
+    return dedupe([...virtual, ...native, ...structural]).filter(d => {
+      const pre = preprocessed.get(d.filename)
+      return !pre || !/(?:^|[/(])no-unused-vars\)?$/.test(d.rule)
+        || !isTemplateUsedBinding(pre.code, pre.templateUsedBindings, d.line, d.column)
+    })
   } finally {
     await fs.rm(tmpRoot, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 })
   }

@@ -315,3 +315,27 @@ test('a JS config reaches the child server', async () => {
     await fs.rm(dir, { recursive: true, force: true, maxRetries: 20, retryDelay: 100 })
   }
 })
+
+test('Vue usages suppress only the matching script declaration in the editor', { timeout: 30000 }, async () => {
+  const source = `<template><div @click="active = true; save()" /></template>
+<script setup>
+let active = false
+const boxColor = 'red'
+function save() { const active = 123 }
+const unusedCanary = 1
+</script>
+<style>.box { color: v-bind(boxColor); }</style>
+`
+  await withServer({ 'Usage.vue': source }, async (client, dir) => {
+    const uri = fileUri(path.join(dir, 'Usage.vue'))
+    client.send({ jsonrpc: '2.0', method: 'textDocument/didOpen', params: {
+      textDocument: { uri, languageId: 'vue', version: 1, text: source },
+    } })
+    const published = await waitFor(() => client.latestFor(uri))
+    assert.ok(published)
+    const unused = published.params.diagnostics.filter(d => String(d.code).includes('no-unused-vars'))
+    assert.equal(unused.length, 2, JSON.stringify(unused))
+    assert.ok(unused.some(d => d.message.includes('unusedCanary')))
+    assert.ok(unused.some(d => d.message.includes('active') && d.range.start.line === 4))
+  })
+})

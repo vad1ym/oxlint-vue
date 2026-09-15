@@ -8,7 +8,7 @@ valid syntax.
 So **an offset in the virtual file is an offset in the `.vue`** — no source
 maps, no diagnostic translation, no range arithmetic.
 
-Scope is not modelled by hand. Directives are emitted as code that already
+Directives are emitted as code that already
 creates the binding, and oxlint's own analyser resolves it:
 
 ```js
@@ -24,6 +24,16 @@ Because padding erases markup, references are re-emitted explicitly —
 `<Icon />` as a component, `v-maska` as a directive, `ref="el"` as a binding.
 On one real project this took `no-unused-vars` from **397 false positives down
 to 10 real ones**.
+
+Script-setup binding uses are also resolved from Vue's expression AST and CSS
+`v-bind()` expressions. Template loop/slot locals and function parameters are
+excluded before matching top-level script declarations. CLI and LSP discard
+`no-unused-vars` only at those declaration ranges; nested same-named variables
+remain checked. This accounts for writes to template refs without changing the
+script or disabling the rule.
+
+Diagnostics are mapped by canonical full paths. Missing mappings, malformed
+engine output and failed engine invocations are tool errors, never clean runs.
 
 ## Formatting
 

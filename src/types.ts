@@ -1,3 +1,4 @@
+import type { UsedBinding } from './template-usage.js'
 import type { SFCDescriptor } from '@vue/compiler-sfc'
 
 /**
@@ -26,6 +27,7 @@ export interface PreprocessResult {
   descriptor: SFCDescriptor
   parseErrors: { message: string, offset: number }[]
   hasScript: boolean
+  templateUsedBindings: UsedBinding[]
 }
 
 /**
