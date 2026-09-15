@@ -3,6 +3,7 @@
 const seeds = [
   ['multi-word-component-names', '<div/>'],
   ['no-unused-components', '<div/>'],
+  ['no-ref-as-operand', '<div/>'],
   ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],

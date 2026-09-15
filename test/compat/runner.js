@@ -36,6 +36,8 @@ export function compareCase(entry, severity = 2) {
   const localOptions = rule === 'vue/no-deprecated-filter'
     && languageOptions.parserOptions?.vueFeatures?.filter === false
     ? [{ filterSyntax: false }]
+    : rule === 'vue/no-ref-as-operand' && languageOptions.globals?.ref
+      ? [{ globalRef: true }]
     : options
   const actual = sort(checkTemplate(descriptor.template?.ast, filename, code,
     { ...disabled, [rule]: [severity, ...localOptions] }, (descriptor.scriptSetup ?? descriptor.script)?.content,

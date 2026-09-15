@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, freeIdentifiers, registeredComponents, scriptInstanceMembers } from './script-rules.js'
+import { componentNameFindings, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -808,6 +808,7 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 const RULES: Rule[] = [
   { name: 'vue/multi-word-component-names', severity: 'error', check() {} },
   { name: 'vue/no-unused-components', severity: 'error', check() {} },
+  { name: 'vue/no-ref-as-operand', severity: 'error', check() {} },
   {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
@@ -2455,6 +2456,13 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const refOperandRule = active.find(entry => entry.rule.name === 'vue/no-ref-as-operand')
+  if (refOperandRule) for (const finding of refOperandFindings(descriptor, source,
+    ruleOptions(config?.[refOperandRule.rule.name]).globalRef === true)) {
+    out.push({ filename, rule: refOperandRule.rule.name, severity: refOperandRule.severity,
+      ...sourceLoc(source, finding.offset),
+      message: `Must use \`.value\` to read or write the value wrapped by \`${finding.method}()\`.` } as Diagnostic)
+  }
   const componentNameRule = active.find(entry => entry.rule.name === 'vue/multi-word-component-names')
   if (componentNameRule) {
     const options = ruleOptions(config?.[componentNameRule.rule.name])

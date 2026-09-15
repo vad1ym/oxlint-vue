@@ -55,6 +55,120 @@ function componentObject(path: NodePath): NodePath | undefined {
 }
 
 export interface RegisteredComponent { name: string, offset: number }
+export interface RefOperandFinding { method: string, offset: number }
+
+/** References to ref-like values used where JavaScript does not auto-unwrap them. */
+export function refOperandFindings(
+  descriptor: SFCDescriptor, source: string, allowGlobalRef = false,
+): RefOperandFinding[] {
+  const out: RefOperandFinding[] = []
+  const realBlocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const blocks = realBlocks.length ? realBlocks.map(block => ({ content: block.content,
+    offset: block.loc.start.offset, setup: block === descriptor.scriptSetup }))
+    : [{ content: source, offset: 0, setup: false }]
+  for (const block of blocks) {
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const factories = new Map<Binding, string>()
+    const refs = new Map<Binding, string>()
+    const definedAt = new Map<Binding, number>()
+    const assignedLater = new Set<Binding>()
+    const emitters = new Set<Binding>()
+    traverse(file, { enter(path) {
+      if (path.isImportSpecifier() && path.parentPath.isImportDeclaration()
+        && ['vue', '@vue/composition-api'].includes(path.parentPath.node.source.value)) {
+        const imported = staticName(path.node.imported)
+        if (!imported || !['ref', 'computed', 'toRef', 'customRef', 'shallowRef'].includes(imported)) return
+        const binding = path.scope.getBinding(path.node.local.name)
+        if (binding) factories.set(binding, imported)
+      }
+    } })
+    traverse(file, { enter(path) {
+      if (!path.isVariableDeclarator() || !path.node.init) return
+      const init = unwrap(path.node.init)
+      if (init.type !== 'CallExpression' || init.callee.type !== 'Identifier') return
+      if (block.setup && init.callee.name === 'defineEmits' && path.node.id.type === 'Identifier') {
+        const binding = path.scope.getBinding(path.node.id.name)
+        if (binding) emitters.add(binding)
+        return
+      }
+      let method: string | undefined
+      const factory = path.scope.getBinding(init.callee.name)
+      if (factory) method = factories.get(factory)
+      if (init.callee.name === 'defineModel') method = 'defineModel'
+      if (allowGlobalRef && init.callee.name === 'ref' && !factory) method = 'ref'
+      if (!method) return
+      const ids = path.node.id.type === 'ArrayPattern' ? [path.node.id.elements[0]] : [path.node.id]
+      for (const id of ids) if (id?.type === 'Identifier') {
+        const binding = path.scope.getBinding(id.name)
+        if (binding) {
+          refs.set(binding, method)
+          definedAt.set(binding, init.start ?? 0)
+        }
+      }
+      return
+    } })
+    traverse(file, { enter(path) {
+      if (!path.isAssignmentExpression() || path.node.operator !== '='
+        || path.node.left.type !== 'Identifier') return
+      const right = unwrap(path.node.right)
+      if (right.type !== 'CallExpression' || right.callee.type !== 'Identifier') return
+      const factory = path.scope.getBinding(right.callee.name)
+      const method = factory ? factories.get(factory)
+        : allowGlobalRef && right.callee.name === 'ref' ? 'ref' : undefined
+      const binding = path.scope.getBinding(path.node.left.name)
+      if (binding && method) {
+        refs.set(binding, method)
+        definedAt.set(binding, right.start ?? 0)
+        assignedLater.add(binding)
+      }
+    } })
+    traverse(file, { enter(path) {
+      if (!path.isVariableDeclarator() || path.node.id.type !== 'Identifier'
+        || path.node.init?.type !== 'Identifier') return
+      const sourceBinding = path.scope.getBinding(path.node.init.name)
+      if (!sourceBinding || !assignedLater.has(sourceBinding)) return
+      const binding = path.scope.getBinding(path.node.id.name)
+      const method = refs.get(sourceBinding)
+      if (binding && method) {
+        refs.set(binding, method)
+        definedAt.set(binding, path.node.init.start ?? 0)
+      }
+    } })
+    traverse(file, { enter(path) {
+      if (!path.isIdentifier()) return
+      const binding = path.scope.getBinding(path.node.name)
+      const method = binding && refs.get(binding)
+      if (!method) return
+      if ((path.node.start ?? 0) < (definedAt.get(binding!) ?? 0)) return
+      const parent = path.parentPath
+      let invalid = parent.isIfStatement() && parent.get('test') === path
+        || parent.isSwitchStatement() && parent.get('discriminant') === path
+        || parent.isUnaryExpression() || parent.isUpdateExpression() || parent.isBinaryExpression()
+        || parent.isConditionalExpression() && parent.get('test') === path
+        || parent.isAssignmentExpression() && (parent.node.operator !== '=' || parent.get('left') === path)
+      if (parent.isLogicalExpression() && parent.get('left') === path
+        && binding?.path.parentPath?.isVariableDeclaration({ kind: 'const' })) invalid = true
+      if (parent.isTemplateLiteral() && !parent.parentPath?.isTaggedTemplateExpression()) invalid = true
+      if ((parent.isMemberExpression() || parent.isOptionalMemberExpression()) && parent.get('object') === path) {
+        const name = parent.node.computed ? parent.node.property.type === 'StringLiteral'
+          ? parent.node.property.value : null : staticName(parent.node.property)
+        if (name !== 'value' && name !== 'effect' && name !== null) invalid = true
+      }
+      if (parent.isCallExpression() && parent.node.arguments.slice(1).some(argument => argument === path.node)
+        && parent.node.arguments[0]?.type === 'StringLiteral') {
+        if (parent.node.callee.type === 'Identifier') {
+          const emitter = path.scope.getBinding(parent.node.callee.name)
+          if (parent.node.callee.name === 'emit' || emitter && emitters.has(emitter)) invalid = true
+        } else if (parent.node.callee.type === 'MemberExpression'
+          && staticName(parent.node.callee.property) === 'emit') invalid = true
+      }
+      if (invalid) out.push({ method, offset: block.offset + (path.node.start ?? 0) })
+    } })
+  }
+  return out
+}
 
 /** Components registered in Options API `components` objects. */
 export function registeredComponents(descriptor: SFCDescriptor): RegisteredComponent[] {

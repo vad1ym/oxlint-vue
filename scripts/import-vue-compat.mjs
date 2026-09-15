@@ -59,7 +59,7 @@ for (const fullRule of structuralRuleNames.filter(rule =>
           cases.push({
             id,
             rule: fullRule, code: test.code, options: test.options ?? [],
-            filename: test.filename ?? 'test.vue', languageOptions,
+            filename: test.filename ?? 'test.js', languageOptions,
             settings: test.settings ?? {},
             expectedCount: kind === 'valid' ? 0 : typeof test.errors === 'number' ? test.errors : test.errors.length,
           })

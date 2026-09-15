@@ -90,7 +90,8 @@
     "tests/lib/rules/valid-v-slot.test.ts": "049bfe8f31d87e96a9267418e8f3b69bf57ddced99fda04803919da09f97d679",
     "tests/lib/rules/multi-word-component-names.test.ts": "92117245374cf88d454ab7a099df143a0520569d3c1af14ed5b784aabbcbfe88",
     "tests/lib/rules/no-deprecated-filter.test.ts": "bde70db241de5f3b38d8f885bcad148c8fe576fed29cb13aad38b7ec77812c5c",
-    "tests/lib/rules/no-unused-components.test.ts": "f74014193754aabfef3cb4949504bd1ca469a4199e327a8974e6e6abe486a282"
+    "tests/lib/rules/no-unused-components.test.ts": "f74014193754aabfef3cb4949504bd1ca469a4199e327a8974e6e6abe486a282",
+    "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
@@ -24071,6 +24072,646 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/valid/1",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref(0)\n    console.log(count.value) // 0\n\n    count.value++\n    console.log(count.value) // 1\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/2",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n      import { ref } from 'vue'\n      export default {\n        setup() {\n          const count = ref(0)\n          console.log(count.value) // 0\n\n          count.value++\n          console.log(count.value) // 1\n          return {\n            count\n          }\n        }\n      }\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/3",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n      import { ref } from '@vue/composition-api'\n      export default {\n        setup() {\n          const count = ref(0)\n          console.log(count.value) // 0\n\n          count.value++\n          console.log(count.value) // 1\n          return {\n            count\n          }\n        }\n      }\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/4",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref(0)\n    if (count.value) {}\n    switch (count.value) {}\n    var foo = -count.value\n    var foo = +count.value\n    count.value++\n    count.value--\n    count.value + 1\n    1 - count.value\n    count.value || other\n    count.value && other\n    var foo = count.value ? x : y\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/5",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const foo = ref(true)\n    if (bar) foo\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/6",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const foo = ref(true)\n    var a = other || foo // ignore\n    var b = other && foo // ignore\n\n    let bar = ref(true)\n    var a = bar || other\n    var b = bar || other\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/7",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    let count = not_ref(0)\n\n    count++\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/8",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const foo = ref(0)\n    const bar = ref(0)\n    var baz = x ? foo : bar\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/9",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    // Probably wrong, but not checked by this rule.\n    const {value} = ref(0)\n    value++\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/10",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref(0)\n    function foo() {\n      let count = 0\n      count++\n    }\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/11",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'unknown'\n    const count = ref(0)\n    count++\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/12",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref\n    count++\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/13",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref(0)\n    foo = count\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/14",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    import { ref } from 'vue'\n    const count = ref(0)\n    const foo = count\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/15",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref, computed, toRef, customRef, shallowRef } from 'vue'\n        const foo = shallowRef({})\n        foo[bar] = 123\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/16",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref, computed, toRef, customRef, shallowRef } from 'vue'\n        const foo = shallowRef({})\n        const isComp = foo.effect\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/17",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref } from 'vue'\n      let foo;\n\n      if (!foo) {\n        foo = ref(5);\n      }\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/18",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref } from 'vue'\n      let foo = undefined;\n\n      if (!foo) {\n        foo = ref(5);\n      }\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/19",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref } from 'vue'\n      const foo = ref(0)\n      func(foo)\n      function func(foo) {}\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/20",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref } from 'vue'\n      const foo = ref(0)\n      tag`${foo}`\n      function tag(arr, ...args) {}\n      </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/21",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script setup>\n    const model = defineModel();\n    console.log(model.value);\n    function process() {\n      if (model.value) console.log('foo')\n    }\n    function update(value) {\n      model.value = value;\n    }\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/22",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script setup>\n    const [model, mod] = defineModel();\n    console.log(model.value);\n    function process() {\n      if (model.value) console.log('foo')\n    }\n    function update(value) {\n      model.value = value;\n    }\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/23",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script setup>\n    const emit = defineEmits(['test'])\n    const [model, mod] = defineModel();\n\n    function update() {\n      emit('test', model.value)\n    }\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/24",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n    import { ref, defineComponent } from 'vue'\n\n    export default defineComponent({\n      emits: ['incremented'],\n      setup(_, ctx) {\n        const counter = ref(0)\n\n        ctx.emit('incremented', counter.value)\n\n        return {\n          counter\n        }\n      }\n    })\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/25",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n    import { ref, defineComponent } from 'vue'\n\n    export default defineComponent({\n      emits: ['incremented'],\n      setup(_, { emit }) {\n        const counter = ref(0)\n\n        emit('incremented', counter.value)\n\n        return {\n          counter\n        }\n      }\n    })\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/26",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n    import { ref, defineComponent } from 'vue'\n\n    export default defineComponent({\n      emits: ['incremented'],\n      setup(_, { emit }) {\n        const counter = ref(0)\n\n        emit('incremented', counter.value, 'xxx')\n\n        return {\n          counter\n        }\n      }\n    })\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/27",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n    import { ref, defineComponent } from 'vue'\n\n    export default defineComponent({\n      emits: ['incremented'],\n      setup(_, { emit }) {\n        const counter = ref(0)\n\n        emit('incremented', 'xxx')\n\n        return {\n          counter\n        }\n      }\n    })\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/valid/28",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n    <script>\n    import { ref, defineComponent } from 'vue'\n\n    export default defineComponent({\n      emits: ['incremented'],\n      setup(_, { emit }) {\n        const counter = ref(0)\n\n        emit('incremented')\n\n        return {\n          counter\n        }\n      }\n    })\n    </script>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-ref-as-operand/invalid/1",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      let count = ref(0)\n\n      count++ // error\n      console.log(count + 1) // error\n      console.log(1 + count) // error\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-ref-as-operand/invalid/2",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref } from 'vue'\n        export default {\n          setup() {\n            let count = ref(0)\n\n            count++ // error\n            console.log(count + 1) // error\n            console.log(1 + count) // error\n            return {\n              count\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-ref-as-operand/invalid/3",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref } from '@vue/composition-api'\n        export default {\n          setup() {\n            let count = ref(0)\n\n            count++ // error\n            console.log(count + 1) // error\n            console.log(1 + count) // error\n            return {\n              count\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-ref-as-operand/invalid/4",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      const foo = ref(true)\n      if (foo) {\n        //\n      }\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/5",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      const foo = ref(true)\n      switch (foo) {\n        //\n      }\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/6",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      const foo = ref(0)\n      var a = -foo\n      var b = +foo\n      var c = !foo\n      var d = ~foo\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "no-ref-as-operand/invalid/7",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      let foo = ref(0)\n      foo += 1\n      foo -= 1\n      baz += foo\n      baz -= foo\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "no-ref-as-operand/invalid/8",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      const foo = ref(true)\n      var a = foo || other\n      var b = foo && other\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-ref-as-operand/invalid/9",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      import { ref } from 'vue'\n      let foo = ref(true)\n      var a = foo ? x : y\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/10",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref } from 'vue'\n        let count = ref(0)\n        export default {\n          setup() {\n            count++ // error\n            console.log(count + 1) // error\n            console.log(1 + count) // error\n            return {\n              count\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-ref-as-operand/invalid/11",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref, computed, toRef, customRef, shallowRef } from 'vue'\n        let count = ref(0)\n        let cntcnt = computed(()=>count.value+count.value)\n\n        const state = reactive({\n          foo: 1,\n          bar: 2\n        })\n\n        const fooRef = toRef(state, 'foo')\n\n        let value = 'hello'\n        const cref = customRef((track, trigger) => {\n          return {\n            get() {\n              track()\n              return value\n            },\n            set(newValue) {\n              clearTimeout(timeout)\n              timeout = setTimeout(() => {\n                value = newValue\n                trigger()\n              }, delay)\n            }\n          }\n        })\n\n        const foo = shallowRef({})\n\n        count++ // error\n        cntcnt++ // error\n\n        const s = `${fooRef} : ${cref}` // error x 2\n\n        const n = foo + 1 // error\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-ref-as-operand/invalid/12",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref, computed, toRef, customRef, shallowRef } from 'vue'\n        const foo = shallowRef({})\n        foo.bar = 123\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/13",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n        import { ref } from 'vue'\n        const foo = ref(123)\n        const bar = foo?.bar\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/14",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref } from 'vue'\n      let foo = undefined;\n\n      if (!foo) {\n        foo = ref(5);\n      }\n      let bar = foo;\n      bar = 4;\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/15",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      let model = defineModel();\n      console.log(model);\n      function process() {\n        if (model) console.log('foo')\n      }\n      function update(value) {\n        model = value;\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-ref-as-operand/invalid/16",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script setup>\n      let [model, mod] = defineModel();\n      console.log(model);\n      function process() {\n        if (model) console.log('foo')\n      }\n      function update(value) {\n        model = value;\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-ref-as-operand/invalid/17",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script setup>\n      import { ref } from 'vue'\n      const emits = defineEmits(['test'])\n      const count = ref(0)\n\n      function update() {\n        emits('test', count)\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/18",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref, defineComponent } from 'vue'\n\n      export default defineComponent({\n        emits: ['incremented'],\n        setup(_, ctx) {\n          const counter = ref(0)\n\n          ctx.emit('incremented', counter)\n\n          return {\n            counter\n          }\n        }\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/19",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref, defineComponent } from 'vue'\n\n      export default defineComponent({\n        emits: ['incremented'],\n        setup(_, { emit }) {\n          const counter = ref(0)\n\n          emit('incremented', counter)\n\n          return {\n            counter\n          }\n        }\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/20",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      <script>\n      import { ref, defineComponent } from 'vue'\n\n      export default defineComponent({\n        emits: ['incremented'],\n        setup(_, { emit }) {\n          const counter = ref(0)\n\n          emit('incremented', 'xxx', counter)\n\n          return {\n            counter\n          }\n        }\n      })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-ref-as-operand/invalid/21",
+      "rule": "vue/no-ref-as-operand",
+      "code": "\n      let count = ref(0)\n\n      count++ // error\n      console.log(count + 1) // error\n      console.log(1 + count) // error\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "globals": {
+          "ref": "readonly"
+        }
+      },
+      "settings": {},
+      "expectedCount": 3
     }
   ]
 }
