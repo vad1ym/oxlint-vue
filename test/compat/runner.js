@@ -18,11 +18,13 @@ export function compareCase(entry, severity = 2) {
   const { rule, code, options, languageOptions = {}, settings = {} } = entry
   const filename = entry.filename ?? 'case.vue'
   assert.ok(vue.rules[rule.slice(4)], `Unknown reference rule: ${rule}`)
-  const parserOptions = { ...languageOptions.parserOptions }
+  const { parserKind, ...eslintLanguageOptions } = languageOptions
+  const parserOptions = { ...eslintLanguageOptions.parserOptions }
   if (parserOptions.parser === '@typescript-eslint/parser') parserOptions.parser = tsParser
+  const parser = parserKind === 'espree' ? undefined : parserKind === 'typescript' ? tsParser : vueParser
   const messages = linter.verify(code, [{
     files: ['**/*.{js,ts,vue}'], plugins: { vue }, settings,
-    languageOptions: { ...languageOptions, parser: vueParser, parserOptions },
+    languageOptions: { ...eslintLanguageOptions, ...(parser ? { parser } : {}), parserOptions },
     rules: { [rule]: [severity, ...options] },
   }], { filename })
   assert.deepEqual(messages.filter(m => !m.ruleId || m.fatal), [], `Reference failed: ${entry.id}`)

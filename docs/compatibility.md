@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 1871 upstream cases, 90 common structural rules | **1870 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1144/1144** |
-| Four pinned Nuxt components, each checked against all 90 rules | **360/360 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1622/1622 comparisons** |
+| 1957 upstream cases, 91 common structural rules | **1956 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1152/1152** |
+| Four pinned Nuxt components, each checked against all 91 rules | **364/364 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1634/1634 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. One parser-crashing case is explicitly excluded below. Eighty-nine
-of the ninety suites currently match on every imported case.
+known failures. Three environment-dependent cases are explicitly excluded below. Ninety
+of the ninety-one suites currently match on every imported case.
 
 Twelve newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
@@ -37,8 +37,13 @@ One `no-deprecated-v-bind-sync` reference case is explicitly unmeasured because
 `v-bind.sync='value'`. The committed corpus records this parser limitation by
 the upstream case ID; regeneration cannot silently add or remove the exception.
 
+Two `require-valid-default-prop` cases are explicitly unmeasured because they
+import `Props2` from eslint-plugin-vue's private TypeScript project fixture.
+The standalone committed corpus cannot reproduce that external type graph;
+the remaining runtime, inline TypeScript and macro cases are measured normally.
+
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 163 are not measured by this structural-rule harness,
+exports 253 rule names; 162 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

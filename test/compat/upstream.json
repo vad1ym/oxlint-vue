@@ -91,10 +91,13 @@
     "tests/lib/rules/multi-word-component-names.test.ts": "92117245374cf88d454ab7a099df143a0520569d3c1af14ed5b784aabbcbfe88",
     "tests/lib/rules/no-deprecated-filter.test.ts": "bde70db241de5f3b38d8f885bcad148c8fe576fed29cb13aad38b7ec77812c5c",
     "tests/lib/rules/no-unused-components.test.ts": "f74014193754aabfef3cb4949504bd1ca469a4199e327a8974e6e6abe486a282",
-    "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10"
+    "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10",
+    "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8"
   },
   "skippedCases": {
-    "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
+    "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
+    "require-valid-default-prop/valid/20": "requires the upstream TypeScript project fixture and imported Props2 type information",
+    "require-valid-default-prop/invalid/45": "requires the upstream TypeScript project fixture and imported Props2 type information"
   },
   "cases": [
     {
@@ -24712,6 +24715,1444 @@
       },
       "settings": {},
       "expectedCount": 3
+    },
+    {
+      "id": "require-valid-default-prop/valid/1",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        ...foo,\n        props: { ...foo }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/2",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: { foo: null }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/3",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: ['foo']\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/4",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Object, Number],\n            default: 10\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/5",
+      "rule": "vue/require-valid-default-prop",
+      "code": "Vue.component('example', {\n        props: {\n          foo: null,\n          foo: Number,\n          foo: [String, Number],\n          foo: { },\n          foo: { type: String },\n          foo: { type: Number, default: VAR_BAR },\n          foo: { type: Number, default: 100 },\n          foo: { type: Number, default: Number.MAX_VALUE },\n          foo: { type: Number, default: Foo.BAR },\n          foo: { type: {}, default: '' },\n          foo: { type: [String, Number], default: '' },\n          foo: { type: [String, Number], default: 0 },\n          foo: { type: String, default: '' },\n          foo: { type: String, default: `` },\n          foo: { type: Boolean, default: false },\n          foo: { type: Object, default: () => { } },\n          foo: { type: Array, default () { } },\n          foo: { type: String, default () { } },\n          foo: { type: Number, default () { } },\n          foo: { type: Boolean, default () { } },\n          foo: { type: Symbol, default () { } },\n          foo: { type: Array, default () { } },\n          foo: { type: Symbol, default: Symbol('a') },\n          foo: { type: String, default: `Foo` },\n          foo: { type: Foo, default: Foo('a') },\n          foo: { type: String, default: `Foo` },\n          foo: { type: BigInt, default: 1n },\n          foo: { type: String, default: null },\n          foo: { type: String, default () { return Foo } },\n          foo: { type: Number, default () { return Foo } },\n          foo: { type: Object, default () { return Foo } },\n          foo: { type: Object, default: null },\n        }\n      })",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/6",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n        export default (Vue as VueConstructor<Vue>).extend({\n          props: {\n            foo: {\n              type: [Object, Number],\n              default: 10\n            } as PropOptions<object>\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/7",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Number],\n            default() {\n              return 10\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/8",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Function, Number],\n            default() {\n              return 's'\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/9",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Number],\n            default: () => 10\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/10",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Function, Number],\n            default: () => 's'\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/11",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [,Object, Number],\n            default: 10\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/12",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: Number?.()\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/13",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Array as PropType<string[]>,\n              default: () => []\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/14",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Object as PropType<{ [key: number]: number }>,\n              default: () => {}\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/15",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Function as PropType<() => number>,\n              default: () => 10\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/16",
+      "rule": "vue/require-valid-default-prop",
+      "code": "<script setup lang=\"ts\">\n      export interface SomePropInterface {\n        someProp?: false | string;\n        str?: 'foo' | 'bar';\n        num?: 1 | 2;\n      }\n\n      withDefaults(defineProps<SomePropInterface>(), {\n        someProp: false,\n        str: 'foo',\n        num: 1\n      });\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/17",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n      import {Props2 as Props} from './test01'\n      withDefaults(defineProps<Props>(), {\n        a: 's',\n        b: 42,\n        c: true,\n        d: false,\n        e: 's',\n        f: () => 42,\n        g: ()=>({ foo: 'foo' }),\n        h: ()=>(['foo', 'bar']),\n        i: ()=>(['foo', 'bar']),\n      })\n      </script>",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/18",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = 'abc' } = defineProps({\n          foo: {\n            type: String,\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/19",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n        const { foo = [] } = defineProps({\n          foo: {\n            type: Array,\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/21",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Boolean })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/22",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: String, required: true })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/23",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Boolean, default: false })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/24",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel('count', { type: Number, default: 0 })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/25",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: String, default: 'hello' })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/26",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Array, default: () => [] })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/27",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Object, default: () => ({}) })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/28",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n        defineModel<string>({ default: 'hello' })\n      </script>\n      ",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/29",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n        defineModel<boolean>({ default: false })\n      </script>\n      ",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/valid/30",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n        defineModel<string>({ required: true })\n      </script>\n      ",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "require-valid-default-prop/invalid/1",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Number, String],\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/2",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Number, Object],\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/3",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/4",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: false\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/5",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/6",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: []\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/7",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: 2\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/8",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/9",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: []\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/10",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Boolean,\n            default: ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/11",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Boolean,\n            default: 5\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/12",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Boolean,\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/13",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Boolean,\n            default: []\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/14",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/15",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: 55\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/16",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: false\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/17",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/18",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: []\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/19",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Array,\n            default: ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/20",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Array,\n            default: 55\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/21",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Array,\n            default: false\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/22",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Array,\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/23",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Array,\n            default: []\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/24",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [Object, Number],\n            default: {}\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/25",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default (Vue as VueConstructor<Vue>).extend({\n        props: {\n          foo: {\n            type: [Object, Number],\n            default: {}\n          } as PropOptions<object>\n        }\n      });",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/26",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          'foo': {\n            type: Object,\n            default: ''\n          },\n          ['bar']: {\n            type: Object,\n            default: ''\n          },\n          [baz]: {\n            type: Object,\n            default: ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "require-valid-default-prop/invalid/27",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: 1n\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/28",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default() {\n              return ''\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/29",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default() {\n              return ''\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/30",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default() {\n              return 123\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/31",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: () => {\n              return ''\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/32",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: () => {\n              return ''\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/33",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: () => {\n              return 123\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/34",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Number,\n            default: () => ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/35",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Object,\n            default: () => ''\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/36",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: () => 123\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/37",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: Function,\n            default: 1\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/38",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: [String, Boolean],\n            default() {\n              switch (kind) {\n                case 1: return 1\n                case 2: return '' // OK\n                case 3: return {}\n                case 4: return Foo // ignore?\n                case 5: return () => {}\n                case 6: return false // OK\n              }\n\n              function foo () {\n                return 1 // ignore?\n              }\n            }\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "require-valid-default-prop/invalid/39",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default {\n        props: {\n          foo: {\n            type: String,\n            default: Number?.()\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "ecmaFeatures": {
+            "jsx": true
+          }
+        },
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/40",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Array as PropType<string[]>,\n              default: []\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/41",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Object as PropType<{ [key: number]: number }>,\n              default: {}\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/42",
+      "rule": "vue/require-valid-default-prop",
+      "code": "export default Vue.extend({\n          props: {\n            foo: {\n              type: Function as PropType<() => number>,\n              default: 10\n            }\n          }\n        });\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "typescript"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/43",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineProps({\n          foo: {\n            type: String,\n            default: () => 123\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/44",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        withDefaults(defineProps<{foo:string}>(),{\n          foo: () => 123\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/46",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = 123 } = defineProps({\n          foo: String\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/47",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = 123 } = defineProps({\n          foo: {\n            type: String,\n            default: 123\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "require-valid-default-prop/invalid/48",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = [] } = defineProps({\n          foo: {\n            type: Number,\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/49",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = 42 } = defineProps({\n          foo: {\n            type: Array,\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/50",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = [] } = defineProps({\n          foo: {\n            type: Array,\n            default: () => {\n              return 42\n            }\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/51",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        const { foo = (()=>[]) } = defineProps({\n          foo: {\n            type: Array,\n          }\n        })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/52",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n      type MaybeString<T extends string | number> = `${T}`\n      const { foo = 1 } = defineProps<{ foo: MaybeString<1, 2>}>()\n      </script>\n      ",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/53",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Boolean, default: 'hello' })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/54",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel('count', { type: Number, default: false })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/55",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Array, default: [] })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/56",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: Object, default: {} })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/57",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup>\n        defineModel({ type: String, default: () => 123 })\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "require-valid-default-prop/invalid/58",
+      "rule": "vue/require-valid-default-prop",
+      "code": "\n      <script setup lang=\"ts\">\n        defineModel<string>({ default: 123 })\n      </script>\n      ",
+      "options": [],
+      "filename": "typescript-fixture.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }

@@ -23,9 +23,15 @@ const files = Object.fromEntries(Object.entries(previous.files).filter(([file]) 
 const skippedCases = {
   'no-deprecated-v-bind-sync/invalid/5':
     '@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value',
+  'require-valid-default-prop/valid/20':
+    'requires the upstream TypeScript project fixture and imported Props2 type information',
+  'require-valid-default-prop/invalid/45':
+    'requires the upstream TypeScript project fixture and imported Props2 type information',
 }
 const pendingSkippedCases = new Set(Object.keys(skippedCases).filter(id =>
   !selected.size || selected.has(id.slice(0, id.indexOf('/')))))
+const vueParserStub = {}
+const tsParserStub = {}
 for (const fullRule of structuralRuleNames.filter(rule =>
   !selected.size || selected.has(rule.slice(4)))) {
   const name = fullRule.slice(4)
@@ -38,13 +44,18 @@ for (const fullRule of structuralRuleNames.filter(rule =>
   const ast = babelParse(source, { sourceType: 'module', plugins: ['typescript'] })
   for (const node of ast.program.body.toReversed()) {
     if (node.type !== 'ImportDeclaration') continue
-    if (!['../../eslint-compat', `../../../lib/rules/${name}`, 'vue-eslint-parser'].includes(node.source.value)) {
+    if (!['../../eslint-compat', `../../../lib/rules/${name}`, 'vue-eslint-parser',
+      '@typescript-eslint/parser', '../../test-utils/typescript'].includes(node.source.value)) {
+      if (node.source.value === 'eslint' && node.importKind === 'type') {
+        source = source.slice(0, node.start) + source.slice(node.end)
+        continue
+      }
       throw new Error(`Review new import: ${node.source.value}`)
     }
     source = source.slice(0, node.start) + source.slice(node.end)
   }
   class RuleTester {
-    constructor(config) { this.config = config }
+    constructor(config = {}) { this.config = config }
     run(rule, _implementation, tests) {
       for (const kind of ['valid', 'invalid']) {
         tests[kind].forEach((entry, index) => {
@@ -55,6 +66,8 @@ for (const fullRule of structuralRuleNames.filter(rule =>
             return
           }
           const languageOptions = { ...this.config.languageOptions, ...test.languageOptions }
+          languageOptions.parserKind = languageOptions.parser === vueParserStub ? 'vue'
+            : languageOptions.parser === tsParserStub ? 'typescript' : 'espree'
           delete languageOptions.parser
           cases.push({
             id,
@@ -69,7 +82,10 @@ for (const fullRule of structuralRuleNames.filter(rule =>
   }
   // No real require, filesystem, process or network exposed to test modules.
   new vm.Script(stripTypeScriptTypes(source), { filename: relative }).runInNewContext({
-    RuleTester, rule: {}, vueEslintParser: {},
+    RuleTester, rule: {}, vueEslintParser: vueParserStub, tsParser: tsParserStub,
+    getTypeScriptFixtureTestOptions: () => ({ filename: 'typescript-fixture.vue',
+      languageOptions: { parser: vueParserStub, ecmaVersion: 2020, sourceType: 'module',
+        parserOptions: { parser: '@typescript-eslint/parser' } } }),
     require: { resolve(parserName) {
       if (parserName !== '@typescript-eslint/parser') throw new Error(`Review parser: ${parserName}`)
       return parserName

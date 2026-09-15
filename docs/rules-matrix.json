@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 60,
+    "implemented": 61,
     "native": 59,
     "partial": 41,
-    "missing": 93
+    "missing": 92
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1029,14 +1029,14 @@
     },
     {
       "name": "require-valid-default-prop",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 86,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

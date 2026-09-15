@@ -46,9 +46,10 @@ function componentObject(path: NodePath): NodePath | undefined {
   }
   if (path.isCallExpression()) {
     const callee = unwrap(path.node.callee)
+    const object = callee.type === 'MemberExpression' ? unwrap(callee.object) : null
     const factory = callee.type === 'Identifier' && ['defineComponent', 'defineNuxtComponent'].includes(callee.name)
-      || callee.type === 'MemberExpression' && callee.object.type === 'Identifier'
-        && callee.object.name === 'Vue' && staticName(callee.property) === 'extend'
+      || callee.type === 'MemberExpression' && object?.type === 'Identifier'
+        && object.name === 'Vue' && staticName(callee.property) === 'extend'
     if (factory) path = (path.get('arguments') as NodePath[])[0] ?? path
   }
   return path.isObjectExpression() ? path : undefined
@@ -56,6 +57,207 @@ function componentObject(path: NodePath): NodePath | undefined {
 
 export interface RegisteredComponent { name: string, offset: number }
 export interface RefOperandFinding { method: string, offset: number }
+export interface DefaultPropFinding { offset: number }
+
+const nativePropTypes = new Set(['String', 'Number', 'Boolean', 'Function', 'Object', 'Array', 'Symbol', 'BigInt'])
+
+function objectPropertyPath(object: NodePath, name: string): NodePath | undefined {
+  if (!object.isObjectExpression()) return undefined
+  return (object.get('properties') as NodePath[]).find(property =>
+    (property.isObjectProperty() || property.isObjectMethod()) && !property.node.computed
+    && staticName(property.node.key) === name)
+}
+
+function pathValue(path: NodePath): NodePath {
+  if (path.isObjectProperty()) return path.get('value') as NodePath
+  return path
+}
+
+function propTypes(path: NodePath): string[] {
+  while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression'].includes(path.node.type)) path = path.get('expression') as NodePath
+  if (path.isIdentifier()) return [path.node.name]
+  if (path.isArrayExpression()) return (path.get('elements') as NodePath[]).flatMap(element =>
+    element?.isIdentifier() ? [element.node.name] : [])
+  return []
+}
+
+function defaultValueType(path: NodePath): string | null {
+  while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(path.node.type)) path = path.get('expression') as NodePath
+  if (path.isStringLiteral() || path.isTemplateLiteral()) return 'String'
+  if (path.isNumericLiteral()) return 'Number'
+  if (path.isBooleanLiteral()) return 'Boolean'
+  if (path.isBigIntLiteral()) return 'BigInt'
+  if (path.isArrayExpression()) return 'Array'
+  if (path.isObjectExpression()) return 'Object'
+  if (path.isFunctionExpression() || path.isArrowFunctionExpression()) return 'Function'
+  if (path.isCallExpression() || path.isOptionalCallExpression()) {
+    const callee = unwrap(path.node.callee)
+    if (callee.type === 'Identifier' && nativePropTypes.has(callee.name)) return callee.name
+  }
+  return null
+}
+
+function inferTsTypes(node: AstNode | undefined, aliases: Map<string, AstNode>): string[] {
+  if (!node) return []
+  if (node.type === 'TSStringKeyword' || node.type === 'TSLiteralType'
+    && (node.literal.type === 'StringLiteral' || node.literal.type === 'TemplateLiteral')) return ['String']
+  if (node.type === 'TSNumberKeyword' || node.type === 'TSLiteralType' && node.literal.type === 'NumericLiteral') return ['Number']
+  if (node.type === 'TSBooleanKeyword' || node.type === 'TSLiteralType' && node.literal.type === 'BooleanLiteral') return ['Boolean']
+  if (node.type === 'TSFunctionType') return ['Function']
+  if (node.type === 'TSArrayType' || node.type === 'TSTupleType') return ['Array']
+  if (node.type === 'TSTypeLiteral' || node.type === 'TSMappedType' || node.type === 'TSObjectKeyword') return ['Object']
+  if (node.type === 'TSUnionType') return [...new Set(node.types.flatMap(type => inferTsTypes(type, aliases)))]
+  if (node.type === 'TSTypeReference' && node.typeName.type === 'Identifier') {
+    if (['Array', 'ReadonlyArray'].includes(node.typeName.name)) return ['Array']
+    if (['Record', 'Object'].includes(node.typeName.name)) return ['Object']
+    return inferTsTypes(aliases.get(node.typeName.name), aliases)
+  }
+  if (node.type === 'TSLiteralType' && node.literal.type === 'BigIntLiteral') return ['BigInt']
+  if (node.type === 'TSTemplateLiteralType') return ['String']
+  return []
+}
+
+/** Invalid runtime prop defaults. Type-only edge cases are intentionally inferred separately. */
+export function validDefaultPropFindings(descriptor: SFCDescriptor, source: string): DefaultPropFinding[] {
+  const findings: DefaultPropFinding[] = []
+  const realBlocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const blocks = realBlocks.length ? realBlocks.map(block => ({ content: block.content,
+    offset: block.loc.start.offset, setup: block === descriptor.scriptSetup }))
+    : [{ content: source, offset: 0, setup: false }]
+  for (const block of blocks) {
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const aliases = new Map<string, AstNode>()
+    traverse(file, { enter(path) {
+      if (path.isTSTypeAliasDeclaration()) aliases.set(path.node.id.name, path.node.typeAnnotation)
+      if (path.isTSInterfaceDeclaration()) aliases.set(path.node.id.name, path.node.body)
+    } })
+    const report = (path: NodePath): void => {
+      findings.push({ offset: block.offset + (path.node.start ?? 0) })
+    }
+    const validate = (value: NodePath, types: string[], sourceKind: 'property' | 'assignment'): void => {
+      const expected = new Set(types.filter(type => nativePropTypes.has(type)))
+      if (!expected.size) return
+      while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+      if (value.isFunctionExpression() || value.isArrowFunctionExpression() || value.isObjectMethod()) {
+        if (expected.has('Function')) return
+        if (sourceKind === 'assignment') { report(value); return }
+        if (value.isArrowFunctionExpression() && !value.get('body').isBlockStatement()) {
+          const body = value.get('body') as NodePath
+          const actual = defaultValueType(body)
+          if (actual && !expected.has(actual)) report(body)
+          return
+        }
+        value.traverse({ ReturnStatement(path) {
+          if (path.getFunctionParent() !== value || !path.node.argument) return
+          const argument = path.get('argument') as NodePath
+          const actual = defaultValueType(argument)
+          if (actual && !expected.has(actual)) report(argument)
+        } })
+        return
+      }
+      const actual = defaultValueType(value)
+      if (!actual) return
+      if (expected.has(actual) && (sourceKind === 'assignment' || !['Object', 'Array'].includes(actual))) return
+      report(value)
+    }
+    const processProps = (props: NodePath, defaults?: NodePath, destructure?: NodePath): void => {
+      while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(props.node.type)) props = props.get('expression') as NodePath
+      if (!props.isObjectExpression()) return
+      const definitions = new Map<string, string[]>()
+      for (const property of props.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = staticName(property.node.key)
+        if (name === null) continue
+        let config = property.get('value') as NodePath
+        while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(config.node.type)) config = config.get('expression') as NodePath
+        const typePath = config.isObjectExpression() ? objectPropertyPath(config, 'type') : undefined
+        const types = propTypes(typePath ? pathValue(typePath) : config)
+        definitions.set(name, types)
+        if (config.isObjectExpression()) {
+          const defaultPath = objectPropertyPath(config, 'default')
+          if (defaultPath) validate(pathValue(defaultPath), types, 'property')
+        }
+      }
+      if (defaults?.isObjectExpression()) for (const property of defaults.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+        const name = staticName(property.node.key)
+        if (name !== null) validate(pathValue(property), definitions.get(name) ?? [], 'property')
+      }
+      if (destructure?.isObjectPattern()) for (const property of destructure.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = staticName(property.node.key)
+        const value = property.get('value') as NodePath
+        if (name !== null && value.isAssignmentPattern()) validate(value.get('right') as NodePath,
+          definitions.get(name) ?? [], 'assignment')
+      }
+    }
+    const typedProps = (call: NodePath): Map<string, string[]> => {
+      const node = call.node as AstNode & { typeParameters?: { params?: AstNode[] }, typeArguments?: { params?: AstNode[] } }
+      let root = node.typeParameters?.params?.[0] ?? node.typeArguments?.params?.[0]
+      if (root?.type === 'TSTypeReference' && root.typeName.type === 'Identifier') root = aliases.get(root.typeName.name)
+      const members = root?.type === 'TSTypeLiteral' ? root.members
+        : root?.type === 'TSInterfaceBody' ? root.body : []
+      const definitions = new Map<string, string[]>()
+      for (const member of members) {
+        if (member.type !== 'TSPropertySignature') continue
+        const name = staticName(member.key)
+        if (name !== null) definitions.set(name, inferTsTypes(member.typeAnnotation?.typeAnnotation, aliases))
+      }
+      return definitions
+    }
+    const processTypedDefaults = (definitions: Map<string, string[]>, defaults?: NodePath,
+      destructure?: NodePath): void => {
+      if (defaults?.isObjectExpression()) for (const property of defaults.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+        const name = staticName(property.node.key)
+        if (name !== null) validate(pathValue(property), definitions.get(name) ?? [], 'property')
+      }
+      if (destructure?.isObjectPattern()) for (const property of destructure.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = staticName(property.node.key)
+        const value = property.get('value') as NodePath
+        if (name !== null && value.isAssignmentPattern()) validate(value.get('right') as NodePath,
+          definitions.get(name) ?? [], 'assignment')
+      }
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        const props = object && objectPropertyPath(object, 'props')
+        if (props?.isObjectProperty()) processProps(props.get('value') as NodePath)
+      }
+      if (!path.isCallExpression() || path.node.callee.type !== 'Identifier') return
+      if (path.node.callee.name === 'defineProps') {
+        const runtime = (path.get('arguments') as NodePath[])[0]
+        const parent = path.parentPath
+        const wrapped = parent?.isCallExpression() && parent.node.callee.type === 'Identifier'
+          && parent.node.callee.name === 'withDefaults'
+        const declarator = (wrapped ? parent.parentPath : parent)?.isVariableDeclarator()
+          ? (wrapped ? parent!.parentPath : parent) : undefined
+        const defaults = wrapped ? (parent!.get('arguments') as NodePath[])[1] : undefined
+        const id = declarator?.isVariableDeclarator() ? declarator.get('id') as NodePath : undefined
+        if (runtime) processProps(runtime, defaults, id)
+        else processTypedDefaults(typedProps(path), defaults, id)
+      }
+      if (path.node.callee.name === 'defineModel') {
+        const args = path.get('arguments') as NodePath[]
+        const options = args.find(argument => argument.isObjectExpression())
+        if (!options) return
+        const type = objectPropertyPath(options, 'type')
+        const def = objectPropertyPath(options, 'default')
+        if (type && def) validate(pathValue(def), propTypes(pathValue(type)), 'property')
+        else if (def) {
+          const node = path.node as AstNode & { typeParameters?: { params?: AstNode[] }, typeArguments?: { params?: AstNode[] } }
+          const annotation = node.typeParameters?.params?.[0] ?? node.typeArguments?.params?.[0]
+          validate(pathValue(def), inferTsTypes(annotation, aliases), 'property')
+        }
+      }
+    } })
+  }
+  return findings
+}
 
 /** References to ref-like values used where JavaScript does not auto-unwrap them. */
 export function refOperandFindings(
