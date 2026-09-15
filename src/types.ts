@@ -59,6 +59,7 @@ export interface OxfmtConfig {
 
 /** oxlint's `--format=json` output. */
 export interface OxlintJsonOutput {
+  number_of_files?: number
   diagnostics?: OxlintJsonDiagnostic[]
   results?: OxlintJsonDiagnostic[]
 }

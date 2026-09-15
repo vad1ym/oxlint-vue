@@ -6,7 +6,7 @@ import process from 'node:process'
 import { execFileAsync, isMissingBinary } from './exec.js'
 import { preprocess } from './preprocess.js'
 import { spawnableFrom } from './resolve.js'
-import { findConfig } from './run.js'
+import { resolveLintConfig } from './run.js'
 
 export interface FixOptions {
   cwd?: string
@@ -38,11 +38,7 @@ export async function fixFiles(
   // The virtual file lives in a temp dir, so oxlint's upward config discovery
   // finds nothing and every rule falls back to its default. Without the
   // project's config the fix pass would silently do nothing.
-  const hasConfig = extraArgs.some(
-    a => a === '-c' || a === '--config' || a.startsWith('--config='),
-  )
-  const discovered = hasConfig ? null : await findConfig(cwd)
-  const configArgs = discovered ? ['-c', discovered] : []
+  const { args } = await resolveLintConfig(cwd, extraArgs)
 
   const results: string[] = []
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oxxxfix-'))
@@ -59,7 +55,7 @@ export async function fixFiles(
           const bin = spawnableFrom(oxlintPath)
           await execFileAsync(
             bin.command,
-            [...bin.args, '--fix', ...configArgs, ...extraArgs, abs],
+            [...bin.args, '--fix', ...args, abs],
             { cwd, maxBuffer: 32 * 1024 * 1024 },
           )
         } catch (err) {
@@ -84,7 +80,7 @@ export async function fixFiles(
         const bin = spawnableFrom(oxlintPath)
         await execFileAsync(
           bin.command,
-          [...bin.args, '--fix', ...configArgs, ...extraArgs, virt],
+          [...bin.args, '--fix', ...args, virt],
           { cwd: tmpRoot, maxBuffer: 32 * 1024 * 1024 },
         )
       } catch (err) {

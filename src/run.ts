@@ -95,22 +95,8 @@ export async function runOxlint(
     extraArgs = [],
   } = opts
 
-  // The virtual tree lives in a temp dir, so oxlint's own upward config
-  // discovery would miss the project's .oxlintrc.json. Resolve it here and
-  // pass it explicitly, unless the caller already supplied -c/--config.
-  const hasExplicitConfig = extraArgs.some(
-    a => a === '-c' || a === '--config' || a.startsWith('--config='),
-  )
-  const discovered = hasExplicitConfig ? null : await findConfig(cwd)
-  const configArgs = discovered ? ['-c', discovered] : []
-
-  // Structural rules are ours, so oxlint never sees them -- read the same
-  // config here to honour `"vue/no-v-html": "off"` and friends.
-  const explicitConfig = hasExplicitConfig
-    ? extraArgs[extraArgs.findIndex(a => a === '-c' || a === '--config') + 1]
-      ?? extraArgs.find(a => a.startsWith('--config='))?.slice(9)
-    : null
-  const structuralConfig = await readRules(explicitConfig ?? discovered)
+  const { args: virtualArgs, configPath } = await resolveLintConfig(cwd, extraArgs)
+  const structuralConfig = await readRules(configPath)
 
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-vue-'))
   /** virtual absolute path -> original absolute path */
@@ -173,7 +159,6 @@ export async function runOxlint(
       backMap.set(await realish(virt), abs)
     }))
 
-    const virtualArgs = [...configArgs, ...extraArgs]
     const [virtual, native] = await Promise.all([
       backMap.size
         ? invokeOxlint(oxlintPath, tmpRoot, virtualArgs, backMap, cwd)
@@ -272,8 +257,8 @@ async function readRules(
       ...cfg.rules,
       ...cfg.settings?.vue?.rules,
     }
-  } catch {
-    return {}
+  } catch (err) {
+    throw new Error(`could not load lint config ${resolved}`, { cause: err })
   }
 }
 
@@ -291,6 +276,31 @@ export async function findConfig(cwd: string): Promise<string | null> {
     if (parent === dir) return null
     dir = parent
   }
+}
+
+/** Resolve explicit config paths before any pass changes its working directory. */
+export async function resolveLintConfig(cwd: string, extraArgs: string[]): Promise<{
+  args: string[]
+  configPath: string | null
+}> {
+  const args: string[] = []
+  let configPath: string | null = null
+  for (let i = 0; i < extraArgs.length; i++) {
+    const arg = extraArgs[i]!
+    if (arg === '-c' || arg === '--config' || arg.startsWith('--config=')) {
+      const value = arg.startsWith('--config=') ? arg.slice(9) : extraArgs[++i]
+      if (!value || value.startsWith('-')) throw new Error(`${arg} requires a config path`)
+      configPath = path.resolve(cwd, value)
+    } else {
+      args.push(arg)
+    }
+  }
+  configPath ??= await findConfig(cwd)
+  if (configPath) {
+    await loadConfig(configPath)
+    args.unshift('-c', configPath)
+  }
+  return { args, configPath }
 }
 
 async function realish(p: string): Promise<string> {
@@ -360,6 +370,7 @@ async function runNativePass(
   ]
 
   let stdout = ''
+  let failed = false
   try {
     const bin = spawnableFrom(oxlintPath)
     const res = await execFileAsync(bin.command, [...bin.args, ...args], {
@@ -368,14 +379,16 @@ async function runNativePass(
     })
     stdout = res.stdout
   } catch (err) {
-    const captured = stdoutOf(err)
-    if (!captured) return []
-    stdout = captured
+    failed = true
+    if (!isExecError(err) || err.code !== 1 || !stdoutOf(err).trim()) throw err
+    stdout = stdoutOf(err)
   }
 
   // Positions already refer to the real file, so map paths only.
   const identity = new Map(files.map(f => [f, f]))
-  return parseOxlintJson(stdout, cwd, identity, cwd)
+  const diagnostics = parseOxlintJson(stdout, cwd, identity, cwd)
+  if (failed && !diagnostics.length) throw new Error('oxlint native pass failed without diagnostics')
+  return diagnostics
 }
 
 /** Drop duplicate diagnostics (same file, position and rule). */
@@ -406,6 +419,7 @@ async function invokeOxlint(
   ]
 
   let stdout = ''
+  let failed = false
   try {
     const bin = spawnableFrom(oxlintPath)
     const res = await execFileAsync(bin.command, [...bin.args, ...args], {
@@ -414,6 +428,7 @@ async function invokeOxlint(
     })
     stdout = res.stdout
   } catch (err) {
+    failed = true
     // oxlint exits 1 when it reports problems, which is success for us. Any
     // other failure (missing binary, bad config, crash) must surface loudly:
     // swallowing it makes the tool report a clean run while linting nothing.
@@ -425,7 +440,7 @@ async function invokeOxlint(
       )
     }
     const captured = stdoutOf(err)
-    if (!captured.trim()) {
+    if (!isExecError(err) || err.code !== 1 || !captured.trim()) {
       const message = isExecError(err) ? err.message : String(err)
       const detail = (stderrOf(err) || message || '').trim()
       throw new Error(
@@ -436,7 +451,9 @@ async function invokeOxlint(
     stdout = captured
   }
 
-  return parseOxlintJson(stdout, tmpRoot, backMap, cwd)
+  const diagnostics = parseOxlintJson(stdout, tmpRoot, backMap, cwd)
+  if (failed && !diagnostics.length) throw new Error('oxlint failed without diagnostics')
+  return diagnostics
 }
 
 /**
@@ -450,23 +467,28 @@ export function parseOxlintJson(
   _cwd: string,
 ): Diagnostic[] {
   const trimmed = stdout.trim()
-  if (!trimmed) return []
+  if (!trimmed) throw new Error('oxlint returned empty output')
 
   let payload: OxlintJsonOutput | OxlintJsonDiagnostic[]
   try {
     payload = JSON.parse(trimmed) as OxlintJsonOutput | OxlintJsonDiagnostic[]
   } catch {
-    return []
+    throw new Error(`oxlint returned invalid JSON: ${trimmed.slice(0, 500)}`)
   }
 
+  if (!payload || typeof payload !== 'object') throw new Error('invalid oxlint result')
+  if (!Array.isArray(payload) && payload.number_of_files === 0 && backMap.size > 0) {
+    throw new Error('oxlint examined zero files despite receiving lint targets')
+  }
   const list = Array.isArray(payload)
     ? payload
-    : payload.diagnostics || payload.results || []
+    : payload.diagnostics ?? payload.results
+  if (!Array.isArray(list)) throw new Error('oxlint result has no diagnostics array')
 
   const out: Diagnostic[] = []
   for (const d of list) {
     const rawPath = d.filename || d.fileName || d.path || d.file
-    if (!rawPath) continue
+    if (!rawPath) throw new Error(`oxlint diagnostic has no filename: ${d.message ?? 'unknown error'}`)
 
     const virtAbs = path.resolve(tmpRoot, rawPath)
     let original = backMap.get(virtAbs)

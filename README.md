@@ -23,6 +23,14 @@ is the reference for rules and config:
 npx oxlint-vue src -- -D correctness -D suspicious
 ```
 
+Select a lint config with `-c ./config.json`, `--config ./config.json`, or
+`--config=./config.json`. Config paths, including those passed after `--`,
+resolve relative to your working directory. The selected config also controls
+Vue rules and file exclusions.
+
+Exit codes: `0` clean, `1` findings, `2` tool/configuration error. An empty input
+fails by default; use `--allow-empty` for an intentionally empty target directory.
+
 Run `npx oxlint-vue --help` for the flags. Node 20.19+.
 
 > **Want a rule set to go with it?**

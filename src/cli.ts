@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import { loadConfig, runOxlint } from './run.js'
+import { loadConfig, resolveLintConfig, runOxlint } from './run.js'
 import { moduleDir } from './resolve.js'
 import type { Diagnostic } from './types.js'
 
@@ -74,9 +74,9 @@ async function collectIgnorePatterns(
 }
 
 /** Build a predicate from an oxlint config's ignorePatterns. */
-async function buildIgnore(cwd: string): Promise<(abs: string) => boolean> {
+async function buildIgnore(cwd: string, configPath?: string | null): Promise<(abs: string) => boolean> {
   const { findConfig } = await import('./run.js')
-  const configPath = await findConfig(cwd)
+  configPath ??= await findConfig(cwd)
   if (!configPath) return () => false
 
   const patterns = await collectIgnorePatterns(configPath)
@@ -127,8 +127,8 @@ async function collectFiles(
     let stat
     try {
       stat = await fs.stat(abs)
-    } catch {
-      return
+    } catch (err) {
+      throw new Error(`cannot access lint target: ${target}`, { cause: err })
     }
 
     if (stat.isFile()) {
@@ -175,6 +175,8 @@ const HELP = `oxlint-vue -- Vue SFC linting on the oxlint engine
   oxlint-vue [paths...] [options] [-- <oxlint args>]
 
 Options
+  -c, --config=<path>    lint config (relative to the working directory)
+      --allow-empty      succeed when no lintable files are found
   -f, --format=<fmt>     pretty (default), json, github, compact
       --fix              apply oxlint's auto-fixes to <script> blocks
       --format-code      format .vue files with oxfmt (template, script, style)
@@ -245,7 +247,8 @@ async function runWatch(
 ): Promise<number> {
   const { watch: fsWatch } = await import('node:fs')
   const { format, quiet, extraArgs } = opts
-  const isIgnored = await buildIgnore(cwd)
+  const { configPath } = await resolveLintConfig(cwd, extraArgs)
+  const isIgnored = await buildIgnore(cwd, configPath)
 
   let running = false
   let pending = false
@@ -419,11 +422,19 @@ async function main(): Promise<number> {
   let lsp = false
   let quiet = false
   let maxWarnings = -1
+  let allowEmpty = false
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!
     if (a === '--format' || a === '-f') { format = argv[++i] ?? ''; continue }
     if (a.startsWith('--format=')) { format = a.slice(9); continue }
+    if (a === '--allow-empty') { allowEmpty = true; continue }
+    if (a === '-c' || a === '--config') {
+      const value = argv[++i]
+      if (!value || value.startsWith('-')) throw new Error(`${a} requires a config path`)
+      extraArgs.push(a, value)
+      continue
+    }
     if (a === '--fix') { fix = true; continue }
     if (a === '--format-code') { formatCode = true; continue }
     if (a === '--check-format') { checkFormat = true; continue }
@@ -459,16 +470,18 @@ async function main(): Promise<number> {
 
   const cwd = process.cwd()
   const roots = targets.length ? targets : ['.']
+  const resolved = await resolveLintConfig(cwd, extraArgs)
+  extraArgs.splice(0, extraArgs.length, ...resolved.args)
 
   if (watch) {
     return runWatch(roots, cwd, { extraArgs, format, quiet, fix })
   }
 
-  const files = await collectFiles(roots, cwd, await buildIgnore(cwd))
+  const files = await collectFiles(roots, cwd, await buildIgnore(cwd, resolved.configPath))
 
   if (!files.length) {
-    process.stderr.write('oxlint-vue: no lintable files found\n')
-    return 0
+    process.stderr.write('oxlint-vue: no lintable files found (use --allow-empty to allow this)\n')
+    return allowEmpty ? 0 : 2
   }
 
   // Formatting runs before linting so the report describes the code the user
