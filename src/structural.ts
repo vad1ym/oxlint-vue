@@ -23,6 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
+import { freeIdentifiers, scriptInstanceMembers } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -237,6 +238,26 @@ function staticClassValues(node: import('./ast.js').AstNode, textOnly = false): 
 
 function classNames(value: string): string[] {
   return value.split(/\s+/u).filter(Boolean)
+}
+
+function deprecatedInstanceRule(name: '$listeners' | '$scopedSlots'): Rule {
+  return {
+    name: `vue/no-deprecated-dollar-${name === '$listeners' ? 'listeners' : 'scopedslots'}-api`,
+    severity: 'error',
+    check(node, report) {
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      const locals = (node as AnyNode & Annotations).__locals
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        for (const identifier of freeIdentifiers(ast, new Set([name]), locals)) {
+          report({ ...astLoc(exp, identifier, ast), message: `The ${name} instance property is deprecated.` })
+        }
+      }
+    },
+  }
 }
 
 function classValueLoc(
@@ -631,6 +652,8 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 }
 
 const RULES: Rule[] = [
+  deprecatedInstanceRule('$listeners'),
+  deprecatedInstanceRule('$scopedSlots'),
   ...['html', 'text', 'show'].map(name => simpleDirectiveRule(name, true)),
   ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
   ...(['if', 'else-if', 'else'] as const).map(conditionalDirectiveRule),
@@ -2261,6 +2284,17 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const deprecatedNames = new Map([
+    ['$listeners', 'vue/no-deprecated-dollar-listeners-api'],
+    ['$scopedSlots', 'vue/no-deprecated-dollar-scopedslots-api'],
+  ])
+  for (const finding of scriptInstanceMembers(descriptor, new Set(deprecatedNames.keys()))) {
+    const ruleName = deprecatedNames.get(finding.name)!
+    const entry = active.find(item => item.rule.name === ruleName)
+    if (!entry) continue
+    out.push({ filename, rule: ruleName, severity: entry.severity,
+      ...sourceLoc(source, finding.offset), message: `The ${finding.name} instance property is deprecated.` } as Diagnostic)
+  }
   const blocks = [descriptor.template, descriptor.script, descriptor.scriptSetup, ...descriptor.styles, ...descriptor.customBlocks]
     .filter(block => block !== null)
   const maxLinesRule = active.find(entry => entry.rule.name === 'vue/max-lines-per-block')

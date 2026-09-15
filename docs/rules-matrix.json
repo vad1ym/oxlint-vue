@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 55,
+    "implemented": 56,
     "native": 59,
-    "partial": 39,
-    "missing": 100
+    "partial": 40,
+    "missing": 98
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -161,13 +161,13 @@
     },
     {
       "name": "no-deprecated-dollar-listeners-api",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 11,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -177,19 +177,21 @@
     },
     {
       "name": "no-deprecated-dollar-scopedslots-api",
-      "status": "missing",
+      "status": "partial",
       "priority": "P0",
       "categories": [
         "vue3-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 11,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-deprecated-dollar-scopedslots-api.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-deprecated-events-api",

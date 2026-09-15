@@ -84,7 +84,9 @@
     "tests/lib/rules/no-dupe-v-else-if.test.ts": "32ab09319c006b8bb2f8a071f5c4cb93984e4a444daa7134b0cda511010f7298",
     "tests/lib/rules/no-mutating-props.test.ts": "ccc4474227ddda47022f8b7573842c35eaf492a187f92c9ed28e3ba77dced790",
     "tests/lib/rules/no-textarea-mustache.test.ts": "e98c745ecba38b37c5182829f712ebdb93c0294dd6d89ceea748874c7debd969",
-    "tests/lib/rules/no-child-content.test.ts": "a52e823fe4e20be88572c47f5183205f70d4a079afe9e6dad6fbacdc771b9bcd"
+    "tests/lib/rules/no-child-content.test.ts": "a52e823fe4e20be88572c47f5183205f70d4a079afe9e6dad6fbacdc771b9bcd",
+    "tests/lib/rules/no-deprecated-dollar-listeners-api.test.ts": "b9866f94a84e294c0af6350d5e94a8796f4a40b7e948c6f7879a51878309e9f2",
+    "tests/lib/rules/no-deprecated-dollar-scopedslots-api.test.ts": "e7bb08608548df9eb99c455a6a4dcfdb46fceef6a95e5b5bf059682a26058b54"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
@@ -21984,6 +21986,292 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/1",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <template>\n          <div v-bind=\"$attrs\"/>\n        </template>\n        <script>\n        export default {\n          mounted () {\n            this.$emit('start')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/2",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n          methods: {\n            click () {\n              this.$emit('click')\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/3",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n        }\n        const another = function () {\n          console.log(this.$listeners)\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/4",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <template>\n          <div foo=\"$listeners\"/>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/5",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <template>\n          <div v-on=\"() => {\n            function click ($listeners) {\n              fn(foo.$listeners)\n              fn($listeners)\n            }\n          }\"/>\n          <div v-for=\"$listeners in list\">\n            <div v-on=\"$listeners\">\n          </div>\n          <VueComp>\n            <template v-slot=\"{$listeners}\">\n              <div v-on=\"$listeners\">\n            </template>\n          </VueComp>\n        </template>\n        <script>\n        export default {\n          methods: {\n            click ($listeners) {\n              foo.$listeners\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/valid/6",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n          computed: {\n            foo () {\n              const {vm} = this\n              return vm.$listeners\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/invalid/1",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <template>\n          <div v-on=\"$listeners\"/>\n        </template>\n        <script>\n        export default {\n          computed: {\n            foo () {\n              return this.$listeners\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/invalid/2",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <template>\n          <div v-for=\"listener in $listeners\"/>\n          <div :foo=\"$listeners\"/>\n        </template>\n        <script>\n        export default {\n          computed: {\n            foo () {\n              fn(this.$listeners)\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/invalid/3",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n          computed: {\n            foo () {\n              const vm = this\n              return vm.$listeners\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/invalid/4",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n          computed: {\n            foo () {\n              const vm = this\n              function fn() {\n                return vm.$listeners\n              }\n              return fn()\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-dollar-listeners-api/invalid/5",
+      "rule": "vue/no-deprecated-dollar-listeners-api",
+      "code": "\n        <script>\n        export default {\n          computed: {\n            foo () {\n              const vm = this\n              const a = vm?.$listeners\n              const b = this?.$listeners\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/1",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <template>\n          <div v-bind=\"$attrs\"/>\n        </template>\n        <script>\n        export default {\n          mounted () {\n            this.$emit('start')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/2",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n          methods: {\n            click () {\n              this.$emit('click')\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/3",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n        }\n        const another = function () {\n          console.log(this.$scopedSlots)\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/4",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <template>\n          <div foo=\"$scopedSlots\"/>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/5",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <template>\n          <div v-on=\"() => {\n            function click ($scopedSlots) {\n              fn(foo.$scopedSlots)\n              fn($scopedSlots)\n            }\n          }\"/>\n          <div v-for=\"$scopedSlots in list\">\n            <div v-on=\"$scopedSlots\">\n          </div>\n          <VueComp>\n            <template v-slot=\"{$scopedSlots}\">\n              <div v-on=\"$scopedSlots\">\n            </template>\n          </VueComp>\n        </template>\n        <script>\n        export default {\n          methods: {\n            click ($scopedSlots) {\n              foo.$scopedSlots\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/valid/6",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n          computed: {\n            foo () {\n              const {vm} = this\n              return vm.$scopedSlots\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/invalid/1",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <template>\n          <div v-if=\"$scopedSlots.default\"/>\n        </template>\n        <script>\n        export default {\n          render() {\n            return this.$scopedSlots.foo('bar')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/invalid/2",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <template>\n          <div v-for=\"slot in $scopedSlots\"/>\n          <div :foo=\"$scopedSlots\"/>\n        </template>\n        <script>\n        export default {\n          computed: {\n            foo () {\n              fn(this.$scopedSlots)\n            }\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/invalid/3",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n          render() {\n            const vm = this\n            return vm.$scopedSlots.foo('bar')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/invalid/4",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n          render() {\n            const vm = this\n            function fn() {\n              return vm.$scopedSlots\n            }\n            return fn().foo('bar')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-dollar-scopedslots-api/invalid/5",
+      "rule": "vue/no-deprecated-dollar-scopedslots-api",
+      "code": "\n        <script>\n        export default {\n          render () {\n            const vm = this\n            const a = vm?.$scopedSlots\n            const b = this?.$scopedSlots\n            return a.foo('bar')\n          }\n        }\n        </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
     }
   ]
 }
