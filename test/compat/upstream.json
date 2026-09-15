@@ -96,7 +96,8 @@
     "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2",
     "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e",
     "tests/lib/rules/require-explicit-emits.test.ts": "6ca1f2a00fe4aa46ff9ddde69997a9ade4d83fb97821a03964f0499bf5d8e6d6",
-    "tests/lib/rules/one-component-per-file.test.ts": "75d0580a2b9fccef957215c53e0456bee0cc284f06bd8c2491b2586fd224a999"
+    "tests/lib/rules/one-component-per-file.test.ts": "75d0580a2b9fccef957215c53e0456bee0cc284f06bd8c2491b2586fd224a999",
+    "tests/lib/rules/v-slot-style.test.ts": "3aa7a15cde9714f51615511aa61c14f1acaba2734d15f1f17fca8ac2c7d4ff4b"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -28549,6 +28550,450 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "v-slot-style/valid/1",
+      "rule": "vue/v-slot-style",
+      "code": "\n      <template>\n        <my-component v-slot=\"data\">\n          <template #default></template>\n          <template #foo></template>\n        </my-component>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/2",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component #default=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        "shorthand"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/3",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot:default=\"data\">\n              <template v-slot:default></template>\n              <template v-slot:foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        "longform"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/4",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component #default=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "shorthand"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/5",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot:default=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/6",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "v-slot"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/7",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "shorthand"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/8",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template v-slot:default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/9",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template v-slot></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "v-slot"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/10",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template #default></template>\n              <template #foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "named": "shorthand"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/11",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component v-slot=\"data\">\n              <template #default></template>\n              <template v-slot:foo></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "named": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/valid/12",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <template>\n            <my-component>\n              <template v-slot:[default]></template>\n            </my-component>\n          </template>\n        </template>\n      ",
+      "options": [
+        {
+          "named": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-slot-style/invalid/1",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component #default=\"data\"></my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/2",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component v-slot:default=\"data\"></my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/3",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component v-slot:default=\"data\"></my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "shorthand"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/4",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component v-slot=\"data\"></my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "shorthand"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/5",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component #default=\"data\"></my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/6",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component v-slot=\"data\"></my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "atComponent": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/7",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot></template>\n          </my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/8",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot:default></template>\n          </my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/9",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template #default></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/10",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/11",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template #default></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "v-slot"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/12",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot:default></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "default": "v-slot"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/13",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot:foo></template>\n          </my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/14",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template #foo></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "named": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/15",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template v-slot:[foo]></template>\n          </my-component>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-slot-style/invalid/16",
+      "rule": "vue/v-slot-style",
+      "code": "\n        <template>\n          <my-component>\n            <template #[foo]></template>\n          </my-component>\n        </template>\n      ",
+      "options": [
+        {
+          "named": "longform"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }

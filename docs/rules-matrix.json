@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 42,
-    "missing": 88
+    "partial": 43,
+    "missing": 87
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1922,20 +1922,22 @@
     },
     {
       "name": "v-slot-style",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 28,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/v-slot-style.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "attributes-order",

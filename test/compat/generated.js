@@ -8,6 +8,7 @@ const seeds = [
   ['no-use-computed-property-like-method', '<div/>'],
   ['no-template-shadow', '<div v-for="item in items"><i v-for="item in item"/></div>'],
   ['require-explicit-emits', '<button @click="$emit(\'save\')"/>'],
+  ['v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>'],
   ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],

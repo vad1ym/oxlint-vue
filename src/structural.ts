@@ -894,6 +894,27 @@ const RULES: Rule[] = [
     check() {},
   },
   {
+    name: 'vue/v-slot-style',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const configured = typeof options.mode === 'string'
+        ? { atComponent: options.mode, default: options.mode, named: options.mode }
+        : { atComponent: 'v-slot', default: 'shorthand', named: 'shorthand', ...options }
+      for (const prop of node.props) {
+        if (prop.type !== NodeTypes.DIRECTIVE || prop.name !== 'slot') continue
+        const source = prop.loc.source
+        const actual = source.startsWith('#') ? 'shorthand'
+          : /^v-slot(?:\s|=|$)/u.test(source) ? 'v-slot' : 'longform'
+        const isDefault = !prop.arg || prop.arg.type === NodeTypes.SIMPLE_EXPRESSION
+          && prop.arg.isStatic && prop.arg.content === 'default'
+        const expected = node.tag !== 'template' ? configured.atComponent
+          : isDefault ? configured.default : configured.named
+        if (actual !== expected) report({ message: `Expected ${expected} v-slot syntax.`, ...loc(prop) })
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {
