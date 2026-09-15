@@ -132,9 +132,10 @@ function hasOptionalReceiver(node: import('./ast.js').AstNode): boolean {
 function ruleOptions(config: RuleConfig | undefined): Record<string, unknown> {
   const option = Array.isArray(config) ? config[1] : undefined
   const secondary = Array.isArray(config) ? config[2] : undefined
+  const rawOptions = Array.isArray(config) ? config.slice(1) : []
   return option && typeof option === 'object'
-    ? { ...(option as Record<string, unknown>), secondary }
-    : { mode: option, secondary }
+    ? { ...(option as Record<string, unknown>), secondary, rawOptions, configured: config !== undefined }
+    : { mode: option, secondary, rawOptions, configured: config !== undefined }
 }
 
 /** Free names only: callback parameters do not refer to loop bindings. */
@@ -1193,6 +1194,62 @@ const RULES: Rule[] = [
           message: preferShorthand ? 'Use : instead of v-bind:.' : 'Use v-bind: instead of shorthand.', ...loc(dir),
         })
       }
+    },
+  },
+  {
+    name: 'vue/restricted-component-names',
+    severity: 'error',
+    check(node, report, options) {
+      if (options.configured !== true || node.type !== NodeTypes.ELEMENT || !customComponent(node)
+        || ['component', 'keep-alive', 'suspense', 'teleport', 'transition', 'transition-group'].includes(node.tag)) return
+      if (!configuredNameMatch(node.tag, options.allow)) report({
+        message: `Component ${node.tag} is not allowed.`, ...loc(node),
+      })
+    },
+  },
+  {
+    name: 'vue/no-restricted-html-elements',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      for (const item of Array.isArray(options.rawOptions) ? options.rawOptions : []) {
+        const value = item && typeof item === 'object' ? (item as { element?: unknown }).element : item
+        const names = Array.isArray(value) ? value : [value]
+        if (names.includes(node.tag)) {
+          report({ message: `Element ${node.tag} is restricted.`, ...loc(node) })
+          return
+        }
+      }
+    },
+  },
+  {
+    name: 'vue/no-template-target-blank',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const target = findAttr(node, 'target')
+      if (target?.value?.content !== '_blank') return
+      const rel = (findAttr(node, 'rel')?.value?.content ?? '').toLowerCase().split(' ')
+      if (rel.includes('noopener') && (options.allowReferrer === true || rel.includes('noreferrer'))) return
+      const href = findAttr(node, 'href')?.value?.content
+      const dynamic = node.props.some(prop => prop.type === NodeTypes.DIRECTIVE
+        && prop.name === 'bind' && argContent(prop) === 'href')
+      if (!(href && /^(?:\w+:|\/\/)/u.test(href))
+        && !(dynamic && options.enforceDynamicLinks !== 'never')) return
+      report({ message: 'External target=_blank links require a secure rel.', ...loc(target) })
+    },
+  },
+  {
+    name: 'vue/static-class-names-order',
+    severity: 'warning',
+    check(node, report) {
+      const attr = findAttr(node, 'class')
+      const value = attr?.value?.content
+      if (!attr || value === undefined) return
+      const withWhitespace = value.split(/(\s+)/u)
+      const divider = withWhitespace.length > 1 ? withWhitespace[1]! : ''
+      const sorted = withWhitespace.filter(name => name.trim()).toSorted((a, b) => a.localeCompare(b)).join(divider)
+      if (value !== sorted) report({ message: 'Order static class names alphabetically.', ...loc(attr) })
     },
   },
   {

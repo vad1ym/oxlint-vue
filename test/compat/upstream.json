@@ -52,6 +52,10 @@
     "tests/lib/rules/attribute-hyphenation.test.ts": "3551335ac2ce8ef6953e0e05e84d3dbbda4b3e7fe2bc2dcbeb29ad39420f75bd",
     "tests/lib/rules/v-on-event-hyphenation.test.ts": "eb041b0de1adbf47be0e82435a31ad5cf974d5bfaad548de5ef49760d86da105",
     "tests/lib/rules/v-bind-style.test.ts": "57a51981c9900b42e4b3e61e5c4857785039790b4ea265576a4e37586b90d6fd",
+    "tests/lib/rules/restricted-component-names.test.ts": "ae8f93301b67461b09f11548f0573908c243bf41028b9b8186187f4453af3d9d",
+    "tests/lib/rules/no-restricted-html-elements.test.ts": "dace06ef5ecb9653e23eb03e03ec7054039ccc42002235ede9355eb43094ec77",
+    "tests/lib/rules/no-template-target-blank.test.ts": "21dfa880a2a036d9f011e78e5c0444fee0ba0e0d2d04a1de272eaf194b987692",
+    "tests/lib/rules/static-class-names-order.test.ts": "f782bfb232940bf0c7b4823b04bcce1924c5d706a0ac04254e1fe356b717a7bc",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -10708,6 +10712,626 @@
         }
       ],
       "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "restricted-component-names/valid/1",
+      "rule": "vue/restricted-component-names",
+      "code": "<template><keep-alive></keep-alive></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "restricted-component-names/valid/2",
+      "rule": "vue/restricted-component-names",
+      "code": "<template><button/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "restricted-component-names/valid/3",
+      "rule": "vue/restricted-component-names",
+      "code": "\n      <template>\n        <foo-button/>\n        <div-bar/>\n      </template>\n      ",
+      "options": [
+        {
+          "allow": [
+            "/^foo-/",
+            "/-bar$/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "restricted-component-names/invalid/1",
+      "rule": "vue/restricted-component-names",
+      "code": "\n      <template>\n        <Button/>\n        <foo-button/>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "restricted-component-names/invalid/2",
+      "rule": "vue/restricted-component-names",
+      "code": "\n      <template>\n        <bar-button/>\n        <foo/>\n      </template>\n      ",
+      "options": [
+        {
+          "allow": [
+            "/^foo-/",
+            "bar"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-html-elements/valid/1",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "",
+      "options": [
+        "button"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/2",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><div class=\"foo\"></div></template>",
+      "options": [
+        "button"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/3",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><button type=\"button\"></button></template>",
+      "options": [
+        "div"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/4",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><div class=\"foo\"><Button type=\"button\"></Button></div></template>",
+      "options": [
+        "button"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/5",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><main><article></article></main></template>",
+      "options": [
+        {
+          "element": [
+            "div",
+            "span"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/6",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><svg><rect width=\"100\" height=\"100\"></rect></svg></template>",
+      "options": [
+        "circle"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/valid/7",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><math><mn>2</mn></math></template>",
+      "options": [
+        "mi"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/1",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><div><button type=\"button\"></button><div></template>",
+      "options": [
+        "button"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/2",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><div class=\"foo\"><button type=\"button\"></button></div></template>",
+      "options": [
+        "div"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/3",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><marquee>foo</marquee></template>",
+      "options": [
+        {
+          "element": "marquee",
+          "message": "Custom error"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/4",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><a></a><RouterLink></RouterLink></template>",
+      "options": [
+        {
+          "element": [
+            "a",
+            "RouterLink"
+          ],
+          "message": "Prefer the use of <NuxtLink> component"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/5",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><svg><circle r=\"50\"></circle></svg></template>",
+      "options": [
+        "circle"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/6",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><svg><rect width=\"100\" height=\"100\"></rect><path d=\"M10,10 L20,20\"></path></svg></template>",
+      "options": [
+        {
+          "element": [
+            "rect",
+            "path"
+          ],
+          "message": "Use simplified shapes instead"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/7",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><math><mfrac><mn>1</mn><mn>2</mn></mfrac></math></template>",
+      "options": [
+        "mfrac"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-html-elements/invalid/8",
+      "rule": "vue/no-restricted-html-elements",
+      "code": "<template><math><mi>x</mi><mo>=</mo><mn>5</mn></math></template>",
+      "options": [
+        {
+          "element": "mo",
+          "message": "Avoid using operators directly"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-target-blank/valid/1",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a>link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/2",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a attr>link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/3",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a target>link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/4",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/5",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a :href=\"link\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/6",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a :href=\"link\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/7",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/8",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\" target=\"_blank\" rel=\"noopener\">link</a></template>",
+      "options": [
+        {
+          "allowReferrer": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/9",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"/foo\" target=\"_blank\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/10",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"/foo\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/11",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"foo/bar\" target=\"_blank\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/12",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"foo/bar\" target=\"_blank\" rel=\"noopener noreferrer\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/valid/13",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a :href=\"link\" target=\"_blank\">link</a></template>",
+      "options": [
+        {
+          "enforceDynamicLinks": "never"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-target-blank/invalid/1",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\" target=\"_blank\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-target-blank/invalid/2",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\" target=\"_blank\" rel=\"noopenernoreferrer\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-target-blank/invalid/3",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a :href=\"link\" target=\"_blank\" rel=3>link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-target-blank/invalid/4",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a :href=\"link\" target=\"_blank\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-target-blank/invalid/5",
+      "rule": "vue/no-template-target-blank",
+      "code": "<template><a href=\"https://eslint.vuejs.org\" target=\"_blank\" rel=\"noopener\">link</a></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "static-class-names-order/valid/1",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "no-classes.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "static-class-names-order/valid/2",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div class=\"a\"></div></template>",
+      "options": [],
+      "filename": "one-class.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "static-class-names-order/valid/3",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div class=\"a b c\"></div></template>",
+      "options": [],
+      "filename": "single-space.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "static-class-names-order/valid/4",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div class=\"a       b       c\"></div></template>",
+      "options": [],
+      "filename": "multiple-spaces.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "static-class-names-order/valid/5",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div class=\"a  b  c\"></div></template>",
+      "options": [],
+      "filename": "tabs.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "static-class-names-order/invalid/1",
+      "rule": "vue/static-class-names-order",
+      "code": "<template><div class=\"b a\"></div></template>",
+      "options": [],
+      "filename": "two-classes.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "static-class-names-order/invalid/2",
+      "rule": "vue/static-class-names-order",
+      "code": "<template>\n          <div class=\"c b a\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "three-classes.vue",
       "languageOptions": {
         "ecmaVersion": 2015
       },

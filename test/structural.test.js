@@ -74,6 +74,10 @@ const CASES = [
   ['vue/attribute-hyphenation', '<MyComp myProp="value" />', true],
   ['vue/v-on-event-hyphenation', '<MyComp @myEvent="go" />', true],
   ['vue/v-bind-style', '<div v-bind:id="id" />', true],
+  ['vue/restricted-component-names', '<MyComp />', false],
+  ['vue/no-restricted-html-elements', '<marquee />', false],
+  ['vue/no-template-target-blank', '<a href="https://example.com" target="_blank" />', true],
+  ['vue/static-class-names-order', '<div class="b a" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

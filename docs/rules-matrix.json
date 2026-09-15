@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 46,
+    "implemented": 48,
     "native": 55,
-    "partial": 23,
-    "missing": 129
+    "partial": 25,
+    "missing": 125
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -3063,11 +3063,11 @@
     },
     {
       "name": "no-restricted-html-elements",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 15,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3219,17 +3219,19 @@
     },
     {
       "name": "no-template-target-blank",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 18,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-template-target-blank.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-this-in-before-route-enter",
@@ -3843,11 +3845,11 @@
     },
     {
       "name": "restricted-component-names",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 5,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3941,17 +3943,19 @@
     },
     {
       "name": "static-class-names-order",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 7,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/static-class-names-order.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "template-curly-spacing",
