@@ -257,6 +257,9 @@ test('local settings override the extended preset', async () => {
 })
 
 for (const [template, script, expected] of [
+  ['<button @click="(props as Props).title++"/>', 'const props=defineProps<{title:number}>()', true],
+  ['<button @click="props.push()"/>', 'const props=defineProps({push:Function})', false],
+  ['<button @click="props.items.push(1)"/>', 'const props=defineProps({items:Array})', true],
   ['<p>{{count++}}</p>', 'defineProps({count:Number})', true],
   ['<button @click="props.title = \'x\'"/>', 'const props = defineProps({title:String})', true],
   ['<button @click="props[\'title\']++"/>', 'const props = defineProps<{title:number}>()', true],

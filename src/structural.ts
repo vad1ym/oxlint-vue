@@ -480,11 +480,16 @@ const RULES: Rule[] = [
           if (!isObject && !propName) return
           let target: import('./ast.js').AstNode = id
           let depth = ancestors.length - 1
-          let member = false
+          let members = 0
           while (depth >= 0) {
             const parent = ancestors[depth]!
             if ((parent.type === 'MemberExpression' || parent.type === 'OptionalMemberExpression') && parent.object === target) {
-              member = true
+              members++
+              target = parent
+              depth--
+            } else if ((parent.type === 'TSAsExpression' || parent.type === 'TSTypeAssertion'
+              || parent.type === 'TSNonNullExpression' || parent.type === 'TSSatisfiesExpression'
+              || parent.type === 'ParenthesizedExpression') && parent.expression === target) {
               target = parent
               depth--
             } else if (parent.type === 'ObjectProperty' && parent.value === target
@@ -494,13 +499,14 @@ const RULES: Rule[] = [
               depth--
             } else break
           }
-          if (isObject && !member) return
+          if (isObject && !members) return
           const parent = ancestors[depth]
           const mutation = (parent?.type === 'AssignmentExpression' && parent.left === target)
             || (parent?.type === 'UpdateExpression' && parent.argument === target)
             || (parent?.type === 'UnaryExpression' && parent.operator === 'delete' && parent.argument === target)
             || (prop.name === 'model' && target === ast)
             || (parent?.type === 'CallExpression' && parent.callee === target
+              && (!isObject || members > 1)
               && target.type === 'MemberExpression'
               && (!target.computed || target.property.type === 'StringLiteral')
               && ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin'].includes(staticName(target.property) ?? ''))
