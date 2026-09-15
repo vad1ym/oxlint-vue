@@ -175,8 +175,8 @@ const clean = `<template>
 const list = [1]
 </script>
 `
-  await withServer({ 'C.vue': clean }, async (client, dir) => {
-    const uri = fileUri(path.join(dir, 'C.vue'))
+  await withServer({ 'CleanFile.vue': clean }, async (client, dir) => {
+    const uri = fileUri(path.join(dir, 'CleanFile.vue'))
     client.send({
       jsonrpc: '2.0',
       method: 'textDocument/didOpen',
@@ -194,8 +194,8 @@ const list = [1]
 })
 
 test('updates diagnostics on edit and cleans up on close', { timeout: 30000 }, async () => {
-  await withServer({ 'D.vue': BROKEN_VUE }, async (client, dir) => {
-    const uri = fileUri(path.join(dir, 'D.vue'))
+  await withServer({ 'BrokenFile.vue': BROKEN_VUE }, async (client, dir) => {
+    const uri = fileUri(path.join(dir, 'BrokenFile.vue'))
     client.send({
       jsonrpc: '2.0',
       method: 'textDocument/didOpen',

@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { freeIdentifiers, scriptInstanceMembers } from './script-rules.js'
+import { componentNameFindings, freeIdentifiers, scriptInstanceMembers } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -806,6 +806,7 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 }
 
 const RULES: Rule[] = [
+  { name: 'vue/multi-word-component-names', severity: 'error', check() {} },
   deprecatedInstanceRule('$listeners'),
   deprecatedInstanceRule('$scopedSlots'),
   validVSlotRule(),
@@ -2439,6 +2440,15 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const componentNameRule = active.find(entry => entry.rule.name === 'vue/multi-word-component-names')
+  if (componentNameRule) {
+    const options = ruleOptions(config?.[componentNameRule.rule.name])
+    for (const finding of componentNameFindings(descriptor, filename, options.ignores)) {
+      out.push({ filename, rule: componentNameRule.rule.name, severity: componentNameRule.severity,
+        ...sourceLoc(source, finding.offset),
+        message: `Component name "${finding.name}" should always be multi-word.` } as Diagnostic)
+    }
+  }
   const deprecatedNames = new Map([
     ['$listeners', 'vue/no-deprecated-dollar-listeners-api'],
     ['$scopedSlots', 'vue/no-deprecated-dollar-scopedslots-api'],

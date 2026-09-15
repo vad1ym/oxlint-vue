@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 1734 upstream cases, 86 common structural rules | **1733 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1112/1112** |
-| Four pinned Nuxt components, each checked against all 86 rules | **344/344 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1574/1574 comparisons** |
+| 1773 upstream cases, 87 common structural rules | **1772 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1120/1120** |
+| Four pinned Nuxt components, each checked against all 87 rules | **348/348 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1586/1586 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. One parser-crashing case is explicitly excluded below. Eighty-five
-of the eighty-six suites currently match on every imported case.
+known failures. One parser-crashing case is explicitly excluded below. Eighty-six
+of the eighty-seven suites currently match on every imported case.
 
 Twelve newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
@@ -38,7 +38,7 @@ One `no-deprecated-v-bind-sync` reference case is explicitly unmeasured because
 the upstream case ID; regeneration cannot silently add or remove the exception.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 167 are not measured by this structural-rule harness,
+exports 253 rule names; 166 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

@@ -35,6 +35,7 @@ export function freeIdentifiers(ast: AstNode, names: Set<string>, locals?: Set<s
 }
 
 export interface ScriptMemberFinding { name: string, offset: number }
+export interface ComponentNameFinding { name: string, offset: number }
 
 function componentObject(path: NodePath): NodePath | undefined {
   path = path.get('declaration') as NodePath
@@ -106,6 +107,95 @@ export function scriptInstanceMembers(
         offset: block.loc.start.offset + (property.node.start ?? 0),
       })
     } })
+  }
+  return findings
+}
+
+const builtInComponentNames = new Set([
+  'Transition', 'transition', 'TransitionGroup', 'transition-group',
+  'KeepAlive', 'keep-alive', 'Teleport', 'teleport', 'Suspense', 'suspense',
+  'Component', 'component',
+])
+
+function kebabName(name: string): string {
+  return name.replace(/([a-z\d])([A-Z])/gu, '$1-$2').replace(/[_\s]+/gu, '-').toLowerCase()
+}
+
+/** Invalid explicit component names, or the filename fallback used by script setup/options components. */
+export function componentNameFindings(
+  descriptor: SFCDescriptor,
+  filename: string,
+  configuredIgnores: unknown,
+): ComponentNameFinding[] {
+  const ignores = new Set(['App', 'app'])
+  if (Array.isArray(configuredIgnores)) for (const value of configuredIgnores) {
+    if (typeof value !== 'string') continue
+    ignores.add(value)
+    if (/^[A-Z][\dA-Za-z]*$/u.test(value)) ignores.add(kebabName(value))
+  }
+  const valid = (name: string): boolean => ignores.has(name) || builtInComponentNames.has(name)
+    || kebabName(name).includes('-')
+  const findings: ComponentNameFinding[] = []
+  let hasVue = descriptor.scriptSetup !== null
+  let hasName = false
+  let hasProgramBody = false
+
+  const validate = (node: AstNode, blockOffset: number): void => {
+    if (!['StringLiteral', 'NumericLiteral', 'BooleanLiteral'].includes(node.type)) return
+    const name = String((node as AstNode & { value: unknown }).value)
+    if (!valid(name)) findings.push({ name, offset: blockOffset + (node.start ?? 0) })
+  }
+
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try {
+      file = babelParse(block.content, {
+        sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'],
+      })
+    } catch { continue }
+    if (file.program.body.length) hasProgramBody = true
+    traverse(file, { enter(path) {
+      if (path.isCallExpression()) {
+        const callee = unwrap(path.node.callee)
+        if (callee.type === 'MemberExpression' && !callee.computed
+          && callee.object.type === 'Identifier' && callee.object.name === 'Vue'
+          && staticName(callee.property) === 'component') {
+          hasVue = true
+          if (path.node.arguments.length === 2) {
+            hasName = true
+            const name = (path.get('arguments') as NodePath[])[0]
+            if (name) validate(name.node, block.loc.start.offset)
+          }
+        }
+        if (block === descriptor.scriptSetup && callee.type === 'Identifier'
+          && callee.name === 'defineOptions' && path.node.arguments[0]?.type === 'ObjectExpression') {
+          const object = (path.get('arguments') as NodePath[])[0]!
+          const property = (object.get('properties') as NodePath[]).find(candidate =>
+            candidate.isObjectProperty() && staticName(candidate.node.key) === 'name')
+          if (property?.isObjectProperty()) {
+            hasName = true
+            validate((property.get('value') as NodePath).node, block.loc.start.offset)
+          }
+        }
+      }
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        if (!object) return
+        hasVue = true
+        const property = (object.get('properties') as NodePath[]).find(candidate =>
+          candidate.isObjectProperty() && staticName(candidate.node.key) === 'name')
+        if (property?.isObjectProperty()) {
+          hasName = true
+          validate((property.get('value') as NodePath).node, block.loc.start.offset)
+        }
+      }
+    } })
+  }
+
+  if (!hasName && (hasVue || !hasProgramBody) && /\.vue$/iu.test(filename)) {
+    const basename = filename.replace(/^.*[/\\]/u, '').replace(/\.[^.]*$/u, '')
+    if (!valid(basename)) findings.push({ name: basename, offset: 0 })
   }
   return findings
 }

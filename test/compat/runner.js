@@ -16,14 +16,15 @@ const sort = findings => findings.toSorted((a, b) => a.line - b.line || a.column
 
 export function compareCase(entry, severity = 2) {
   const { rule, code, options, languageOptions = {}, settings = {} } = entry
+  const filename = entry.filename ?? 'case.vue'
   assert.ok(vue.rules[rule.slice(4)], `Unknown reference rule: ${rule}`)
   const parserOptions = { ...languageOptions.parserOptions }
   if (parserOptions.parser === '@typescript-eslint/parser') parserOptions.parser = tsParser
   const messages = linter.verify(code, [{
-    files: ['**/*.vue'], plugins: { vue }, settings,
+    files: ['**/*.{js,ts,vue}'], plugins: { vue }, settings,
     languageOptions: { ...languageOptions, parser: vueParser, parserOptions },
     rules: { [rule]: [severity, ...options] },
-  }], { filename: 'case.vue' })
+  }], { filename })
   assert.deepEqual(messages.filter(m => !m.ruleId || m.fatal), [], `Reference failed: ${entry.id}`)
   const expected = sort(messages.map(m => ({ line: m.line, column: m.column, severity: m.severity })))
   // Validate the imported corpus against the actual reference engine, so a
@@ -31,8 +32,8 @@ export function compareCase(entry, severity = 2) {
   if (entry.expectedCount !== undefined && severity !== 0) {
     assert.equal(expected.length, entry.expectedCount, `Reference drift: ${entry.id}`)
   }
-  const { descriptor } = parse(code, { filename: 'case.vue' })
-  const actual = sort(checkTemplate(descriptor.template?.ast, 'case.vue', code,
+  const { descriptor } = parse(code, { filename })
+  const actual = sort(checkTemplate(descriptor.template?.ast, filename, code,
     { ...disabled, [rule]: [severity, ...options] }, (descriptor.scriptSetup ?? descriptor.script)?.content,
   ).map(d => ({ line: d.line, column: d.column, severity: d.severity === 'error' ? 2 : 1 })))
   return { expected, actual }

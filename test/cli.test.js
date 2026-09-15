@@ -12,7 +12,7 @@ async function fixture(fn) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-vue-cli-'))
   try {
     await fs.mkdir(path.join(dir, 'src'))
-    await fs.writeFile(path.join(dir, 'src/A.vue'), '<template><div /></template>\n<script setup>const unusedCanary = 1</script>\n')
+    await fs.writeFile(path.join(dir, 'src/CanaryFile.vue'), '<template><div /></template>\n<script setup>const unusedCanary = 1</script>\n')
     await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify(config))
     const run = (...args) => spawnSync(process.execPath, [cli, ...args], { cwd: dir, encoding: 'utf8' })
     await fn(dir, run)
@@ -47,8 +47,8 @@ test('invalid config, missing arguments and unknown flags are tool errors', asyn
 
 test('explicit config governs structural rules and file collection too', async () => {
   await fixture(async (dir, run) => {
-    await fs.writeFile(path.join(dir, 'src/B.vue'), '<template><div v-html="html" /></template>\n<script setup>const html = ""</script>')
-    await fs.writeFile(path.join(dir, 'chosen.json'), JSON.stringify({ ...config, ignorePatterns: ['src/A.vue'], settings: { vue: { rules: { 'vue/no-v-html': 'off' } } } }))
+    await fs.writeFile(path.join(dir, 'src/ButtonFile.vue'), '<template><div v-html="html" /></template>\n<script setup>const html = ""</script>')
+    await fs.writeFile(path.join(dir, 'chosen.json'), JSON.stringify({ ...config, ignorePatterns: ['src/CanaryFile.vue'], settings: { vue: { rules: { 'vue/no-v-html': 'off' } } } }))
     for (const args of [['-c', 'chosen.json'], ['--config=chosen.json'], ['--', '--config=chosen.json']]) {
       const result = run('src', ...args)
       assert.equal(result.status, 0, result.stdout + result.stderr)
@@ -60,7 +60,7 @@ test('explicit config governs structural rules and file collection too', async (
 test('config and CLI severity govern native SFC rules', async () => {
   await fixture(async (dir, run) => {
     await fs.writeFile(
-      path.join(dir, 'src/A.vue'),
+      path.join(dir, 'src/CanaryFile.vue'),
       '<script setup>export const exposed = 1</script>\n',
     )
     const rule = 'vue/no-export-in-script-setup'
@@ -91,7 +91,7 @@ test('engine protocol failures cannot become a clean result', async () => {
     const fake = path.join(dir, 'fake.mjs')
     for (const body of ['console.log("broken");process.exit(1)', 'console.log(JSON.stringify({diagnostics:[]}));process.exit(1)', 'console.log(JSON.stringify({diagnostics:[]}));process.exit(2)']) {
       await fs.writeFile(fake, body)
-      await assert.rejects(runOxlint([path.join(dir, 'src/A.vue')], { cwd: dir, oxlintPath: fake }))
+      await assert.rejects(runOxlint([path.join(dir, 'src/CanaryFile.vue')], { cwd: dir, oxlintPath: fake }))
     }
   })
 })
@@ -146,7 +146,7 @@ test('a failed pass waits for the other engine process before returning', async 
         }, 500)
       }
     `)
-    await assert.rejects(runOxlint([path.join(dir, 'src/A.vue')], {
+    await assert.rejects(runOxlint([path.join(dir, 'src/CanaryFile.vue')], {
       cwd: dir,
       oxlintPath: fake,
     }), /invalid JSON/)
@@ -156,11 +156,11 @@ test('a failed pass waits for the other engine process before returning', async 
 
 test('explicit relative config is also honored by the fix pass', async () => {
   await fixture(async (dir, run) => {
-    await fs.writeFile(path.join(dir, 'src/A.vue'), '<template>{{ count }}</template>\n<script setup>\nlet count = 1\n</script>\n')
+    await fs.writeFile(path.join(dir, 'src/CountFile.vue'), '<template>{{ count }}</template>\n<script setup>\nlet count = 1\n</script>\n')
     await fs.writeFile(path.join(dir, 'fix.json'), JSON.stringify({ rules: { 'prefer-const': 'error' } }))
     const result = run('src', '--fix', '--', '-c', 'fix.json')
     assert.equal(result.status, 0, result.stdout + result.stderr)
-    assert.match(await fs.readFile(path.join(dir, 'src/A.vue'), 'utf8'), /const count = 1/)
+    assert.match(await fs.readFile(path.join(dir, 'src/CountFile.vue'), 'utf8'), /const count = 1/)
   })
 })
 
@@ -173,14 +173,14 @@ test('batched same-basename SFCs report the actual source file and line', async 
     await fs.mkdir(path.join(dir, 'alpha'))
     await fs.mkdir(path.join(dir, 'beta'))
     const clean = '<template>{{ ok }}</template>\n<script setup>\nconst ok = 1\n</script>\n'
-    await fs.writeFile(path.join(dir, 'alpha/index.vue'), clean)
-    await fs.writeFile(path.join(dir, 'beta/index.vue'), clean.replace('</script>', 'const onlyInBeta = 2\n</script>'))
+    await fs.writeFile(path.join(dir, 'alpha/shared-file.vue'), clean)
+    await fs.writeFile(path.join(dir, 'beta/shared-file.vue'), clean.replace('</script>', 'const onlyInBeta = 2\n</script>'))
     for (const targets of [['alpha', 'beta'], ['beta', 'alpha']]) {
       const result = run(...targets, '--format=json')
       assert.equal(result.status, 1, result.stderr)
       const diags = JSON.parse(result.stdout)
       assert.equal(diags.length, 1)
-      assert.equal(await fs.realpath(diags[0].filename), await fs.realpath(path.join(dir, 'beta/index.vue')))
+      assert.equal(await fs.realpath(diags[0].filename), await fs.realpath(path.join(dir, 'beta/shared-file.vue')))
       assert.equal(diags[0].line, 4)
       assert.equal(diags[0].column, 7)
     }

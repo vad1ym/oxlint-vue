@@ -87,7 +87,8 @@
     "tests/lib/rules/no-child-content.test.ts": "a52e823fe4e20be88572c47f5183205f70d4a079afe9e6dad6fbacdc771b9bcd",
     "tests/lib/rules/no-deprecated-dollar-listeners-api.test.ts": "b9866f94a84e294c0af6350d5e94a8796f4a40b7e948c6f7879a51878309e9f2",
     "tests/lib/rules/no-deprecated-dollar-scopedslots-api.test.ts": "e7bb08608548df9eb99c455a6a4dcfdb46fceef6a95e5b5bf059682a26058b54",
-    "tests/lib/rules/valid-v-slot.test.ts": "049bfe8f31d87e96a9267418e8f3b69bf57ddced99fda04803919da09f97d679"
+    "tests/lib/rules/valid-v-slot.test.ts": "049bfe8f31d87e96a9267418e8f3b69bf57ddced99fda04803919da09f97d679",
+    "tests/lib/rules/multi-word-component-names.test.ts": "92117245374cf88d454ab7a099df143a0520569d3c1af14ed5b784aabbcbfe88"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
@@ -22906,6 +22907,525 @@
       "filename": "empty-value.vue",
       "languageOptions": {
         "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/valid/1",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "App.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/2",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'App' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/3",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('App', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/4",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "app.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/5",
+      "rule": "vue/multi-word-component-names",
+      "code": "<script></script>",
+      "options": [],
+      "filename": "path/to/app.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/6",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'app' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/7",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('app', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/8",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "transition.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/9",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'transition' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/10",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('transition', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/11",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "component.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/12",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'component' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/13",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('component', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/14",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "multi-word.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/15",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'multi-word' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/16",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('multi-word', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/17",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "multiWord.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/18",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'multiWord' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/19",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('multiWord', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/20",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "MultiWord.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/21",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'MultiWord' }\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/22",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('MultiWord', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/23",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script>\n      export default { name: 'TheTest' }\n      </script>\n      ",
+      "options": [],
+      "filename": "TheTest.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/24",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script>\n      Vue.component('TheTest', {})\n      </script>\n      ",
+      "options": [],
+      "filename": "TheTest.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/25",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script>\n      export default {\n        name: 'Todo'\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "ignores": [
+            "Todo"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/26",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      new Vue({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/27",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      import Vue from 'vue'\n      import VueCompositionAPI, { h } from '@vue/composition-api'\n      import i18n from '@/i18n'\n      import router from '@/router'\n      import store from '@/store'\n      // ...\n\n      Vue.use(VueCompositionAPI)\n\n      new Vue({\n          i18n,\n          router,\n          store,\n          setup() {\n              return () => h(App)\n          },\n      }).$mount('#app')\n      ",
+      "options": [],
+      "filename": "main.ts",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/28",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <template>\n        <AppButton />\n      </template>\n\n      <script setup lang=\"ts\">\n      import AppButton from \"@/components/AppButton.vue\";\n      </script>",
+      "options": [],
+      "filename": "MultiWord.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/valid/29",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script setup>\n      defineOptions({name: 'MultiWord'})\n      </script>\n      ",
+      "options": [],
+      "filename": "Single.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multi-word-component-names/invalid/1",
+      "rule": "vue/multi-word-component-names",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/2",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'test' }\n        </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/3",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('test', {})\n        </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/4",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default { name: 'invalid' }\n        </script>",
+      "options": [],
+      "filename": "valid-name.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/5",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('invalid', {})\n        </script>",
+      "options": [],
+      "filename": "valid-name.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/6",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        export default {}\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/7",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n        <script>\n        Vue.component('', {})\n        </script>",
+      "options": [],
+      "filename": "invalid.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/8",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script>\n      export default {\n        name: 'Item'\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "ignores": [
+            "Todo"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/9",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script setup lang=\"ts\">\n      import Item from \"@/components/Item.vue\";\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multi-word-component-names/invalid/10",
+      "rule": "vue/multi-word-component-names",
+      "code": "\n      <script setup>\n      defineOptions({name: 'Single'})\n      </script>\n      ",
+      "options": [],
+      "filename": "MultiWord.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
       },
       "settings": {},
       "expectedCount": 1

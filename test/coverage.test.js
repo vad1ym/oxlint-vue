@@ -13,7 +13,7 @@ const CLI = path.resolve('dist/cli.js')
 async function withProject(fn) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-coverage-'))
   try {
-    await fs.writeFile(path.join(dir, 'Case.vue'), SOURCE)
+    await fs.writeFile(path.join(dir, 'CoverageCase.vue'), SOURCE)
     await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({
       plugins: [], categories: {}, rules: {},
       settings: { vue: { rules: { 'vue/max-attributes-per-line': 'off' } } },
@@ -42,7 +42,7 @@ test('scope and dynamic argument omissions are recorded', () => {
 test('coverage gaps warn by default and fail strict CLI runs', async () => {
   await withProject(async dir => {
     for (const strict of [false, true]) {
-      const result = spawnSync(process.execPath, [CLI, 'Case.vue', '--format=json', ...(strict ? ['--strict-templates'] : [])], { cwd: dir, encoding: 'utf8' })
+      const result = spawnSync(process.execPath, [CLI, 'CoverageCase.vue', '--format=json', ...(strict ? ['--strict-templates'] : [])], { cwd: dir, encoding: 'utf8' })
       assert.equal(result.status, strict ? 1 : 0, result.stderr + result.stdout)
       const gap = JSON.parse(result.stdout).find(d => d.rule === 'oxlint-vue/incomplete-template')
       assert.ok(gap)
@@ -59,9 +59,9 @@ test('strict settings inherit without being reset by an unrelated parent', async
     await fs.writeFile(path.join(dir, 'style.json'), '{"rules":{}}')
     await fs.writeFile(path.join(dir, '.oxlintrc.json'), '{"extends":["./strict.json","./style.json"]}')
     assert.equal((await readVueSettings(path.join(dir, '.oxlintrc.json'))).strictTemplates, true)
-    let diags = await runOxlint(['Case.vue'], { cwd: dir })
+    let diags = await runOxlint(['CoverageCase.vue'], { cwd: dir })
     assert.ok(diags.some(d => d.rule === 'oxlint-vue/incomplete-template' && d.severity === 'error'))
-    diags = await runOxlint(['Case.vue'], { cwd: dir, strictTemplates: false })
+    diags = await runOxlint(['CoverageCase.vue'], { cwd: dir, strictTemplates: false })
     assert.ok(diags.some(d => d.rule === 'oxlint-vue/incomplete-template' && d.severity === 'warning'))
   })
 })
@@ -69,8 +69,8 @@ test('strict settings inherit without being reset by an unrelated parent', async
 test('SFC parse failures are located errors, including in otherwise blank templates', async () => {
   await withProject(async dir => {
     for (const body of ['<div><span></div>', '<div>{{ value + }}</div>']) {
-      await fs.writeFile(path.join(dir, 'Case.vue'), `<template>\n${body}\n</template><script setup>const value=1</script>`)
-      const result = spawnSync(process.execPath, [CLI, 'Case.vue', '--format=json'], { cwd: dir, encoding: 'utf8' })
+      await fs.writeFile(path.join(dir, 'CoverageCase.vue'), `<template>\n${body}\n</template><script setup>const value=1</script>`)
+      const result = spawnSync(process.execPath, [CLI, 'CoverageCase.vue', '--format=json'], { cwd: dir, encoding: 'utf8' })
       assert.equal(result.status, 1, result.stderr)
       const error = JSON.parse(result.stdout).find(d => d.rule === 'vue/no-parsing-error')
       assert.ok(error, result.stdout)
@@ -84,8 +84,8 @@ test('SFC parse failures are located errors, including in otherwise blank templa
 test('coverage positions survive Unicode before the omitted expression', async () => {
   await withProject(async dir => {
     const source = SOURCE.replace('<i ', '😀<i ')
-    await fs.writeFile(path.join(dir, 'Case.vue'), source)
-    const diags = await runOxlint(['Case.vue'], { cwd: dir, strictTemplates: true })
+    await fs.writeFile(path.join(dir, 'CoverageCase.vue'), source)
+    const diags = await runOxlint(['CoverageCase.vue'], { cwd: dir, strictTemplates: true })
     const gap = diags.find(d => d.rule === 'oxlint-vue/incomplete-template')
     assert.ok(gap)
     assert.ok(Buffer.from(source).subarray(gap.offset).toString().startsWith('item.x'))
