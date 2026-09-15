@@ -72,6 +72,7 @@ export interface ExplicitEmitInfo {
   templateEmitters: Set<string>
   findings: { name: string, offset: number }[]
   emissions: { name: string, offset: number }[]
+  declarations: { name: string, offset: number }[]
 }
 
 /** Component definition locations for one-component-per-file. */
@@ -550,27 +551,29 @@ function memberParts(path: NodePath): { object: NodePath, name: string | null } 
 export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean): ExplicitEmitInfo {
   const info: ExplicitEmitInfo = { declared: new Set(), props: new Set(), acceptsAny: false,
     hasDefinition: Boolean(descriptor.scriptSetup), templateEmitters: new Set(['$emit']), findings: [],
-    emissions: [] }
+    emissions: [], declarations: [] }
   const typeDeclarations = new Map<string, NodePath>()
-  const readDeclarations = (value: NodePath | undefined, target: Set<string>): boolean => {
+  const readDeclarations = (value: NodePath | undefined, target: Set<string>,
+    record?: (name: string, path: NodePath) => void): boolean => {
     if (!value) return false
     while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
     if (value.isArrayExpression()) {
       for (const element of value.get('elements') as NodePath[]) {
         const name = staticString(element)
         if (name === null) return true
-        else target.add(name)
+        else { target.add(name); record?.(name, element) }
       }
     } else if (value.isObjectExpression()) {
       for (const property of value.get('properties') as NodePath[]) {
         const name = componentPropertyName(property)
         if (name === null) return true
-        else target.add(name)
+        else { target.add(name); record?.(name, property) }
       }
     } else return true
     return false
   }
-  const readType = (path: NodePath | undefined, target: Set<string>, seen = new Set<object>()): boolean => {
+  const readType = (path: NodePath | undefined, target: Set<string>, seen = new Set<object>(),
+    record?: (name: string, path: NodePath) => void): boolean => {
     if (!path || seen.has(path.node)) return true
     seen.add(path.node)
     if (path.isTSTypeReference()) {
@@ -578,39 +581,40 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
       if (!name.isIdentifier()) return true
       const binding = path.scope.getBinding(name.node.name)
       const declaration = binding?.path
-      if (declaration?.isTSTypeAliasDeclaration()) return readType(declaration.get('typeAnnotation') as NodePath, target, seen)
-      if (declaration?.isTSInterfaceDeclaration()) return readType(declaration.get('body') as NodePath, target, seen)
+      if (declaration?.isTSTypeAliasDeclaration()) return readType(declaration.get('typeAnnotation') as NodePath, target, seen, record)
+      if (declaration?.isTSInterfaceDeclaration()) return readType(declaration.get('body') as NodePath, target, seen, record)
       const local = typeDeclarations.get(name.node.name)
-      if (local?.isTSTypeAliasDeclaration()) return readType(local.get('typeAnnotation') as NodePath, target, seen)
-      if (local?.isTSInterfaceDeclaration()) return readType(local.get('body') as NodePath, target, seen)
+      if (local?.isTSTypeAliasDeclaration()) return readType(local.get('typeAnnotation') as NodePath, target, seen, record)
+      if (local?.isTSInterfaceDeclaration()) return readType(local.get('body') as NodePath, target, seen, record)
       return true
     }
-    if (path.isTSParenthesizedType()) return readType(path.get('typeAnnotation') as NodePath, target, seen)
-    if (path.isTSUnionType()) return (path.get('types') as NodePath[]).some(type => readType(type, target, seen))
-    const readEventParameter = (parameter: NodePath | undefined): boolean => {
+    if (path.isTSParenthesizedType()) return readType(path.get('typeAnnotation') as NodePath, target, seen, record)
+    if (path.isTSUnionType()) return (path.get('types') as NodePath[]).some(type => readType(type, target, seen, record))
+    const readEventParameter = (parameter: NodePath | undefined, reportPath: NodePath): boolean => {
       if (!parameter) return true
       const annotation = parameter.isIdentifier() ? parameter.get('typeAnnotation') as NodePath : parameter
       const type = annotation?.isTSTypeAnnotation() ? annotation.get('typeAnnotation') as NodePath : annotation
       const literal = type?.isTSLiteralType() ? type.get('literal') as NodePath : undefined
       if (literal?.isStringLiteral()) {
         target.add(literal.node.value)
+        record?.(literal.node.value, reportPath)
         return false
       }
-      if (type?.isTSUnionType()) return (type.get('types') as NodePath[]).some(member => readEventParameter(member))
+      if (type?.isTSUnionType()) return (type.get('types') as NodePath[]).some(member => readEventParameter(member, reportPath))
       return true
     }
     if (path.isTSFunctionType() || path.isTSCallSignatureDeclaration()) {
-      return readEventParameter((path.get('parameters') as NodePath[])[0])
+      return readEventParameter((path.get('parameters') as NodePath[])[0], path)
     }
     if (path.isTSTypeLiteral() || path.isTSInterfaceBody()) {
       let dynamic = false
       for (const member of path.get('members') as NodePath[]) {
-        if (member.isTSCallSignatureDeclaration()) dynamic ||= readType(member, target, seen)
+        if (member.isTSCallSignatureDeclaration()) dynamic ||= readType(member, target, seen, record)
         else if (member.isTSPropertySignature()) {
           const name = member.node.computed ? staticString(member.get('key') as NodePath)
             : staticName(member.node.key)
           if (name === null) dynamic = true
-          else target.add(name)
+          else { target.add(name); record?.(name, member.get('key') as NodePath) }
         }
       }
       return dynamic
@@ -618,6 +622,7 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
     const literal = path.isTSLiteralType() ? path.get('literal') as NodePath : undefined
     if (literal?.isStringLiteral()) {
       target.add(literal.node.value)
+      record?.(literal.node.value, path)
       return false
     }
     return true
@@ -627,6 +632,9 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
     let file
     try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
     catch { continue }
+    const recordDeclaration = (name: string, path: NodePath): void => {
+      info.declarations.push({ name, offset: block.loc.start.offset + (path.node.start ?? 0) })
+    }
     interface EmitContext { object?: NodePath, declared: Set<string>, props: Set<string>, acceptsAny: boolean }
     const root: EmitContext = { declared: info.declared, props: info.props, acceptsAny: false }
     const emitterBindings = new Map<Binding, EmitContext>()
@@ -644,11 +652,11 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
         || path.node.callee.name !== 'defineEmits') return
       info.hasDefinition = true
       const argument = (path.get('arguments') as NodePath[])[0]
-      if (argument) root.acceptsAny ||= readDeclarations(argument, root.declared)
+      if (argument) root.acceptsAny ||= readDeclarations(argument, root.declared, recordDeclaration)
       else {
         const parameters = path.get('typeParameters') as NodePath | undefined
         const type = parameters && (parameters.get('params') as NodePath[])[0]
-        root.acceptsAny ||= type ? readType(type, root.declared) : true
+        root.acceptsAny ||= type ? readType(type, root.declared, new Set(), recordDeclaration) : true
       }
       if (path.parentPath?.isVariableDeclarator() && path.parentPath.node.id.type === 'Identifier') {
         const binding = path.scope.getBinding(path.parentPath.node.id.name)
@@ -674,7 +682,8 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
         : { object, declared: new Set<string>(), props: new Set<string>(), acceptsAny: false }
       contexts.set(object.node, context)
       const emits = objectPropertyPath(object, 'emits')
-      if (emits?.isObjectProperty()) context.acceptsAny ||= readDeclarations(pathValue(emits), context.declared)
+      if (emits?.isObjectProperty()) context.acceptsAny ||=
+        readDeclarations(pathValue(emits), context.declared, recordDeclaration)
       if (allowProps) {
         const props = objectPropertyPath(object, 'props')
         if (props?.isObjectProperty()) context.acceptsAny ||= readDeclarations(pathValue(props), context.props)

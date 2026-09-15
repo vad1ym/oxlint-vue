@@ -185,6 +185,29 @@ function customEventCasingMessage(options: Record<string, unknown>, name: string
   return valid ? undefined : "Custom event name '" + name + "' must be " + mode + '.'
 }
 
+const nativeEventNames = new Set([
+  'copy', 'cut', 'paste', 'compositionend', 'compositionstart', 'compositionupdate',
+  'drag', 'dragend', 'dragenter', 'dragexit', 'dragleave', 'dragover', 'dragstart', 'drop',
+  'focus', 'focusin', 'focusout', 'blur', 'change', 'beforeinput', 'formdata', 'input',
+  'reset', 'submit', 'invalid', 'fullscreenchange', 'fullscreenerror', 'load', 'error',
+  'keydown', 'keypress', 'keyup', 'auxclick', 'click', 'contextmenu', 'gotpointercapture',
+  'lostpointercapture', 'dblclick', 'mousedown', 'mouseenter', 'mouseleave', 'mousemove',
+  'mouseout', 'mouseover', 'mouseup', 'abort', 'canplay', 'canplaythrough', 'durationchange',
+  'emptied', 'encrypted', 'ended', 'loadeddata', 'loadedmetadata', 'loadstart', 'pause',
+  'play', 'playing', 'progress', 'ratechange', 'seeked', 'seeking', 'stalled', 'suspend',
+  'timeupdate', 'volumechange', 'waiting', 'select', 'scroll', 'scrollend', 'touchcancel',
+  'touchend', 'touchmove', 'touchstart', 'pointerdown', 'pointermove', 'pointerup',
+  'pointercancel', 'pointerenter', 'pointerleave', 'pointerover', 'pointerout',
+  'beforetoggle', 'toggle', 'wheel', 'animationcancel', 'animationstart', 'animationend',
+  'animationiteration', 'securitypolicyviolation', 'transitioncancel', 'transitionend',
+  'transitionrun', 'transitionstart',
+])
+
+function nativeEventMessage(name: string): string | undefined {
+  return nativeEventNames.has(name.toLowerCase())
+    ? 'Avoid shadowing the native event "' + name + '".' : undefined
+}
+
 /** Free names only: callback parameters do not refer to loop bindings. */
 function referencesAny(exp: DirectiveNode['exp'], names: Set<string>): boolean {
   const ast = expressionAst(exp)
@@ -996,6 +1019,31 @@ const RULES: Rule[] = [
           const first = candidate.arguments[0]
           if (!first || first.type !== 'StringLiteral') return
           const message = customEventCasingMessage(options, first.value)
+          if (message) report({ ...astLoc(exp, first, ast), message })
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/no-shadow-native-events',
+    severity: 'error',
+    check(node, report) {
+      const context = node as AnyNode & Annotations
+      const emitters = context.__emitInfo?.templateEmitters
+      if (!emitters) return
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        const free = new Set(freeIdentifiers(ast, emitters, context.__locals))
+        visitExpression(ast, candidate => {
+          if ((candidate.type !== 'CallExpression' && candidate.type !== 'OptionalCallExpression')
+            || candidate.callee.type !== 'Identifier' || !free.has(candidate.callee)) return
+          const first = candidate.arguments[0]
+          if (!first || first.type !== 'StringLiteral') return
+          const message = nativeEventMessage(first.value)
           if (message) report({ ...astLoc(exp, first, ast), message })
         })
       }
@@ -3169,9 +3217,10 @@ export function checkTemplate(
   const explicitEmitsRule = active.find(entry => entry.rule.name === 'vue/require-explicit-emits')
   const restrictedEventRule = active.find(entry => entry.rule.name === 'vue/no-restricted-custom-event')
   const eventCasingRule = active.find(entry => entry.rule.name === 'vue/custom-event-name-casing')
+  const shadowEventRule = active.find(entry => entry.rule.name === 'vue/no-shadow-native-events')
   const allowProps = explicitEmitsRule
     ? ruleOptions(config?.[explicitEmitsRule.rule.name]).allowProps === true : false
-  const emitInfo = explicitEmitsRule || restrictedEventRule || eventCasingRule
+  const emitInfo = explicitEmitsRule || restrictedEventRule || eventCasingRule || shadowEventRule
     ? explicitEmitInfo(descriptor, allowProps)
     : undefined
   if (emitInfo && /<script\b[^>]*\bsetup(?:\s|>|=)/iu.test(source)) emitInfo.hasDefinition = true
@@ -3194,6 +3243,16 @@ export function checkTemplate(
       if (message) out.push({ filename, rule: eventCasingRule.rule.name,
         severity: eventCasingRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
     }
+  }
+  if (shadowEventRule && emitInfo) for (const finding of emitInfo.emissions) {
+    const message = nativeEventMessage(finding.name)
+    if (message) out.push({ filename, rule: shadowEventRule.rule.name,
+      severity: shadowEventRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
+  }
+  if (shadowEventRule && emitInfo) for (const finding of emitInfo.declarations) {
+    const message = nativeEventMessage(finding.name)
+    if (message) out.push({ filename, rule: shadowEventRule.rule.name,
+      severity: shadowEventRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
   }
   const componentFileRule = active.find(entry => entry.rule.name === 'vue/one-component-per-file')
   if (componentFileRule) for (const offset of componentDefinitionOffsets(descriptor, source, filename)) {

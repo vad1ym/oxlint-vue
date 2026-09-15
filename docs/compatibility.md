@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 2662 upstream cases, 111 common structural rules | **2661 exact matches (99.9%)** |
+| 2725 upstream cases, 112 common structural rules | **2724 exact matches (99.9%)** |
 | Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1224/1224** |
-| Four pinned Nuxt components, each checked against all 111 rules | **444/444 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1786/1786 comparisons** |
+| Four pinned Nuxt components, each checked against all 112 rules | **448/448 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1790/1790 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. Five environment-dependent cases are explicitly excluded below. One hundred
-and ten of the 111 suites currently match on every imported case.
+known failures. Six environment-dependent cases are explicitly excluded below. One hundred
+and eleven of the 112 suites currently match on every imported case.
 
 Eleven newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
@@ -46,8 +46,12 @@ Two `require-explicit-emits` cases are excluded for the same reason: they import
 the private fixture's `Emits1` type. Runtime declarations, inline call signatures,
 Vue 3.3 object syntax and local type aliases remain covered.
 
+One `no-shadow-native-events` case imports the private fixture's `Emits2` type
+and is excluded for the same reason. Its runtime declarations, inline TypeScript
+signatures, local aliases and event calls remain covered.
+
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 152 are not measured by this structural-rule harness,
+exports 253 rule names; 141 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

@@ -33,6 +33,7 @@ const CASES = [
   ['vue/require-explicit-emits', '<button @click="$emit(\'save\')" />', true],
   ['vue/no-restricted-custom-event', '<button @click="$emit(\'save\')" />', false],
   ['vue/custom-event-name-casing', '<button @click="$emit(\'save-item\')" />', true],
+  ['vue/no-shadow-native-events', '<button @click="$emit(\'click\')" />', true],
   ['vue/one-component-per-file', '<div />', true,
     'Vue.component(\'FirstComp\', {}); Vue.component(\'SecondComp\', {})'],
   ['vue/v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>', true],

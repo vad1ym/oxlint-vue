@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 68,
+    "implemented": 69,
     "native": 59,
     "partial": 55,
-    "missing": 71
+    "missing": 70
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -3242,11 +3242,11 @@
     },
     {
       "name": "no-shadow-native-events",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 63,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
