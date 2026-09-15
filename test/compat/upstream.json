@@ -88,7 +88,8 @@
     "tests/lib/rules/no-deprecated-dollar-listeners-api.test.ts": "b9866f94a84e294c0af6350d5e94a8796f4a40b7e948c6f7879a51878309e9f2",
     "tests/lib/rules/no-deprecated-dollar-scopedslots-api.test.ts": "e7bb08608548df9eb99c455a6a4dcfdb46fceef6a95e5b5bf059682a26058b54",
     "tests/lib/rules/valid-v-slot.test.ts": "049bfe8f31d87e96a9267418e8f3b69bf57ddced99fda04803919da09f97d679",
-    "tests/lib/rules/multi-word-component-names.test.ts": "92117245374cf88d454ab7a099df143a0520569d3c1af14ed5b784aabbcbfe88"
+    "tests/lib/rules/multi-word-component-names.test.ts": "92117245374cf88d454ab7a099df143a0520569d3c1af14ed5b784aabbcbfe88",
+    "tests/lib/rules/no-deprecated-filter.test.ts": "bde70db241de5f3b38d8f885bcad148c8fe576fed29cb13aad38b7ec77812c5c"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
@@ -23426,6 +23427,131 @@
       "languageOptions": {
         "ecmaVersion": 2020,
         "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/valid/1",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ msg }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-filter/valid/2",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ method(msg) }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-filter/valid/3",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ msg | filter }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserOptions": {
+          "vueFeatures": {
+            "filter": false
+          }
+        }
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-filter/invalid/1",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ msg | filter }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/2",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ msg | filter(x) }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/3",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template>{{ msg | filterA | filterB }}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/4",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template><div v-for=\"msg in messages\">{{ msg | filter }}</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/5",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template><div v-bind:id=\"msg | filter\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/6",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template><div v-bind:id=\"msg | filter(aaa)\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-filter/invalid/7",
+      "rule": "vue/no-deprecated-filter",
+      "code": "<template><div v-bind:id=\"msg | filterA | filterB\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
       },
       "settings": {},
       "expectedCount": 1

@@ -2,6 +2,7 @@
 // the reference engine, including multiple findings on one source line.
 const seeds = [
   ['multi-word-component-names', '<div/>'],
+  ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],
   ['valid-v-slot', '<div v-slot="{ value }"/>'],

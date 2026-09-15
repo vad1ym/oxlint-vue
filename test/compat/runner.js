@@ -33,8 +33,12 @@ export function compareCase(entry, severity = 2) {
     assert.equal(expected.length, entry.expectedCount, `Reference drift: ${entry.id}`)
   }
   const { descriptor } = parse(code, { filename })
+  const localOptions = rule === 'vue/no-deprecated-filter'
+    && languageOptions.parserOptions?.vueFeatures?.filter === false
+    ? [{ filterSyntax: false }]
+    : options
   const actual = sort(checkTemplate(descriptor.template?.ast, filename, code,
-    { ...disabled, [rule]: [severity, ...options] }, (descriptor.scriptSetup ?? descriptor.script)?.content,
+    { ...disabled, [rule]: [severity, ...localOptions] }, (descriptor.scriptSetup ?? descriptor.script)?.content,
   ).map(d => ({ line: d.line, column: d.column, severity: d.severity === 'error' ? 2 : 1 })))
   return { expected, actual }
 }

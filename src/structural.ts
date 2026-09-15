@@ -807,6 +807,20 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 
 const RULES: Rule[] = [
   { name: 'vue/multi-word-component-names', severity: 'error', check() {} },
+  {
+    name: 'vue/no-deprecated-filter',
+    severity: 'error',
+    check(node, report, options) {
+      if (options.filterSyntax === false) return
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp && prop.name !== 'for' ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        if (exp.type !== NodeTypes.SIMPLE_EXPRESSION || !/(^|[^|])\|([^|=]|$)/u.test(exp.content)) continue
+        report({ message: 'Filters are deprecated.', ...loc(exp) })
+      }
+    },
+  },
   deprecatedInstanceRule('$listeners'),
   deprecatedInstanceRule('$scopedSlots'),
   validVSlotRule(),
