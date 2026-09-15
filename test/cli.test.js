@@ -67,6 +67,24 @@ test('engine protocol failures cannot become a clean result', async () => {
   })
 })
 
+test('same basenames retain their full identity through a symlinked root', async () => {
+  await fixture(async dir => {
+    const real = path.join(dir, 'real')
+    const alias = path.join(dir, 'alias')
+    await fs.mkdir(path.join(real, 'alpha'), { recursive: true })
+    await fs.mkdir(path.join(real, 'beta'), { recursive: true })
+    await fs.symlink(real, alias, process.platform === 'win32' ? 'junction' : 'dir')
+    const map = new Map(['alpha', 'beta'].map(name => [path.join(real, name, 'index.vue.ts'), `/project/${name}/index.vue`]))
+    for (const entries of [map, new Map([...map].toReversed())]) {
+      for (const filename of ['beta/index.vue.ts', path.join(alias, 'beta/index.vue.ts')]) {
+        const result = parseOxlintJson(JSON.stringify({ diagnostics: [{ filename, message: 'onlyInBeta' }] }), alias, entries, dir)
+        assert.equal(result[0].filename, '/project/beta/index.vue')
+      }
+      assert.throws(() => parseOxlintJson('{"diagnostics":[{"filename":"index.vue.ts"}]}', alias, entries, dir), /cannot map/)
+    }
+  })
+})
+
 test('explicit relative config is also honored by the fix pass', async () => {
   await fixture(async (dir, run) => {
     await fs.writeFile(path.join(dir, 'src/A.vue'), '<template>{{ count }}</template>\n<script setup>\nlet count = 1\n</script>\n')
@@ -79,4 +97,23 @@ test('explicit relative config is also honored by the fix pass', async () => {
 
 test('a zero-file engine result is not confused with a clean lint run', () => {
   assert.throws(() => parseOxlintJson('{"diagnostics":[],"number_of_files":0}', '/tmp', new Map([['/tmp/A.ts', '/project/A.vue']]), '/project'), /zero files/)
+})
+
+test('batched same-basename SFCs report the actual source file and line', async () => {
+  await fixture(async (dir, run) => {
+    await fs.mkdir(path.join(dir, 'alpha'))
+    await fs.mkdir(path.join(dir, 'beta'))
+    const clean = '<template>{{ ok }}</template>\n<script setup>\nconst ok = 1\n</script>\n'
+    await fs.writeFile(path.join(dir, 'alpha/index.vue'), clean)
+    await fs.writeFile(path.join(dir, 'beta/index.vue'), clean.replace('</script>', 'const onlyInBeta = 2\n</script>'))
+    for (const targets of [['alpha', 'beta'], ['beta', 'alpha']]) {
+      const result = run(...targets, '--format=json')
+      assert.equal(result.status, 1, result.stderr)
+      const diags = JSON.parse(result.stdout)
+      assert.equal(diags.length, 1)
+      assert.equal(await fs.realpath(diags[0].filename), await fs.realpath(path.join(dir, 'beta/index.vue')))
+      assert.equal(diags[0].line, 4)
+      assert.equal(diags[0].column, 7)
+    }
+  })
 })

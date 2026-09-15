@@ -7,6 +7,7 @@ import type {
   RulesMap,
 } from './types.js'
 import fs from 'node:fs/promises'
+import { realpathSync } from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
@@ -385,7 +386,10 @@ async function runNativePass(
   }
 
   // Positions already refer to the real file, so map paths only.
-  const identity = new Map(files.map(f => [f, f]))
+  const identity = new Map(files.map(f => {
+    const abs = path.resolve(cwd, f)
+    return [abs, abs]
+  }))
   const diagnostics = parseOxlintJson(stdout, cwd, identity, cwd)
   if (failed && !diagnostics.length) throw new Error('oxlint native pass failed without diagnostics')
   return diagnostics
@@ -485,20 +489,15 @@ export function parseOxlintJson(
     : payload.diagnostics ?? payload.results
   if (!Array.isArray(list)) throw new Error('oxlint result has no diagnostics array')
 
+  const canonicalMap = new Map([...backMap].map(([virtual, original]) => [canonicalPath(virtual), original]))
   const out: Diagnostic[] = []
   for (const d of list) {
     const rawPath = d.filename || d.fileName || d.path || d.file
     if (!rawPath) throw new Error(`oxlint diagnostic has no filename: ${d.message ?? 'unknown error'}`)
 
-    const virtAbs = path.resolve(tmpRoot, rawPath)
-    let original = backMap.get(virtAbs)
-    if (!original) {
-      // Fall back to stripping the .ts we appended.
-      const guess = virtAbs.replace(/\.ts$/, '')
-      original = backMap.get(guess) || [...backMap.entries()]
-        .find(([k]) => k.endsWith(path.basename(virtAbs)))?.[1]
-    }
-    if (!original) continue
+    const virtAbs = canonicalPath(path.resolve(tmpRoot, rawPath))
+    const original = canonicalMap.get(virtAbs)
+    if (!original) throw new Error(`cannot map oxlint diagnostic path: ${rawPath}`)
 
     // Location lives inside labels[].span; the primary label is the anchor.
     const start: OxlintSpan | null = d.labels?.[0]?.span ?? d.span ?? null
@@ -517,4 +516,12 @@ export function parseOxlintJson(
     })
   }
   return out
+}
+
+/** Canonicalize the existing parent too, for callers mapping synthetic filenames. */
+function canonicalPath(file: string): string {
+  try { return realpathSync(file) } catch {
+    const parent = path.dirname(file)
+    return parent === file ? file : path.join(canonicalPath(parent), path.basename(file))
+  }
 }
