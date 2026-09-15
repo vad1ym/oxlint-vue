@@ -31,6 +31,11 @@ Vue rules and file exclusions.
 Exit codes: `0` clean, `1` findings, `2` tool/configuration error. An empty input
 fails by default; use `--allow-empty` for an intentionally empty target directory.
 
+Template expressions that cannot be fully checked produce
+`oxlint-vue/incomplete-template` warnings. Use `--strict-templates` in CI to make
+these errors, or set `settings.vue.strictTemplates: true` in your lint config
+for both CLI and editor diagnostics. SFC parsing errors always fail the check.
+
 Run `npx oxlint-vue --help` for the flags. Node 20.19+.
 
 > **Want a rule set to go with it?**

@@ -35,6 +35,30 @@ script or disabling the rule.
 Diagnostics are mapped by canonical full paths. Missing mappings, malformed
 engine output and failed engine invocations are tool errors, never clean runs.
 
+## Incomplete template checks
+
+The transform records known omissions in `preprocess(...).coverageGaps`, with a
+UTF-16 source range, a kind (`expression`, `scope`, or `binding`) and a reason.
+Examples include insufficient padding for an expression or scope, deferred
+expressions reduced to references, dynamic directive arguments, and unsupported
+external/preprocessor templates. CLI and LSP expose these as
+`oxlint-vue/incomplete-template` warnings at the original source location.
+
+Enable `--strict-templates`, pass `{ strictTemplates: true }` to `runOxlint`, or
+configure the shared CLI/LSP setting:
+
+```json
+{ "settings": { "vue": { "strictTemplates": true } } }
+```
+
+The setting follows `extends`; a nearer explicit value takes precedence. Strict
+mode raises recorded gaps to errors and returns exit 1 in the CLI. Normal rule
+configuration still determines which checks run on emitted expressions.
+
+Compiler-sfc parsing errors are reported separately as `vue/no-parsing-error`
+errors. Invalid SFCs do not reach the CLI's engine passes; the editor receives a
+blank virtual document and the original parsing diagnostics.
+
 ## Formatting
 
 `--format-code` runs oxfmt, which handles `.vue` whole — template, script and
@@ -81,7 +105,7 @@ on unformatted files without touching them.
 
 - **4726 real `.vue` files**: the length and line-position invariant holds on
   100%, every virtual file parses.
-- **132 tests**, including a full stdio LSP session and regressions found on
+- **223 tests**, including a full stdio LSP session and regressions found on
   that corpus — multi-line attributes, object literals in `:class`,
   `v-for="n in 5"`, destructuring, multi-statement handlers, CRLF, emoji.
 - Five real projects (571 SFCs): 6–30 findings each, no noise.

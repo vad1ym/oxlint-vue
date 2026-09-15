@@ -6,7 +6,7 @@ import type {
   SimpleExpressionNode,
   TemplateChildNode,
 } from '@vue/compiler-core'
-import type { PreprocessResult } from './types.js'
+import type { CoverageGap, PreprocessResult } from './types.js'
 // NodeTypes is a real enum, so the magic numbers (`node.type === 1`) that the
 // JavaScript version carried around become named constants.
 import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
@@ -164,6 +164,7 @@ export function preprocess(
   // splits by code point, which desynchronises every offset after the first
   // astral character (emoji, rare CJK) and quietly corrupts the mapping.
   const chars: CharBuffer = source.split('')
+  const coverageGaps: CoverageGap[] = []
 
   const parseErrors = errors.map(e => ({
     message: e.message,
@@ -189,7 +190,12 @@ export function preprocess(
 
   // 3. Extract template expressions into the blanked template region.
   if (descriptor.template?.ast) {
-    extractTemplate(descriptor.template.ast, source, chars, [])
+    extractTemplate(descriptor.template.ast, source, chars, [], coverageGaps)
+  }
+
+  if (descriptor.template && (descriptor.template.src || (descriptor.template.lang && descriptor.template.lang !== 'html'))) {
+    coverageGaps.push({ offset: descriptor.template.loc.start.offset, end: descriptor.template.loc.end.offset,
+      kind: 'expression', message: 'External or preprocessor templates cannot be fully checked.' })
   }
 
   const code = chars.join('')
@@ -200,7 +206,13 @@ export function preprocess(
     )
   }
 
-  return { code, descriptor, parseErrors, hasScript: scripts.length > 0, templateUsedBindings: templateUsedBindings(descriptor) }
+  let usedBindings: PreprocessResult['templateUsedBindings'] = []
+  try { usedBindings = templateUsedBindings(descriptor) } catch (err) {
+    const block = descriptor.scriptSetup ?? descriptor.template
+    coverageGaps.push({ offset: block?.loc.start.offset ?? 0, end: block?.loc.end.offset ?? 0,
+      kind: 'binding', message: `Binding usage analysis failed: ${(err as Error).message}` })
+  }
+  return { code, descriptor, parseErrors, coverageGaps, hasScript: scripts.length > 0, templateUsedBindings: usedBindings }
 }
 
 /** Built-in directives resolve to no user binding. */
@@ -238,12 +250,17 @@ function extractTemplate(
   source: string,
   chars: CharBuffer,
   out: EmittedRegion[],
+  gaps: CoverageGap[],
 ): void {
   /** Offsets already claimed by emitted code, so later writes cannot clobber. */
   const written = new Set<number>()
 
   const claim = (from: number, to: number): void => {
     for (let i = from; i < to; i++) written.add(i)
+  }
+
+  const gap = (node: { loc: RootNode['loc'] }, kind: CoverageGap['kind'], message: string): void => {
+    gaps.push({ offset: node.loc.start.offset, end: node.loc.end.offset, kind, message })
   }
 
   walk(root)
@@ -273,6 +290,9 @@ function extractTemplate(
         // A custom directive `v-maska` resolves to a `vMaska` binding, exactly
         // like a component tag resolves to its import.
         emitDirectiveReference(prop)
+        if (prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION && !prop.arg.isStatic) {
+          gap(prop.arg, 'expression', 'Dynamic directive arguments are not emitted for expression linting.')
+        }
 
         if (prop.name === 'for' && prop.forParseResult) {
           scopeOpeners.push(prop)
@@ -359,7 +379,11 @@ function extractTemplate(
   function emitComponentReference(node: ElementNode): void {
     if (node.tagType !== ElementTypes.COMPONENT) return
     const tag = node.tag
-    if (!tag || tag.includes('.')) return // `<foo.bar>` is a member expression
+    if (!tag) return
+    if (tag.includes('.')) {
+      gap(node, 'binding', 'Namespaced component references are not emitted.')
+      return
+    }
     if (BUILTIN_COMPONENTS.test(tag)) return
 
     const ident = IDENTIFIER.test(tag) ? tag : pascalCase(tag)
@@ -552,6 +576,7 @@ function extractTemplate(
       // would be a syntax error, which silently disables every rule for the
       // whole file -- far worse than losing this one expression. Blank it.
       blankRegion(chars, start, end)
+      gap(simple, 'expression', 'Not enough padding to preserve expression syntax.')
       return
     }
 
@@ -621,12 +646,17 @@ function extractTemplate(
       // in the directive's own span; fall back to padding rather than corrupt.
       if (!writeAt(chars, dirStart, open, dirEnd)) {
         blankRegion(chars, dirStart, dirEnd)
+        gap(prop, 'scope', 'Not enough padding to preserve the directive scope.')
         return
       }
       const closeAt = closeScope(node, dirEnd)
       if (closeAt === null) {
         blankRegion(chars, dirStart, dirEnd)
+        gap(prop, 'scope', 'Not enough padding to preserve the directive scope.')
         return
+      }
+      for (const exp of deferred) {
+        if (exp) gap(exp, 'expression', 'Expression before v-for is reduced to binding references; its full syntax is not linted.')
       }
       emitDeferred(deferred, dirStart + open.length, closeAt)
       out.push({ start: dirStart, end: dirEnd, kind: 'v-for' })
@@ -636,9 +666,13 @@ function extractTemplate(
     if (prop.name === 'slot' && prop.exp) {
       const expText = source.slice(prop.exp.loc.start.offset, prop.exp.loc.end.offset)
       const open = `((${expText})=>{`
-      if (!writeAt(chars, dirStart, open, dirEnd)) return
+      if (!writeAt(chars, dirStart, open, dirEnd)) {
+        gap(prop, 'scope', 'Not enough padding to preserve the slot scope.')
+        return
+      }
       if (closeScope(node, dirEnd) === null) {
         blankRegion(chars, dirStart, dirEnd)
+        gap(prop, 'scope', 'Not enough padding to preserve the directive scope.')
         return
       }
       out.push({ start: dirStart, end: dirEnd, kind: 'v-slot' })

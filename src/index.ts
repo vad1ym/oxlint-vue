@@ -22,6 +22,7 @@ export {
 } from './run.js'
 export { checkTemplate, structuralRuleNames } from './structural.js'
 export type {
+  CoverageGap,
   Diagnostic,
   OxfmtConfig,
   OxlintConfig,

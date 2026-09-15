@@ -339,3 +339,28 @@ const unusedCanary = 1
     assert.ok(unused.some(d => d.message.includes('active') && d.range.start.line === 4))
   })
 })
+
+test('editor reports inherited strict coverage gaps and SFC parse errors', { timeout: 30000 }, async () => {
+  const incomplete = `<template>\n<i :title="item.x" v-for="item in longItems" :key="item.id" />\n</template>\n<script setup>const longItems=[]</script>`
+  const invalid = '<template>\n<div><span></div>\n</template>\n<script setup>const unused=1</script>'
+  await withServer({
+    'Partial.vue': incomplete,
+    'Invalid.vue': invalid,
+    'base.json': JSON.stringify({ settings: { vue: { strictTemplates: true } } }),
+    '.oxlintrc.json': JSON.stringify({ extends: ['./base.json'] }),
+  }, async (client, dir) => {
+    for (const [name, text, code] of [
+      ['Partial.vue', incomplete, 'oxlint-vue/incomplete-template'],
+      ['Invalid.vue', invalid, 'vue/no-parsing-error'],
+    ]) {
+      const uri = fileUri(path.join(dir, name))
+      client.send({ jsonrpc: '2.0', method: 'textDocument/didOpen', params: {
+        textDocument: { uri, languageId: 'vue', version: 1, text },
+      } })
+      const diagnostic = await waitFor(() => client.latestFor(uri)?.params.diagnostics.find(d => d.code === code))
+      assert.ok(diagnostic, `missing ${code}`)
+      assert.equal(diagnostic.severity, 1)
+      assert.equal(diagnostic.range.start.line, 1)
+    }
+  })
+})

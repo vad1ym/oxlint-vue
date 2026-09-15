@@ -176,6 +176,7 @@ const HELP = `oxlint-vue -- Vue SFC linting on the oxlint engine
 
 Options
   -c, --config=<path>    lint config (relative to the working directory)
+      --strict-templates fail if template expressions cannot be fully checked
       --allow-empty      succeed when no lintable files are found
   -f, --format=<fmt>     pretty (default), json, github, compact
       --fix              apply oxlint's auto-fixes to <script> blocks
@@ -230,6 +231,7 @@ interface WatchOptions {
   format: string
   quiet: boolean
   fix: boolean
+  strictTemplates?: boolean
 }
 
 /**
@@ -259,7 +261,7 @@ async function runWatch(
     running = true
     try {
       const files = await collectFiles(roots, cwd, isIgnored)
-      let diagnostics = await runOxlint(files, { cwd, extraArgs })
+      let diagnostics = await runOxlint(files, { cwd, extraArgs, ...(opts.strictTemplates === undefined ? {} : { strictTemplates: opts.strictTemplates }) })
       if (quiet) diagnostics = diagnostics.filter(d => d.severity === 'error')
 
       if (process.stdout.isTTY) process.stdout.write('\x1b[2J\x1b[H')
@@ -423,11 +425,13 @@ async function main(): Promise<number> {
   let quiet = false
   let maxWarnings = -1
   let allowEmpty = false
+  let strictTemplates: true | undefined
 
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!
     if (a === '--format' || a === '-f') { format = argv[++i] ?? ''; continue }
     if (a.startsWith('--format=')) { format = a.slice(9); continue }
+    if (a === '--strict-templates') { strictTemplates = true; continue }
     if (a === '--allow-empty') { allowEmpty = true; continue }
     if (a === '-c' || a === '--config') {
       const value = argv[++i]
@@ -463,7 +467,7 @@ async function main(): Promise<number> {
 
   if (lsp) {
     const { startProxy } = await import('./lsp.js')
-    await startProxy({ cwd: process.cwd() })
+    await startProxy({ cwd: process.cwd(), ...(strictTemplates ? { strictTemplates } : {}) })
     // The server owns the process from here until the editor disconnects.
     return new Promise<number>(() => {})
   }
@@ -474,7 +478,7 @@ async function main(): Promise<number> {
   extraArgs.splice(0, extraArgs.length, ...resolved.args)
 
   if (watch) {
-    return runWatch(roots, cwd, { extraArgs, format, quiet, fix })
+    return runWatch(roots, cwd, { extraArgs, format, quiet, fix, ...(strictTemplates ? { strictTemplates } : {}) })
   }
 
   const files = await collectFiles(roots, cwd, await buildIgnore(cwd, resolved.configPath))
@@ -513,7 +517,7 @@ async function main(): Promise<number> {
   }
 
   // Re-lint after fixing so the report reflects what is left, not what was.
-  let diagnostics = await runOxlint(files, { cwd, extraArgs })
+  let diagnostics = await runOxlint(files, { cwd, extraArgs, ...(strictTemplates ? { strictTemplates } : {}) })
   if (quiet) diagnostics = diagnostics.filter(d => d.severity === 'error')
 
   const errors = diagnostics.filter(d => d.severity === 'error').length

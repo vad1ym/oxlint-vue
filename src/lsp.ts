@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 import type { ChildProcessByStdio } from 'node:child_process'
 import type { Readable, Writable } from 'node:stream'
-import type { RulesMap } from './types.js'
 import { spawn } from 'node:child_process'
 import { rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { isTemplateUsedBinding } from './template-usage.js'
+import { preprocessingDiagnostics } from './preprocess-diagnostics.js'
 import { preprocess } from './preprocess.js'
 import { spawnableFrom } from './resolve.js'
-import { findConfig, loadConfig, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
+import { findConfig, readVueSettings, resolveOxlintPath, VIRTUAL_SUPPRESSED } from './run.js'
 import { checkTemplate } from './structural.js'
 
 /**
@@ -70,6 +70,7 @@ export interface ProxyOptions {
   output?: Writable
   cwd?: string
   oxlintPath?: string
+  strictTemplates?: boolean
 }
 
 export interface Proxy {
@@ -216,13 +217,9 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
 
   // Structural rules are ours, so the child never sees them; read the same
   // config it reads so `"vue/no-v-html": "off"` still applies in the editor.
-  let structuralConfig: RulesMap = {}
-  try {
-    if (found) {
-      const cfg = await loadConfig(found)
-      structuralConfig = { ...cfg.rules, ...cfg.settings?.vue?.rules }
-    }
-  } catch { /* no config is fine */ }
+  const vueSettings = await readVueSettings(found)
+  const structuralConfig = vueSettings.rules
+  const strictTemplates = opts.strictTemplates ?? vueSettings.strictTemplates
 
   /**
    * Replace a .vue document's text with its padded virtual form, and stash the
@@ -237,49 +234,50 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
     let result
     try {
       result = preprocess(text, filename)
-    } catch {
+    } catch (err) {
       preprocessedByUri.delete(uri)
-      structuralByUri.set(uri, [])
-      return text
+      const diagnostic: LspDiagnostic = {
+        range: { start: { line: 0, character: 0 }, end: { line: 0, character: 1 } },
+        severity: ERROR, code: 'oxlint-vue/preprocess', source: 'oxlint-vue',
+        message: err instanceof Error ? err.message : String(err),
+      }
+      structuralByUri.set(uri, [diagnostic])
+      writeFrame(output, { jsonrpc: '2.0', method: 'textDocument/publishDiagnostics',
+        params: { uri, diagnostics: [diagnostic] } })
+      return text.replace(/[^\r\n]/g, ' ')
     }
 
     preprocessedByUri.set(uri, result)
-    const structural: LspDiagnostic[] = []
+    const diagnostics = preprocessingDiagnostics(result, filename, text, strictTemplates)
     if (result.descriptor.template?.ast) {
-      for (const d of checkTemplate(
-        result.descriptor.template.ast,
-        filename,
-        text,
-        structuralConfig,
+      diagnostics.push(...checkTemplate(
+        result.descriptor.template.ast, filename, text, structuralConfig,
         (result.descriptor.scriptSetup ?? result.descriptor.script)?.content,
-      )) {
-        // Our positions are 1-based; LSP ranges are 0-based.
-        const line = Math.max(0, d.line - 1)
-        const char = Math.max(0, d.column - 1)
-        structural.push({
-          range: {
-            start: { line, character: char },
-            end: { line, character: char + 1 },
-          },
-          severity: d.severity === 'warning' ? WARNING : ERROR,
-          code: d.rule,
-          source: 'oxlint-vue',
-          message: d.help ? `${d.message}\nhelp: ${d.help}` : d.message,
-        })
-      }
+      ))
     }
+    const structural: LspDiagnostic[] = diagnostics.map(d => {
+      const line = Math.max(0, d.line - 1)
+      const character = Math.max(0, d.column - 1)
+      return {
+        range: { start: { line, character }, end: { line, character: character + 1 } },
+        severity: d.severity === 'warning' ? WARNING : ERROR,
+        code: d.rule, source: 'oxlint-vue',
+        message: d.help ? `${d.message}\nhelp: ${d.help}` : d.message,
+      }
+    })
     structuralByUri.set(uri, structural)
+    const virtualCode = result.parseErrors.length ? text.replace(/[^\r\n]/g, ' ') : result.code
 
     // The child server reads the file from disk rather than linting the text it
     // was handed, so the virtual document has to actually exist. It is written
     // beside the real one (same directory) so config discovery, tsconfig paths
     // and ignore patterns all resolve exactly as they would for the .vue.
     try {
-      writeFileSync(`${filename}${VIRTUAL_SUFFIX}`, result.code, 'utf8')
+      writeFileSync(`${filename}${VIRTUAL_SUFFIX}`, virtualCode, 'utf8')
       virtualFiles.add(`${filename}${VIRTUAL_SUFFIX}`)
     } catch { /* read-only tree: diagnostics degrade, editing still works */ }
 
-    return result.code
+    return virtualCode
   }
 
   // editor -> child

@@ -21,6 +21,7 @@ import {
 import { parseJsonc } from './jsonc.js'
 import { resolveBin, spawnableFrom } from './resolve.js'
 import { isTemplateUsedBinding } from './template-usage.js'
+import { preprocessingDiagnostics } from './preprocess-diagnostics.js'
 import { preprocess } from './preprocess.js'
 import { checkTemplate } from './structural.js'
 
@@ -29,6 +30,7 @@ export interface RunOptions {
   cwd?: string
   oxlintPath?: string
   extraArgs?: string[]
+  strictTemplates?: boolean
 }
 
 /**
@@ -98,12 +100,15 @@ export async function runOxlint(
   } = opts
 
   const { args: virtualArgs, configPath } = await resolveLintConfig(cwd, extraArgs)
-  const structuralConfig = await readRules(configPath)
+  const vueSettings = await readVueSettings(configPath)
+  const structuralConfig = vueSettings.rules
+  const strictTemplates = opts.strictTemplates ?? vueSettings.strictTemplates
 
   const tmpRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-vue-'))
   /** virtual absolute path -> original absolute path */
   const backMap = new Map<string, string>()
   const structural: Diagnostic[] = []
+  const invalidSfcFiles = new Set<string>()
   const preprocessed = new Map<string, ReturnType<typeof preprocess>>()
 
   try {
@@ -126,6 +131,7 @@ export async function runOxlint(
       try {
         result = preprocess(source, abs)
       } catch (err) {
+        invalidSfcFiles.add(abs)
         structural.push({
           filename: abs,
           line: 1,
@@ -138,6 +144,11 @@ export async function runOxlint(
       }
 
       preprocessed.set(abs, result)
+      structural.push(...preprocessingDiagnostics(result, abs, source, strictTemplates))
+      if (result.parseErrors.length) {
+        invalidSfcFiles.add(abs)
+        return
+      }
 
       // Structural checks run on the template AST, which padding discards.
       if (result.descriptor.template?.ast) {
@@ -172,7 +183,7 @@ export async function runOxlint(
       // and knows the block is `<script setup>`, so SFC-aware rules that the
       // virtual .ts cannot express (vue/no-export-in-script-setup and friends)
       // fire here. Positions are already correct, so no rebinding is needed.
-      runNativePass(oxlintPath, files, cwd, virtualArgs),
+      runNativePass(oxlintPath, files.filter(file => !invalidSfcFiles.has(path.resolve(cwd, file))), cwd, virtualArgs),
     ])
 
     return dedupe([...virtual, ...native, ...structural]).filter(d => {
@@ -233,15 +244,15 @@ export async function loadConfig(resolved: string): Promise<OxlintConfig> {
   return parseJsonc<OxlintConfig>(await fs.readFile(resolved, 'utf8'))
 }
 
-async function readRules(
+export async function readVueSettings(
   configPath: string | null | undefined,
   seen = new Set<string>(),
-): Promise<RulesMap> {
-  if (!configPath) return {}
+): Promise<{ rules: RulesMap, strictTemplates?: boolean }> {
+  if (!configPath) return { rules: {} }
   const resolved = path.resolve(configPath)
   // A config that extends itself (directly or in a cycle) would recurse for
   // ever; visiting each file at most once also makes the merge deterministic.
-  if (seen.has(resolved)) return {}
+  if (seen.has(resolved)) return { rules: {} }
   seen.add(resolved)
 
   try {
@@ -252,22 +263,27 @@ async function readRules(
     // walk the chain too. Without this, "vue/no-static-inline-styles": "off"
     // in the shipped preset silently has no effect for anyone using `extends`.
     let inherited: RulesMap = {}
+    let strictTemplates: boolean | undefined
     for (const parent of cfg.extends ?? []) {
       const parentPath = path.resolve(path.dirname(resolved), parent)
-      inherited = { ...inherited, ...await readRules(parentPath, seen) }
+      const parentSettings = await readVueSettings(parentPath, seen)
+      inherited = { ...inherited, ...parentSettings.rules }
+      strictTemplates = parentSettings.strictTemplates ?? strictTemplates
     }
 
     // Structural rule names are not oxlint rules, and oxlint validates its
     // `rules` map strictly -- listing them there makes it reject the whole
     // config. `settings` is free-form, so that is where they live.
     // Nearer config wins over what it extends.
+    strictTemplates = cfg.settings?.vue?.strictTemplates ?? strictTemplates
     return {
-      ...inherited,
-      ...cfg.rules,
-      ...cfg.settings?.vue?.rules,
+      rules: { ...inherited, ...cfg.rules, ...cfg.settings?.vue?.rules },
+      ...(strictTemplates === undefined ? {} : { strictTemplates }),
     }
   } catch (err) {
     throw new Error(`could not load lint config ${resolved}`, { cause: err })
+  } finally {
+    seen.delete(resolved)
   }
 }
 

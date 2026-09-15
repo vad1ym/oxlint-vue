@@ -20,12 +20,21 @@ export interface Diagnostic {
   offset?: number
 }
 
+export interface CoverageGap {
+  /** UTF-16 source range, matching compiler-sfc locations. */
+  offset: number
+  end: number
+  kind: 'expression' | 'scope' | 'binding'
+  message: string
+}
+
 /** Result of turning one `.vue` file into its padded virtual counterpart. */
 export interface PreprocessResult {
   /** Virtual TypeScript, byte-for-byte the same length as the input. */
   code: string
   descriptor: SFCDescriptor
   parseErrors: { message: string, offset: number }[]
+  coverageGaps: CoverageGap[]
   hasScript: boolean
   templateUsedBindings: UsedBinding[]
 }
@@ -49,7 +58,7 @@ export interface OxlintConfig {
   rules?: RulesMap
   ignorePatterns?: string[]
   settings?: {
-    vue?: { rules?: RulesMap }
+    vue?: { rules?: RulesMap, strictTemplates?: boolean }
   }
 }
 
