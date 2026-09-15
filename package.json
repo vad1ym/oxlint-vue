@@ -62,7 +62,8 @@
     "smoke": "node scripts/smoke.mjs",
     "release": "changelogen --release",
     "verify": "pnpm build && pnpm typecheck && pnpm test && pnpm stress:self && pnpm smoke",
-    "compat": "node scripts/compat.mjs"
+    "compat": "node scripts/compat.mjs",
+    "rules:matrix": "node scripts/rules-matrix.mjs"
   },
   "dependencies": {
     "@babel/traverse": "^7.29.8",

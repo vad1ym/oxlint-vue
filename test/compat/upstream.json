@@ -2,6 +2,11 @@
   "repository": "https://github.com/vuejs/eslint-plugin-vue",
   "version": "10.11.0",
   "files": {
+    "tests/lib/rules/valid-v-html.test.ts": "c7212bde59534590e5ea9784b74061dac0206cb92adb2b51d3aa90b9de718756",
+    "tests/lib/rules/valid-v-text.test.ts": "4af85a0c78cbde4fe6ca2a784c347d5c0a9e0d69fc378a1280b397114a9c0161",
+    "tests/lib/rules/valid-v-show.test.ts": "617b7daa76de6386e4d99adab8c61343242ef0ad7e97ef81f4baa20874b87d45",
+    "tests/lib/rules/valid-v-once.test.ts": "b5cad2887d385378136c981f7fb03597fb6523419a2ee4258f24e5d9c1921d8f",
+    "tests/lib/rules/valid-v-cloak.test.ts": "833bb19c95d781366a03228783fbeff16420add60c116b04daf84d8beef71731",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -22,6 +27,522 @@
     "tests/lib/rules/no-child-content.test.ts": "a52e823fe4e20be88572c47f5183205f70d4a079afe9e6dad6fbacdc771b9bcd"
   },
   "cases": [
+    {
+      "id": "valid-v-html/valid/1",
+      "rule": "vue/valid-v-html",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-html/valid/2",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-html/valid/3",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html=\".\"></div></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-html/valid/4",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html=\"/**/\"></div></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-html/invalid/1",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html:aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-html/invalid/2",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html.aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-html/invalid/3",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-html/invalid/4",
+      "rule": "vue/valid-v-html",
+      "code": "<template><div v-html=\"\"></div></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-text/valid/1",
+      "rule": "vue/valid-v-text",
+      "code": "test",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-text/valid/2",
+      "rule": "vue/valid-v-text",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-text/valid/3",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-text/valid/4",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-text/valid/5",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text=\"/**/\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-text/invalid/1",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text:aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-text/invalid/2",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text.aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-text/invalid/3",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-text/invalid/4",
+      "rule": "vue/valid-v-text",
+      "code": "<template><div v-text=\"\" /></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/valid/1",
+      "rule": "vue/valid-v-show",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-show/valid/2",
+      "rule": "vue/valid-v-show",
+      "code": "<template><div v-show=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-show/valid/3",
+      "rule": "vue/valid-v-show",
+      "code": "<template><MyComponent v-show=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-show/valid/4",
+      "rule": "vue/valid-v-show",
+      "code": "<template><MyComponent v-show=\"/**/\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-show/invalid/1",
+      "rule": "vue/valid-v-show",
+      "code": "<template><div v-show:aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/invalid/2",
+      "rule": "vue/valid-v-show",
+      "code": "<template><div v-show.aaa=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/invalid/3",
+      "rule": "vue/valid-v-show",
+      "code": "<template><div v-show></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/invalid/4",
+      "rule": "vue/valid-v-show",
+      "code": "<template><div v-show=\"\"></div></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/invalid/5",
+      "rule": "vue/valid-v-show",
+      "code": "<template><template v-show=\"condition\"></template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-show/invalid/6",
+      "rule": "vue/valid-v-show",
+      "code": "<template><template v-show=\"condition\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/valid/1",
+      "rule": "vue/valid-v-once",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-once/valid/2",
+      "rule": "vue/valid-v-once",
+      "code": "<template><div v-once></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-once/invalid/1",
+      "rule": "vue/valid-v-once",
+      "code": "<template><div v-once:aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/invalid/2",
+      "rule": "vue/valid-v-once",
+      "code": "<template><div v-once.aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/invalid/3",
+      "rule": "vue/valid-v-once",
+      "code": "<template><div v-once=\"aaa\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/invalid/4",
+      "rule": "vue/valid-v-once",
+      "code": "<template><MyComponent v-once=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/invalid/5",
+      "rule": "vue/valid-v-once",
+      "code": "<template><MyComponent v-once=\"/**/\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-once/invalid/6",
+      "rule": "vue/valid-v-once",
+      "code": "<template><MyComponent v-once=\"\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/valid/1",
+      "rule": "vue/valid-v-cloak",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-cloak/valid/2",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-cloak/invalid/1",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak:aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/invalid/2",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak.aaa></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/invalid/3",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak=\"aaa\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/invalid/4",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak=\".\"></div></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/invalid/5",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak=\"/**/\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-cloak/invalid/6",
+      "rule": "vue/valid-v-cloak",
+      "code": "<template><div v-cloak=\"\" /></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
     {
       "id": "require-v-for-key/valid/1",
       "rule": "vue/require-v-for-key",

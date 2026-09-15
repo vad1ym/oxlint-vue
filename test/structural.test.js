@@ -24,6 +24,12 @@ function checkWithProps(template, script) {
 }
 
 const CASES = [
+  ['vue/valid-v-html', '<div v-html />', true],
+  ['vue/valid-v-text', '<div v-text />', true],
+  ['vue/valid-v-show', '<div v-show />', true],
+  ['vue/valid-v-once', '<div v-once="value" />', true],
+  ['vue/valid-v-cloak', '<div v-cloak="value" />', true],
+
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
   ['vue/no-v-for-template-key-on-child', '<template v-for="item in items"><div :key="item.id"/></template>', true],

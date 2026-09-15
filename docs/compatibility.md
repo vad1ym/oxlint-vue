@@ -5,18 +5,20 @@ The compatibility target is **eslint-plugin-vue 10.11.0**, run by **ESLint
 references, not runtime dependencies. TypeScript 7 still builds the package;
 the TypeScript 6 API alias is used only by the reference TypeScript parser.
 
+See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
+
 ## Current measurement
 
 | Corpus | Result |
 |---|---|
-| 568 upstream cases, 18 common structural rules | **567 exact matches (99.8%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **264/264** |
-| Four pinned Nuxt components, each checked against all 18 rules | **72/72 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **454/454 comparisons** |
+| 611 upstream cases, 23 common structural rules | **610 exact matches (99.8%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **464/464** |
+| Four pinned Nuxt components, each checked against all 23 rules | **92/92 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **674/674 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures; none are silently excluded. Seventeen of the eighteen suites
+known failures; none are silently excluded. Twenty-two of the twenty-three suites
 currently match on every imported case.
 
 **An exact match here means rule identity, finding count, severity and start
@@ -27,7 +29,7 @@ in the count. The reference case's original expected count is checked before
 comparison, so a broken parser/configuration cannot pass as an empty result.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 235 are not measured by this structural-rule harness,
+exports 253 rule names; 230 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

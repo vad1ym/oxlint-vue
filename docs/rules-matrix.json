@@ -1,0 +1,3997 @@
+{
+  "referenceVersion": "10.11.0",
+  "oxlintVersion": "1.78.0",
+  "counts": {
+    "implemented": 16,
+    "native": 46,
+    "partial": 8,
+    "missing": 183
+  },
+  "projectSpecificRules": [
+    "vue/require-v-for-with-index-key",
+    "vue/no-target-blank"
+  ],
+  "rules": [
+    {
+      "name": "multi-word-component-names",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/multi-word-component-names.html",
+      "notes": []
+    },
+    {
+      "name": "no-arrow-functions-in-watch",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-arrow-functions-in-watch.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-async-in-computed-properties",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-async-in-computed-properties.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-child-content",
+      "status": "partial",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 17,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-child-content.html",
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
+    },
+    {
+      "name": "no-computed-properties-in-data",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-computed-properties-in-data.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-data-object-declaration",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-data-object-declaration.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-delete-set",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-delete-set.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-destroyed-lifecycle",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-destroyed-lifecycle.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-dollar-listeners-api",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-dollar-listeners-api.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-dollar-scopedslots-api",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-dollar-scopedslots-api.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-events-api",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-events-api.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-filter",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-filter.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-functional-template",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-functional-template.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-html-element-is",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-html-element-is.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-inline-template",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-inline-template.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-model-definition",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-model-definition.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-props-default-this",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-props-default-this.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-deprecated-router-link-tag-prop",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-router-link-tag-prop.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-scope-attribute",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-scope-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-slot-attribute",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-slot-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-slot-scope-attribute",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-slot-scope-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-v-bind-sync",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-v-bind-sync.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-v-is",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-v-is.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-v-on-native-modifier",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-v-on-native-modifier.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-v-on-number-modifiers",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-v-on-number-modifiers.html",
+      "notes": []
+    },
+    {
+      "name": "no-deprecated-vue-config-keycodes",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-deprecated-vue-config-keycodes.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-dupe-keys",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-dupe-keys.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-dupe-v-else-if",
+      "status": "partial",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 97,
+      "knownDifferences": 1,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-dupe-v-else-if.html",
+      "notes": [
+        "1 reviewed upstream case difference"
+      ]
+    },
+    {
+      "name": "no-duplicate-attributes",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 15,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-duplicate-attributes.html",
+      "notes": []
+    },
+    {
+      "name": "no-export-in-script-setup",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-export-in-script-setup.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-expose-after-await",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-expose-after-await.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-lifecycle-after-await",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-lifecycle-after-await.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-mutating-props",
+      "status": "partial",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 48,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-mutating-props.html",
+      "notes": [
+        "Six additional scope cases intentionally avoid reference false positives"
+      ]
+    },
+    {
+      "name": "no-parsing-error",
+      "status": "partial",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-parsing-error.html",
+      "notes": [
+        "Compiler parsing diagnostics only; reference options and severity not implemented"
+      ]
+    },
+    {
+      "name": "no-ref-as-operand",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-ref-as-operand.html",
+      "notes": []
+    },
+    {
+      "name": "no-reserved-component-names",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-reserved-component-names.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-reserved-keys",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-reserved-keys.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-reserved-props",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-reserved-props.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-shared-component-data",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/no-shared-component-data.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-side-effects-in-computed-properties",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-side-effects-in-computed-properties.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-template-key",
+      "status": "partial",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 14,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-template-key.html",
+      "notes": [
+        "Vue 3 conditional template keys intentionally allowed"
+      ]
+    },
+    {
+      "name": "no-textarea-mustache",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 6,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-textarea-mustache.html",
+      "notes": []
+    },
+    {
+      "name": "no-unused-components",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unused-components.html",
+      "notes": []
+    },
+    {
+      "name": "no-unused-vars",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unused-vars.html",
+      "notes": []
+    },
+    {
+      "name": "no-use-computed-property-like-method",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-use-computed-property-like-method.html",
+      "notes": []
+    },
+    {
+      "name": "no-use-v-if-with-v-for",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 23,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-use-v-if-with-v-for.html",
+      "notes": []
+    },
+    {
+      "name": "no-useless-template-attributes",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-useless-template-attributes.html",
+      "notes": []
+    },
+    {
+      "name": "no-v-for-template-key-on-child",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 15,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-for-template-key-on-child.html",
+      "notes": []
+    },
+    {
+      "name": "no-v-text-v-html-on-component",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue2-essential",
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 15,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-text-v-html-on-component.html",
+      "notes": []
+    },
+    {
+      "name": "no-watch-after-await",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-watch-after-await.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "prefer-import-from-vue",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/prefer-import-from-vue.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-component-is",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 5,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-component-is.html",
+      "notes": []
+    },
+    {
+      "name": "require-prop-type-constructor",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/require-prop-type-constructor.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-render-return",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-render-return.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-slots-as-functions",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-slots-as-functions.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-toggle-inside-transition",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-toggle-inside-transition.html",
+      "notes": []
+    },
+    {
+      "name": "require-v-for-key",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 21,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-v-for-key.html",
+      "notes": []
+    },
+    {
+      "name": "require-valid-default-prop",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-valid-default-prop.html",
+      "notes": []
+    },
+    {
+      "name": "return-in-computed-property",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/return-in-computed-property.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "return-in-emits-validator",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/return-in-emits-validator.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "use-v-on-exact",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/use-v-on-exact.html",
+      "notes": []
+    },
+    {
+      "name": "valid-attribute-name",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-attribute-name.html",
+      "notes": []
+    },
+    {
+      "name": "valid-define-emits",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/valid-define-emits.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "valid-define-options",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/valid-define-options.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "valid-define-props",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/valid-define-props.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "valid-next-tick",
+      "status": "native",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/valid-next-tick.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "valid-template-root",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-template-root.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-bind",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-bind.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-cloak",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 8,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-cloak.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-else",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-else.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-else-if",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-else-if.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-for",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 59,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-for.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-html",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 8,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-html.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-if",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-if.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-is",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-is.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-memo",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-memo.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-model",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 58,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-model.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-on",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-on.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-once",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 8,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-once.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-pre",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-pre.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-show",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 10,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-show.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-slot",
+      "status": "missing",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-slot.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-text",
+      "status": "implemented",
+      "priority": "P0",
+      "categories": [
+        "vue3-essential",
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 9,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-text.html",
+      "notes": []
+    },
+    {
+      "name": "attribute-hyphenation",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/attribute-hyphenation.html",
+      "notes": []
+    },
+    {
+      "name": "component-definition-name-casing",
+      "status": "native",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/component-definition-name-casing.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "first-attribute-linebreak",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/first-attribute-linebreak.html",
+      "notes": []
+    },
+    {
+      "name": "html-closing-bracket-newline",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-closing-bracket-newline.html",
+      "notes": []
+    },
+    {
+      "name": "html-closing-bracket-spacing",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-closing-bracket-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "html-end-tags",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-end-tags.html",
+      "notes": []
+    },
+    {
+      "name": "html-indent",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-indent.html",
+      "notes": []
+    },
+    {
+      "name": "html-quotes",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-quotes.html",
+      "notes": []
+    },
+    {
+      "name": "html-self-closing",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-self-closing.html",
+      "notes": []
+    },
+    {
+      "name": "max-attributes-per-line",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/max-attributes-per-line.html",
+      "notes": []
+    },
+    {
+      "name": "multiline-html-element-content-newline",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/multiline-html-element-content-newline.html",
+      "notes": []
+    },
+    {
+      "name": "mustache-interpolation-spacing",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/mustache-interpolation-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "no-multi-spaces",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-multi-spaces.html",
+      "notes": []
+    },
+    {
+      "name": "no-spaces-around-equal-signs-in-attribute",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-spaces-around-equal-signs-in-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "no-template-shadow",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-template-shadow.html",
+      "notes": []
+    },
+    {
+      "name": "one-component-per-file",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/one-component-per-file.html",
+      "notes": []
+    },
+    {
+      "name": "prop-name-casing",
+      "status": "native",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/prop-name-casing.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-default-prop",
+      "status": "native",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-default-prop.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-explicit-emits",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-explicit-emits.html",
+      "notes": []
+    },
+    {
+      "name": "require-prop-types",
+      "status": "native",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-prop-types.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "singleline-html-element-content-newline",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/singleline-html-element-content-newline.html",
+      "notes": []
+    },
+    {
+      "name": "v-bind-style",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-bind-style.html",
+      "notes": []
+    },
+    {
+      "name": "v-on-event-hyphenation",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-on-event-hyphenation.html",
+      "notes": []
+    },
+    {
+      "name": "v-on-style",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-on-style.html",
+      "notes": []
+    },
+    {
+      "name": "v-slot-style",
+      "status": "missing",
+      "priority": "P1",
+      "categories": [
+        "vue3-strongly-recommended",
+        "vue2-strongly-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-slot-style.html",
+      "notes": []
+    },
+    {
+      "name": "attributes-order",
+      "status": "missing",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/attributes-order.html",
+      "notes": []
+    },
+    {
+      "name": "block-order",
+      "status": "missing",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/block-order.html",
+      "notes": []
+    },
+    {
+      "name": "no-lone-template",
+      "status": "missing",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-lone-template.html",
+      "notes": []
+    },
+    {
+      "name": "no-multiple-slot-args",
+      "status": "native",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/no-multiple-slot-args.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-required-prop-with-default",
+      "status": "native",
+      "priority": "P2",
+      "categories": [
+        "vue2-recommended",
+        "vue3-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": "fixable_suggestion",
+      "url": "https://eslint.vuejs.org/rules/no-required-prop-with-default.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-v-html",
+      "status": "implemented",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 10,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-html.html",
+      "notes": []
+    },
+    {
+      "name": "order-in-components",
+      "status": "missing",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/order-in-components.html",
+      "notes": []
+    },
+    {
+      "name": "this-in-template",
+      "status": "partial",
+      "priority": "P2",
+      "categories": [
+        "vue3-recommended",
+        "vue2-recommended"
+      ],
+      "deprecated": false,
+      "upstreamCases": 122,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/this-in-template.html",
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
+    },
+    {
+      "name": "array-bracket-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/array-bracket-newline.html",
+      "notes": []
+    },
+    {
+      "name": "array-bracket-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/array-bracket-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "array-element-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/array-element-newline.html",
+      "notes": []
+    },
+    {
+      "name": "arrow-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/arrow-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "block-lang",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/block-lang.html",
+      "notes": []
+    },
+    {
+      "name": "block-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/block-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "block-tag-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/block-tag-newline.html",
+      "notes": []
+    },
+    {
+      "name": "brace-style",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/brace-style.html",
+      "notes": []
+    },
+    {
+      "name": "camelcase",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/camelcase.html",
+      "notes": []
+    },
+    {
+      "name": "comma-dangle",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/comma-dangle.html",
+      "notes": []
+    },
+    {
+      "name": "comma-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/comma-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "comma-style",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/comma-style.html",
+      "notes": []
+    },
+    {
+      "name": "comment-directive",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "base"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/comment-directive.html",
+      "notes": []
+    },
+    {
+      "name": "component-api-style",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/component-api-style.html",
+      "notes": []
+    },
+    {
+      "name": "component-name-in-template-casing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/component-name-in-template-casing.html",
+      "notes": []
+    },
+    {
+      "name": "component-options-name-casing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/component-options-name-casing.html",
+      "notes": []
+    },
+    {
+      "name": "custom-event-name-casing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/custom-event-name-casing.html",
+      "notes": []
+    },
+    {
+      "name": "define-emits-declaration",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "pending",
+      "url": "https://eslint.vuejs.org/rules/define-emits-declaration.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "define-macros-order",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/define-macros-order.html",
+      "notes": []
+    },
+    {
+      "name": "define-props-declaration",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/define-props-declaration.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "define-props-destructuring",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/define-props-destructuring.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "dot-location",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/dot-location.html",
+      "notes": []
+    },
+    {
+      "name": "dot-notation",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/dot-notation.html",
+      "notes": []
+    },
+    {
+      "name": "enforce-style-attribute",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/enforce-style-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "eqeqeq",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/eqeqeq.html",
+      "notes": []
+    },
+    {
+      "name": "func-call-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/func-call-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "html-button-has-type",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-button-has-type.html",
+      "notes": []
+    },
+    {
+      "name": "html-comment-content-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-comment-content-newline.html",
+      "notes": []
+    },
+    {
+      "name": "html-comment-content-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-comment-content-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "html-comment-indent",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/html-comment-indent.html",
+      "notes": []
+    },
+    {
+      "name": "jsx-uses-vars",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "base"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/jsx-uses-vars.html",
+      "notes": []
+    },
+    {
+      "name": "key-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/key-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "keyword-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/keyword-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "match-component-file-name",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/match-component-file-name.html",
+      "notes": []
+    },
+    {
+      "name": "match-component-import-name",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/match-component-import-name.html",
+      "notes": []
+    },
+    {
+      "name": "max-len",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/max-len.html",
+      "notes": []
+    },
+    {
+      "name": "max-lines-per-block",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/max-lines-per-block.html",
+      "notes": []
+    },
+    {
+      "name": "max-props",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/max-props.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "max-template-depth",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/max-template-depth.html",
+      "notes": []
+    },
+    {
+      "name": "multiline-ternary",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/multiline-ternary.html",
+      "notes": []
+    },
+    {
+      "name": "new-line-between-multi-line-property",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/new-line-between-multi-line-property.html",
+      "notes": []
+    },
+    {
+      "name": "next-tick-style",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_fix",
+      "url": "https://eslint.vuejs.org/rules/next-tick-style.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-bare-strings-in-template",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-bare-strings-in-template.html",
+      "notes": []
+    },
+    {
+      "name": "no-boolean-default",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-boolean-default.html",
+      "notes": []
+    },
+    {
+      "name": "no-console",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-console.html",
+      "notes": []
+    },
+    {
+      "name": "no-constant-condition",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-constant-condition.html",
+      "notes": []
+    },
+    {
+      "name": "no-custom-modifiers-on-v-model",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-custom-modifiers-on-v-model.html",
+      "notes": []
+    },
+    {
+      "name": "no-duplicate-attr-inheritance",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-duplicate-attr-inheritance.html",
+      "notes": []
+    },
+    {
+      "name": "no-duplicate-class-names",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-duplicate-class-names.html",
+      "notes": []
+    },
+    {
+      "name": "no-empty-component-block",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-empty-component-block.html",
+      "notes": []
+    },
+    {
+      "name": "no-empty-pattern",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-empty-pattern.html",
+      "notes": []
+    },
+    {
+      "name": "no-extra-parens",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-extra-parens.html",
+      "notes": []
+    },
+    {
+      "name": "no-implicit-coercion",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-implicit-coercion.html",
+      "notes": []
+    },
+    {
+      "name": "no-import-compiler-macros",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": "fixable_dangerous_fix",
+      "url": "https://eslint.vuejs.org/rules/no-import-compiler-macros.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-irregular-whitespace",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-irregular-whitespace.html",
+      "notes": []
+    },
+    {
+      "name": "no-literals-in-template",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-literals-in-template.html",
+      "notes": []
+    },
+    {
+      "name": "no-loss-of-precision",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-loss-of-precision.html",
+      "notes": []
+    },
+    {
+      "name": "no-multiple-objects-in-class",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-multiple-objects-in-class.html",
+      "notes": []
+    },
+    {
+      "name": "no-multiple-template-root",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-multiple-template-root.html",
+      "notes": []
+    },
+    {
+      "name": "no-negated-condition",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-negated-condition.html",
+      "notes": []
+    },
+    {
+      "name": "no-negated-v-if-condition",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-negated-v-if-condition.html",
+      "notes": []
+    },
+    {
+      "name": "no-potential-component-option-typo",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-potential-component-option-typo.html",
+      "notes": []
+    },
+    {
+      "name": "no-ref-object-reactivity-loss",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-ref-object-reactivity-loss.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-block",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-block.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-call-after-await",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-call-after-await.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-class",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-class.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-component-names",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-component-names.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-component-options",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-component-options.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-custom-event",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-custom-event.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-html-elements",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-html-elements.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-props",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-props.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-static-attribute",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-static-attribute.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-syntax",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-syntax.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-v-bind",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-v-bind.html",
+      "notes": []
+    },
+    {
+      "name": "no-restricted-v-on",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-restricted-v-on.html",
+      "notes": []
+    },
+    {
+      "name": "no-root-v-if",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-root-v-if.html",
+      "notes": []
+    },
+    {
+      "name": "no-setup-props-reactivity-loss",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-setup-props-reactivity-loss.html",
+      "notes": []
+    },
+    {
+      "name": "no-shadow-native-events",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-shadow-native-events.html",
+      "notes": []
+    },
+    {
+      "name": "no-sparse-arrays",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-sparse-arrays.html",
+      "notes": []
+    },
+    {
+      "name": "no-static-inline-styles",
+      "status": "implemented",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 22,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-static-inline-styles.html",
+      "notes": []
+    },
+    {
+      "name": "no-template-target-blank",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-template-target-blank.html",
+      "notes": []
+    },
+    {
+      "name": "no-this-in-before-route-enter",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/no-this-in-before-route-enter.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "no-undef-components",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-undef-components.html",
+      "notes": []
+    },
+    {
+      "name": "no-undef-directives",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-undef-directives.html",
+      "notes": []
+    },
+    {
+      "name": "no-undef-properties",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-undef-properties.html",
+      "notes": []
+    },
+    {
+      "name": "no-unsupported-features",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unsupported-features.html",
+      "notes": []
+    },
+    {
+      "name": "no-unused-emit-declarations",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unused-emit-declarations.html",
+      "notes": []
+    },
+    {
+      "name": "no-unused-properties",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unused-properties.html",
+      "notes": []
+    },
+    {
+      "name": "no-unused-refs",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-unused-refs.html",
+      "notes": []
+    },
+    {
+      "name": "no-use-v-else-with-v-for",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-use-v-else-with-v-for.html",
+      "notes": []
+    },
+    {
+      "name": "no-useless-concat",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-useless-concat.html",
+      "notes": []
+    },
+    {
+      "name": "no-useless-mustaches",
+      "status": "partial",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 13,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-useless-mustaches.html",
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
+    },
+    {
+      "name": "no-useless-v-bind",
+      "status": "partial",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 8,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-useless-v-bind.html",
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
+    },
+    {
+      "name": "no-v-for-template-key",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": true,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-for-template-key.html",
+      "notes": []
+    },
+    {
+      "name": "no-v-model-argument",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": true,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-model-argument.html",
+      "notes": []
+    },
+    {
+      "name": "no-v-text",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/no-v-text.html",
+      "notes": []
+    },
+    {
+      "name": "object-curly-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/object-curly-newline.html",
+      "notes": []
+    },
+    {
+      "name": "object-curly-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/object-curly-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "object-property-newline",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/object-property-newline.html",
+      "notes": []
+    },
+    {
+      "name": "object-shorthand",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/object-shorthand.html",
+      "notes": []
+    },
+    {
+      "name": "operator-linebreak",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/operator-linebreak.html",
+      "notes": []
+    },
+    {
+      "name": "padding-line-between-blocks",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/padding-line-between-blocks.html",
+      "notes": []
+    },
+    {
+      "name": "padding-line-between-tags",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/padding-line-between-tags.html",
+      "notes": []
+    },
+    {
+      "name": "padding-lines-in-component-definition",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/padding-lines-in-component-definition.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-define-options",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-define-options.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-prop-type-boolean-first",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-prop-type-boolean-first.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-separate-static-class",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-separate-static-class.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-single-event-payload",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-single-event-payload.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-template",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-template.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-true-attribute-shorthand",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-true-attribute-shorthand.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-use-template-ref",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-use-template-ref.html",
+      "notes": []
+    },
+    {
+      "name": "prefer-v-model",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/prefer-v-model.html",
+      "notes": []
+    },
+    {
+      "name": "quote-props",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/quote-props.html",
+      "notes": []
+    },
+    {
+      "name": "require-default-export",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-default-export.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-direct-export",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-direct-export.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "require-emit-validator",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-emit-validator.html",
+      "notes": []
+    },
+    {
+      "name": "require-explicit-slots",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-explicit-slots.html",
+      "notes": []
+    },
+    {
+      "name": "require-expose",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-expose.html",
+      "notes": []
+    },
+    {
+      "name": "require-macro-variable-name",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-macro-variable-name.html",
+      "notes": []
+    },
+    {
+      "name": "require-name-property",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-name-property.html",
+      "notes": []
+    },
+    {
+      "name": "require-prop-comment",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-prop-comment.html",
+      "notes": []
+    },
+    {
+      "name": "require-typed-object-prop",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": true,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/require-typed-object-prop.html",
+      "notes": []
+    },
+    {
+      "name": "require-typed-ref",
+      "status": "native",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": "none",
+      "url": "https://eslint.vuejs.org/rules/require-typed-ref.html",
+      "notes": [
+        "Available in oxlint; wrapper behavior, options and severity parity unmeasured"
+      ]
+    },
+    {
+      "name": "restricted-component-names",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/restricted-component-names.html",
+      "notes": []
+    },
+    {
+      "name": "script-indent",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/script-indent.html",
+      "notes": []
+    },
+    {
+      "name": "slot-name-casing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/slot-name-casing.html",
+      "notes": []
+    },
+    {
+      "name": "sort-keys",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/sort-keys.html",
+      "notes": []
+    },
+    {
+      "name": "space-in-parens",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/space-in-parens.html",
+      "notes": []
+    },
+    {
+      "name": "space-infix-ops",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/space-infix-ops.html",
+      "notes": []
+    },
+    {
+      "name": "space-unary-ops",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/space-unary-ops.html",
+      "notes": []
+    },
+    {
+      "name": "static-class-names-order",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/static-class-names-order.html",
+      "notes": []
+    },
+    {
+      "name": "template-curly-spacing",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/template-curly-spacing.html",
+      "notes": []
+    },
+    {
+      "name": "v-for-delimiter-style",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-for-delimiter-style.html",
+      "notes": []
+    },
+    {
+      "name": "v-if-else-key",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-if-else-key.html",
+      "notes": []
+    },
+    {
+      "name": "v-on-handler-style",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [],
+      "deprecated": false,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": true,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/v-on-handler-style.html",
+      "notes": []
+    },
+    {
+      "name": "valid-model-definition",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": true,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-model-definition.html",
+      "notes": []
+    },
+    {
+      "name": "valid-v-bind-sync",
+      "status": "missing",
+      "priority": "P3",
+      "categories": [
+        "vue2-essential"
+      ],
+      "deprecated": true,
+      "upstreamCases": 0,
+      "knownDifferences": 0,
+      "upstreamFixable": false,
+      "upstreamSuggestions": false,
+      "nativeFix": null,
+      "url": "https://eslint.vuejs.org/rules/valid-v-bind-sync.html",
+      "notes": []
+    }
+  ]
+}

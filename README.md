@@ -57,7 +57,7 @@ Here every rule you already run on `.ts` reaches template expressions too:
 <p>{{ a == b }}</p>               <!-- eqeqeq -->
 ```
 
-Plus 20 template rules oxlint has no equivalent for — `require-v-for-key`,
+Plus 25 template rules oxlint has no equivalent for — `require-v-for-key`,
 `no-mutating-props`, `no-dupe-v-else-if` and the rest. They are configured
 under `settings.vue.rules`, a key oxlint ignores:
 
@@ -98,10 +98,12 @@ every virtual file parses. [Details →](./docs/internals.md)
 
 ## Compatibility regression tests
 
-`pnpm compat --json` compares 568 cases from eslint-plugin-vue 10.11.0 against
-our 18 common structural rules. CI checks the reviewed differences and also
+`pnpm compat --json` compares 611 cases from eslint-plugin-vue 10.11.0 against
+our 23 common structural rules. CI checks the reviewed differences and also
 runs generated scope/layout cases and pinned Nuxt fixtures through real oxlint.
 See [the compatibility report and limitations](docs/compatibility.md).
+
+Full rule coverage and implementation priorities: [Vue rule inventory](docs/rules-matrix.md).
 
 ## License
 

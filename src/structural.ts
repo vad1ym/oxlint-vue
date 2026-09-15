@@ -218,7 +218,37 @@ function equalConditions(a: Ast, b: Ast): boolean {
   return astKey(a) === astKey(b)
 }
 
+/** These directives accept neither arguments nor modifiers. */
+function simpleDirectiveRule(name: string, requiresValue: boolean): Rule {
+  return {
+    name: `vue/valid-v-${name}`,
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== name) continue
+        if (dir.arg) report({ message: `v-${name} does not accept an argument.`, ...loc(dir.arg) })
+        if (dir.modifiers[0]) report({ message: `v-${name} does not accept modifiers.`, ...loc(dir.modifiers[0]) })
+        if (requiresValue) {
+          if (!dir.exp?.loc.source) report({ message: `v-${name} requires a value.`, ...loc(dir) })
+        } else {
+          // Include the opening quote, as the reference attribute-value node does.
+          if (dir.exp) {
+            const start = dir.exp.loc.start.offset - dir.loc.start.offset
+            const quoted = ['"', "'"].includes(dir.loc.source[start - 1] ?? '')
+            report({ message: `v-${name} does not accept a value.`, ...relativeLoc(dir, start - Number(quoted)) })
+          }
+        }
+        if (name === 'show' && node.type === NodeTypes.ELEMENT && node.tag === 'template') {
+          report({ message: 'v-show cannot be used on <template>.', ...loc(dir) })
+        }
+      }
+    },
+  }
+}
+
 const RULES: Rule[] = [
+  ...['html', 'text', 'show'].map(name => simpleDirectiveRule(name, true)),
+  ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
   {
     name: 'vue/require-v-for-key',
     severity: 'error',
