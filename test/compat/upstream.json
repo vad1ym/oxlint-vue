@@ -109,7 +109,8 @@
     "tests/lib/rules/html-comment-content-spacing.test.ts": "160b25f61a63a044d175c905181a7417ee87a3100df4a6462da5ae00b0f98831",
     "tests/lib/rules/html-comment-content-newline.test.ts": "b60e6050b3f5bdadd474f9a801a49eb9adb8da6e7c5df4dac09262e1eddb58fe",
     "tests/lib/rules/no-duplicate-attr-inheritance.test.ts": "5f95c3370afcdaced3ea5e106439315b4ab2ac35d47a16c74fed6583732886fc",
-    "tests/lib/rules/no-potential-component-option-typo.test.ts": "05a7fb8302bb4e069f9431674138eee349e2fa397b4b46766eea42cdcc05fc21"
+    "tests/lib/rules/no-potential-component-option-typo.test.ts": "05a7fb8302bb4e069f9431674138eee349e2fa397b4b46766eea42cdcc05fc21",
+    "tests/lib/rules/no-restricted-component-options.test.ts": "98f227102e0c3f7d3bc05a723b48f063ce5138e363674342c8538ad6840ff029"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -36274,6 +36275,237 @@
       "filename": "test.vue",
       "languageOptions": {
         "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-component-options/valid/1",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        /* ✗ BAD */\n        init: function () {},\n        beforeCompile: function () {},\n        compiled: function () {},\n        activate: function () {},\n        ready: function () {},\n        attached: function () {},\n        detached: function () {},\n\n        /* ✓ GOOD */\n        beforeCreate: function () {},\n        activated: function () {},\n        mounted: function () {},\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/valid/2",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        props: {\n          size: Number,\n          name: {\n            type: String,\n            required: true,\n            /* ✗ BAD */\n            twoWay: true\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/valid/3",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        /* ✓ GOOD */\n        beforeCreate: function () {},\n        activated: function () {},\n        mounted: function () {},\n      }\n      </script>\n      ",
+      "options": [
+        "init",
+        "beforeCompile",
+        "compiled",
+        "activate",
+        "ready",
+        "/^(?:at|de)tached$/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/valid/4",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        foo: {\n          ...bar,\n          baz\n        }\n      }\n      </script>\n      ",
+      "options": [
+        [
+          "foo",
+          "*",
+          "baz"
+        ]
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/valid/5",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        foo: {\n          ...bar,\n          baz\n        }\n      }\n      </script>\n      ",
+      "options": [
+        [
+          "foo",
+          "bar"
+        ]
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/valid/6",
+      "rule": "vue/no-restricted-component-options",
+      "code": "<script setup> defineOptions({ name: 'Foo' }) </script>",
+      "options": [
+        "Foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-component-options/invalid/1",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        /* ✗ BAD */\n        init: function () {},\n        beforeCompile: function () {},\n        compiled: function () {},\n        activate: function () {},\n        ready: function () {},\n        attached: function () {},\n        detached: function () {},\n\n        /* ✓ GOOD */\n        beforeCreate: function () {},\n        activated: function () {},\n        mounted: function () {},\n      }\n      </script>\n      ",
+      "options": [
+        "init",
+        "beforeCompile",
+        "compiled",
+        "activate",
+        "ready",
+        "/^(?:at|de)tached$/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 7
+    },
+    {
+      "id": "no-restricted-component-options/invalid/2",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        props: {\n          size: Number,\n          name: {\n            type: String,\n            required: true,\n            /* ✗ BAD */\n            twoWay: true\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        [
+          "props",
+          "/.*/",
+          "twoWay"
+        ]
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-component-options/invalid/3",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        props: {\n          size: Number,\n          name: {\n            type: String,\n            required: true,\n            /* ✗ BAD */\n            twoWay: true\n          }\n        },\n        init: function () {},\n        beforeCompile: function () {},\n        compiled: function () {},\n        activate: function () {},\n        ready: function () {},\n        attached: function () {},\n        detached: function () {},\n\n        beforeCreate: function () {},\n        activated: function () {},\n        mounted: function () {},\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "name": "init",
+          "message": "Use \"beforeCreate\" instead."
+        },
+        {
+          "name": "/^(?:at|de)tached$/",
+          "message": "\"attached\" and \"detached\" is deprecated."
+        },
+        {
+          "name": [
+            "props",
+            "/.*/",
+            "twoWay"
+          ],
+          "message": "\"props.*.twoWay\" cannot be used."
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "no-restricted-component-options/invalid/4",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        props: {\n          size: Number,\n          [name]: {\n            type: String,\n            required: true,\n            /* ✗ BAD */\n            twoWay: true\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        [
+          "props",
+          "*",
+          "twoWay"
+        ]
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-component-options/invalid/5",
+      "rule": "vue/no-restricted-component-options",
+      "code": "\n      <script>\n      export default {\n        foo: {\n          ...bar\n        }\n      }\n      </script>\n      ",
+      "options": [
+        [
+          "foo",
+          "*"
+        ]
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-component-options/invalid/6",
+      "rule": "vue/no-restricted-component-options",
+      "code": "<script setup> defineOptions({ Foo: 'Foo' }) </script>",
+      "options": [
+        "Foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
         "sourceType": "module",
         "parserKind": "vue"
       },

@@ -51,6 +51,8 @@ const CASES = [
   ['vue/no-duplicate-attr-inheritance', '<div><span v-bind="$attrs" /></div>', true],
   ['vue/no-potential-component-option-typo', '<div />', true,
     'export default { dat() {} }'],
+  ['vue/no-restricted-component-options', '<div />', false,
+    'defineOptions({ name: "Example" })'],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

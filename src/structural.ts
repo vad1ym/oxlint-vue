@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { booleanDefaultFindings, componentDefinitionOffsets, componentInheritAttrsDisabled, componentNameFindings, componentOptionNameFindings, componentOptionTypoFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { booleanDefaultFindings, componentDefinitionOffsets, componentInheritAttrsDisabled, componentNameFindings, componentOptionNameFindings, componentOptionTypoFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, restrictedComponentOptionFindings, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -1418,6 +1418,11 @@ const RULES: Rule[] = [
   },
   {
     name: 'vue/no-potential-component-option-typo',
+    severity: 'error',
+    check() {},
+  },
+  {
+    name: 'vue/no-restricted-component-options',
     severity: 'error',
     check() {},
   },
@@ -3126,6 +3131,15 @@ export function checkTemplate(
         ...sourceLoc(source, finding.offset),
         message: "'" + finding.name + "' may be a typo, which is similar to option ["
           + finding.candidates.join(',') + '].' } as Diagnostic)
+    }
+  }
+  const restrictedOptionsRule = active.find(entry => entry.rule.name === 'vue/no-restricted-component-options')
+  if (restrictedOptionsRule) {
+    const rawOptions = ruleOptions(config?.[restrictedOptionsRule.rule.name]).rawOptions
+    for (const finding of restrictedComponentOptionFindings(descriptor, rawOptions)) {
+      out.push({ filename, rule: restrictedOptionsRule.rule.name,
+        severity: restrictedOptionsRule.severity, ...sourceLoc(source, finding.offset),
+        message: finding.message } as Diagnostic)
     }
   }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')

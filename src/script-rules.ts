@@ -63,6 +63,7 @@ export interface ComponentOrderFinding { name: string, offset: number }
 export interface BooleanDefaultFinding { offset: number }
 export interface ComponentOptionNameFinding { name: string, offset: number }
 export interface ComponentOptionTypoFinding { name: string, candidates: string[], offset: number }
+export interface RestrictedComponentOptionFinding { message: string, offset: number }
 export interface ExplicitEmitInfo {
   declared: Set<string>
   props: Set<string>
@@ -451,6 +452,80 @@ export function componentOptionTypoFindings(descriptor: SFCDescriptor,
           .map(item => item.candidate)
         if (similar.length) findings.push({ name, candidates: similar,
           offset: block.loc.start.offset + (property.node.start ?? 0) })
+      }
+    } })
+  }
+  return findings
+}
+
+function optionNamePattern(value: string): (name: string) => boolean {
+  if (value.startsWith('/') && value.lastIndexOf('/') > 0) {
+    const end = value.lastIndexOf('/')
+    try {
+      const regexp = new RegExp(value.slice(1, end), value.slice(end + 1).replaceAll('g', ''))
+      return name => regexp.test(name)
+    } catch {}
+  }
+  return name => name === value
+}
+
+/** Component option paths forbidden by no-restricted-component-options. */
+export function restrictedComponentOptionFindings(descriptor: SFCDescriptor,
+  rawOptions: unknown): RestrictedComponentOptionFinding[] {
+  const configurations = Array.isArray(rawOptions) ? rawOptions.flatMap(option => {
+    const record = option && typeof option === 'object' && !Array.isArray(option)
+      ? option as { name?: unknown, message?: unknown } : undefined
+    const configuredName = record?.name ?? option
+    const names = Array.isArray(configuredName) ? configuredName : [configuredName]
+    if (!names.every(name => typeof name === 'string')) return []
+    return [{ steps: names as string[],
+      message: typeof record?.message === 'string' ? record.message : undefined }]
+  }) : []
+  const findings: RestrictedComponentOptionFinding[] = []
+  if (!configurations.length) return findings
+  const verify = (object: NodePath, steps: string[], message: string | undefined,
+    pathNames: string[] = []): void => {
+    const [step, ...remaining] = steps
+    if (!step || !object.isObjectExpression()) return
+    const wildcard = step === '*'
+    const matches = wildcard ? undefined : optionNamePattern(step)
+    for (const property of object.get('properties') as NodePath[]) {
+      const name = componentPropertyName(property)
+      if (!wildcard && (name === null || !matches!(name))) continue
+      const keyName = wildcard ? '*' : name!
+      if (remaining.length) {
+        if (!property.isObjectProperty()) continue
+        const value = property.get('value') as NodePath
+        if (value.isObjectExpression()) verify(value, remaining, message, [...pathNames, keyName])
+        continue
+      }
+      findings.push({
+        message: message ?? 'Using ' + [...pathNames, keyName].join('.') + ' is not allowed.',
+        offset: property.node.start ?? 0,
+      })
+    }
+  }
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const inspect = (object: NodePath): void => {
+      const before = findings.length
+      for (const configuration of configurations) {
+        verify(object, configuration.steps, configuration.message)
+      }
+      for (let index = before; index < findings.length; index++) findings[index]!.offset += block.loc.start.offset
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        if (object) inspect(object)
+      }
+      if (path.isCallExpression() && path.node.callee.type === 'Identifier'
+        && path.node.callee.name === 'defineOptions') {
+        const first = (path.get('arguments') as NodePath[])[0]
+        if (first?.isObjectExpression()) inspect(first)
       }
     } })
   }
