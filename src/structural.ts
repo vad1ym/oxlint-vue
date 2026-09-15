@@ -131,7 +131,10 @@ function hasOptionalReceiver(node: import('./ast.js').AstNode): boolean {
 
 function ruleOptions(config: RuleConfig | undefined): Record<string, unknown> {
   const option = Array.isArray(config) ? config[1] : undefined
-  return option && typeof option === 'object' ? option as Record<string, unknown> : { mode: option }
+  const secondary = Array.isArray(config) ? config[2] : undefined
+  return option && typeof option === 'object'
+    ? { ...(option as Record<string, unknown>), secondary }
+    : { mode: option, secondary }
 }
 
 /** Free names only: callback parameters do not refer to loop bindings. */
@@ -163,6 +166,15 @@ function numericLimit(value: unknown): number {
   return typeof value === 'number' ? value
     : value && typeof value === 'object' && typeof (value as { max?: unknown }).max === 'number'
       ? (value as { max: number }).max : 1
+}
+
+function configuredNameMatch(value: string, patterns: unknown): boolean {
+  if (!Array.isArray(patterns)) return false
+  return patterns.some(pattern => {
+    if (typeof pattern !== 'string') return false
+    const match = pattern.match(/^\/(.*)\/([a-z]*)$/u)
+    try { return match ? new RegExp(match[1]!, match[2]).test(value) : pattern === value } catch { return false }
+  })
 }
 
 function customComponent(node: ElementNode, ignoreElementNamespaces = false): boolean {
@@ -1082,6 +1094,51 @@ const RULES: Rule[] = [
           ? 'Move the first attribute to a new line.' : 'Move the first attribute beside the tag name.',
         ...loc(first),
       })
+    },
+  },
+  {
+    name: 'vue/html-quotes',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const expected = options.mode === 'single' ? "'" : '"'
+      const avoidEscape = options.secondary && typeof options.secondary === 'object'
+        && (options.secondary as { avoidEscape?: unknown }).avoidEscape === true
+      for (const prop of node.props) {
+        const raw = prop.loc.source
+        const equals = raw.indexOf('=')
+        if (equals < 0) continue
+        const value = raw.slice(equals + 1).trimStart()
+        if (!value) continue
+        const quote = value[0]
+        if ((quote === '"' || quote === "'") && !value.endsWith(quote)) continue
+        if (quote === expected || avoidEscape && (quote === '"' || quote === "'")
+          && value.slice(1, -1).includes(expected)) continue
+        const valueOffset = equals + 1 + raw.slice(equals + 1).length - raw.slice(equals + 1).trimStart().length
+        report({ message: `Use ${expected === '"' ? 'double' : 'single'} quotes.`, ...relativeLoc(prop, valueOffset) })
+      }
+    },
+  },
+  {
+    name: 'vue/attribute-hyphenation',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node) && node.tag !== 'slot') return
+      const secondary = options.secondary && typeof options.secondary === 'object'
+        ? options.secondary as Record<string, unknown> : {}
+      if (configuredNameMatch(node.tag, secondary.ignoreTags)) return
+      const hyphenated = options.mode !== 'never'
+      for (const prop of node.props) {
+        const name = prop.type === NodeTypes.ATTRIBUTE ? prop.name
+          : ['bind', 'model'].includes(prop.name) ? argContent(prop) : undefined
+        if (!name || configuredNameMatch(name, secondary.ignore)
+          || ['data-', 'aria-', 'slot-scope'].some(prefix => name.includes(prefix))) continue
+        const invalid = hyphenated ? name.toLowerCase() !== name : name.includes('-')
+        if (invalid) report({
+          message: hyphenated ? `Attribute ${name} must be hyphenated.` : `Attribute ${name} cannot be hyphenated.`,
+          ...loc(prop),
+        })
+      }
     },
   },
   {

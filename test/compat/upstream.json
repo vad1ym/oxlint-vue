@@ -48,6 +48,8 @@
     "tests/lib/rules/mustache-interpolation-spacing.test.ts": "be04e1e70705c61ef24bb6f79572a8e8843ea94123e90a70e35b75c3a8bd2dd8",
     "tests/lib/rules/max-attributes-per-line.test.ts": "514c0eb70e78eff8a814408daa3fdd47bcdaa3cb164bbb3185cbcaaee2d8825d",
     "tests/lib/rules/first-attribute-linebreak.test.ts": "126dc1147e7e7a37eab120dc98a18dfe2ba5d52bdf99da9f5a5d136513b40ddc",
+    "tests/lib/rules/html-quotes.test.ts": "d4924763033177acbf34c5d9d928e1834215049fe080906ce86cb15709efce6d",
+    "tests/lib/rules/attribute-hyphenation.test.ts": "3551335ac2ce8ef6953e0e05e84d3dbbda4b3e7fe2bc2dcbeb29ad39420f75bd",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -8628,6 +8630,1142 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "html-quotes/valid/1",
+      "rule": "vue/html-quotes",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/2",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/3",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/4",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=\"foo\"></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/5",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=\"foo\"></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/6",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class='foo'></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/7",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class='foo'></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/8",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr='foo\"bar'></div></template>",
+      "options": [
+        "double",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/9",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=\"foo'bar\"></div></template>",
+      "options": [
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/10",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :foo /></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/11",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :foo /></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/12",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=\"foo></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/valid/13",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class='foo></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-quotes/invalid/1",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=foo></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/2",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class='foo'></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/3",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/4",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class='foo'></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/5",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo+\"bar\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/6",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=foo></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/7",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class='foo'></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/8",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/9",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class='foo'></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/10",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo+\"bar\"></div></template>",
+      "options": [
+        "double"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/11",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=foo></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/12",
+      "rule": "vue/html-quotes",
+      "code": "<template><div class=\"foo\"></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/13",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/14",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=\"foo\"></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/15",
+      "rule": "vue/html-quotes",
+      "code": "<template><div :class=foo+'bar'></div></template>",
+      "options": [
+        "single"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/16",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr='foo'></div></template>",
+      "options": [
+        "double",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/17",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=\"bar\"></div></template>",
+      "options": [
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/18",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=foo\"bar></div></template>",
+      "options": [
+        "double",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/19",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=foo'bar></div></template>",
+      "options": [
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/20",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=foo\"bar'baz></div></template>",
+      "options": [
+        "double",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-quotes/invalid/21",
+      "rule": "vue/html-quotes",
+      "code": "<template><div attr=foo\"bar'baz></div></template>",
+      "options": [
+        "single",
+        {
+          "avoidEscape": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/valid/1",
+      "rule": "vue/attribute-hyphenation",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/2",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\" my-prop=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/3",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :my-prop=\"prop\" v-model:foo-bar=\"fooBar\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/4",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\" myProp=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/5",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\"><a onClick=\"\" my-prop=\"prop\"></a></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/6",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><custom data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\" custom-hyphen=\"foo\" second-custom=\"bar\"><a onClick=\"\" my-prop=\"prop\"></a></custom></template>",
+      "options": [
+        "never",
+        {
+          "ignore": [
+            "custom-hyphen",
+            "second-custom"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/7",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><my-component :[fooBar]></my-component></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/8",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><my-component :[foo-bar]></my-component></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/9",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><slot my-prop></slot></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/10",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><slot myProp></slot></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/11",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :attr_ff=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/12",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :attr_ff=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/13",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :my-name.sync=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/14",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :myName.sync=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/15",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n      <template>\n        <VueComponent my-prop></VueComponent>\n        <custom-component my-prop></custom-component>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignoreTags": [
+            "VueComponent",
+            "/^custom-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/valid/16",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n      <template>\n        <VueComponent myProp=\"prop\"></VueComponent>\n        <custom-component myProp=\"prop\"></custom-component>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "ignoreTags": [
+            "VueComponent",
+            "/^custom-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attribute-hyphenation/invalid/1",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom my-prop=\"foo\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/2",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom MyProp=\"Bar\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/3",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :my-prop=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/4",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :MyProp=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/5",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:my-prop=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/6",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:MyProp=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/7",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:MyProp=\"prop\"></custom></div></template>",
+      "options": [
+        "always",
+        {
+          "ignore": []
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/8",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:my-prop=\"prop\" :second-prop=\"test\"></custom></div></template>",
+      "options": [
+        "never",
+        {
+          "ignore": [
+            "my-prop"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/9",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:myProp=\"prop\" :secondProp=\"test\"></custom></div></template>",
+      "options": [
+        "always",
+        {
+          "ignore": [
+            "secondProp"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/10",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-bind:propID=\"prop\" :secondPropID=\"test\"></custom></div></template>",
+      "options": [
+        "always",
+        {
+          "ignore": [
+            "secondPropID"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/11",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-model:my-prop=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/12",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-model:myProp=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/13",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom v-model:MyProp=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/14",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n        <template>\n          <custom data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\" custom-hyphen=\"foo\" second-custom=\"baz\" third-custom=\"bar\">\n            <a onClick=\"\" my-prop=\"prop\"></a>\n          </custom>\n        </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignore": [
+            "custom-hyphen",
+            "second-custom"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/15",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n        <template>\n          <custom data-id=\"foo\" aria-test=\"bar\" slot-scope=\"{ data }\" custom-hyphen=\"foo\" second-custom=\"baz\" thirdCustom=\"bar\">\n            <a onClick=\"\" my-prop=\"prop\"></a>\n          </custom>\n        </template>\n      ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attribute-hyphenation/invalid/16",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><slot my-prop=\"foo\"></slot></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/17",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><slot MyProp=\"Bar\"></slot></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/18",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :attr_Gg=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/19",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :Attr_Hh=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/20",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :_attr_Jj=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/21",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :_attrKk=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/22",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :_AttrLl=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/23",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :my-custom_prop=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/24",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :myAge.sync=\"prop\"></custom></div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/25",
+      "rule": "vue/attribute-hyphenation",
+      "code": "<template><div><custom :my-age.sync=\"prop\"></custom></div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/26",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n      <template>\n        <custom my-prop/>\n        <CustomComponent my-prop/>\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "ignoreTags": [
+            "CustomComponent"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attribute-hyphenation/invalid/27",
+      "rule": "vue/attribute-hyphenation",
+      "code": "\n      <template>\n        <custom myProp/>\n        <CustomComponent myProp/>\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "ignoreTags": [
+            "CustomComponent"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
     },
     {
       "id": "require-v-for-key/valid/1",
