@@ -25,6 +25,7 @@ function checkWithProps(template, script) {
 
 const CASES = [
   ['vue/multi-word-component-names', '<div />', true],
+  ['vue/no-unused-components', '<div />', false],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, freeIdentifiers, scriptInstanceMembers } from './script-rules.js'
+import { componentNameFindings, freeIdentifiers, registeredComponents, scriptInstanceMembers } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -807,6 +807,7 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 
 const RULES: Rule[] = [
   { name: 'vue/multi-word-component-names', severity: 'error', check() {} },
+  { name: 'vue/no-unused-components', severity: 'error', check() {} },
   {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
@@ -2461,6 +2462,44 @@ export function checkTemplate(
       out.push({ filename, rule: componentNameRule.rule.name, severity: componentNameRule.severity,
         ...sourceLoc(source, finding.offset),
         message: `Component name "${finding.name}" should always be multi-word.` } as Diagnostic)
+    }
+  }
+  const unusedComponentsRule = active.find(entry => entry.rule.name === 'vue/no-unused-components')
+  if (unusedComponentsRule && ast && descriptor.template && !Object.hasOwn(descriptor.template.attrs, 'src')) {
+    const used = new Set<string>()
+    let dynamicBinding = false
+    const collect = (node: AnyNode): void => {
+      if (node.type === NodeTypes.ELEMENT) {
+        if (customComponent(node)) used.add(node.tag)
+        const staticIs = findAttr(node, 'is')?.value?.content
+        if (staticIs) used.add(staticIs.startsWith('vue:') ? staticIs.slice(4) : staticIs)
+        for (const dir of node.props) {
+          if (dir.type !== NodeTypes.DIRECTIVE
+            || !(dir.name === 'is' || dir.name === 'bind' && argContent(dir) === 'is') || !dir.exp) continue
+          const value = expressionAst(dir.exp)
+          if (value?.type === 'StringLiteral') used.add(value.value)
+          else if (value) dynamicBinding = true
+        }
+      }
+      for (const child of childrenOf(node)) collect(child)
+    }
+    collect(ast)
+    const options = ruleOptions(config?.[unusedComponentsRule.rule.name])
+    if (!dynamicBinding || options.ignoreWhenBindingPresent === false) {
+      for (const component of registeredComponents(descriptor)) {
+        const pascal = pascalComponentName(component.name)
+        const camel = pascal.charAt(0).toLowerCase() + pascal.slice(1)
+        const flexible = /^[A-Z][\dA-Za-z]*$/u.test(component.name)
+          || /^[a-z][\dA-Za-z]*$/u.test(component.name)
+        const found = flexible
+          ? [...used].some(name => !name.includes('_')
+            && (pascalComponentName(name) === pascal || (pascalComponentName(name).charAt(0).toLowerCase()
+              + pascalComponentName(name).slice(1)) === camel))
+          : used.has(component.name)
+        if (!found) out.push({ filename, rule: unusedComponentsRule.rule.name,
+          severity: unusedComponentsRule.severity, ...sourceLoc(source, component.offset),
+          message: `The "${component.name}" component has been registered but not used.` } as Diagnostic)
+      }
     }
   }
   const deprecatedNames = new Map([

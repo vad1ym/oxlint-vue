@@ -38,7 +38,7 @@ export interface ScriptMemberFinding { name: string, offset: number }
 export interface ComponentNameFinding { name: string, offset: number }
 
 function componentObject(path: NodePath): NodePath | undefined {
-  path = path.get('declaration') as NodePath
+  if (path.isExportDefaultDeclaration()) path = path.get('declaration') as NodePath
   while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(path.node.type)) path = path.get('expression') as NodePath
   if (path.isIdentifier()) {
     const binding = path.scope.getBinding(path.node.name)
@@ -52,6 +52,49 @@ function componentObject(path: NodePath): NodePath | undefined {
     if (factory) path = (path.get('arguments') as NodePath[])[0] ?? path
   }
   return path.isObjectExpression() ? path : undefined
+}
+
+export interface RegisteredComponent { name: string, offset: number }
+
+/** Components registered in Options API `components` objects. */
+export function registeredComponents(descriptor: SFCDescriptor): RegisteredComponent[] {
+  const out: RegisteredComponent[] = []
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const inspect = (object: NodePath | undefined): void => {
+      if (!object?.isObjectExpression()) return
+      const components = (object.get('properties') as NodePath[]).find(property =>
+        (property.isObjectProperty() || property.isObjectMethod())
+        && staticName(property.node.key) === 'components')
+      if (!components?.isObjectProperty()) return
+      let value = components.get('value') as NodePath
+      while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+      if (!value.isObjectExpression()) return
+      for (const property of value.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+        const key = property.node.key
+        const name = property.node.computed
+          ? key.type === 'StringLiteral' ? key.value
+            : key.type === 'TemplateLiteral' && key.expressions.length === 0
+              ? key.quasis[0]?.value.cooked ?? null : null
+          : staticName(key)
+        if (name !== null) out.push({ name, offset: block.loc.start.offset + (property.node.start ?? 0) })
+      }
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) inspect(componentObject(path))
+      if (!path.isCallExpression()) return
+      const callee = unwrap(path.node.callee)
+      if (callee.type === 'MemberExpression' && callee.object.type === 'Identifier'
+        && callee.object.name === 'Vue' && staticName(callee.property) === 'component') {
+        inspect((path.get('arguments') as NodePath[])[1])
+      }
+    } })
+  }
+  return out
 }
 
 /** Deprecated instance members used through component `this` or a constant alias. */
