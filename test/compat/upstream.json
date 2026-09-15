@@ -104,7 +104,8 @@
     "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70",
     "tests/lib/rules/attributes-order.test.ts": "74e9b47f05cc0ab505a1c13a76dbefe0bae7551ca141ec02e3bb62d768644e8f",
     "tests/lib/rules/order-in-components.test.ts": "8c7251a675db205bcdb0b9237e06274e206043da8cc0025d16464fbd53e38473",
-    "tests/lib/rules/no-boolean-default.test.ts": "0d64a2d2d43e3bbf5c9e35c5060d1f133b44fb2d545fc03f45be38954eb5f078"
+    "tests/lib/rules/no-boolean-default.test.ts": "0d64a2d2d43e3bbf5c9e35c5060d1f133b44fb2d545fc03f45be38954eb5f078",
+    "tests/lib/rules/component-options-name-casing.test.ts": "eaf00df53d0d6f174a9e903515b38299b98f08d2dd636e9f3becae6a79559bd6"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -34399,6 +34400,346 @@
         "ecmaVersion": 2018,
         "sourceType": "module",
         "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/valid/1",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/2",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          ...components\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/3",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/4",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar: fooBar\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/5",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar\n          }\n        }\n      ",
+      "options": [
+        "PascalCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/6",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar\n          }\n        }\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/7",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar: FooBar\n          }\n        }\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/8",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            'foo-bar': fooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/valid/9",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            'foo-bar': FooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "component-options-name-casing/invalid/1",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/2",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar: FooBar\n          }\n        }\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/3",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar\n          }\n        }\n      ",
+      "options": [
+        "PascalCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/4",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar: FooBar\n          }\n        }\n      ",
+      "options": [
+        "PascalCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/5",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            'foo-bar': FooBar\n          }\n        }\n      ",
+      "options": [
+        "PascalCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/6",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar\n          }\n        }\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/7",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar: fooBar\n          }\n        }\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/8",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            'foo-bar': fooBar\n          }\n        }\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/9",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/10",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar: fooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/11",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/12",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            fooBar: FooBar\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "component-options-name-casing/invalid/13",
+      "rule": "vue/component-options-name-casing",
+      "code": "\n        export default {\n          components: {\n            FooBar,\n            'my-component': MyComponent\n          }\n        }\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "espree"
       },
       "settings": {},
       "expectedCount": 1

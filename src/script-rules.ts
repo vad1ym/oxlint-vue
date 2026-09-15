@@ -61,6 +61,7 @@ export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
 export interface ComponentOrderFinding { name: string, offset: number }
 export interface BooleanDefaultFinding { offset: number }
+export interface ComponentOptionNameFinding { name: string, offset: number }
 export interface ExplicitEmitInfo {
   declared: Set<string>
   props: Set<string>
@@ -307,6 +308,37 @@ export function booleanDefaultFindings(descriptor: SFCDescriptor, source: string
       const id = declarator?.isVariableDeclarator() ? declarator.get('id') as NodePath : undefined
       const definitions = runtime ? runtimeDefinitions(runtime) : typedDefinitions(path)
       assignedDefaults(definitions, defaults, id)
+    } })
+  }
+  return findings
+}
+
+/** Mis-cased local registration names in an Options API components object. */
+export function componentOptionNameFindings(descriptor: SFCDescriptor, source: string,
+  casing: unknown): ComponentOptionNameFinding[] {
+  const mode = casing === 'camelCase' || casing === 'kebab-case' ? casing : 'PascalCase'
+  const matches = (name: string): boolean => mode === 'PascalCase' ? /^[A-Z][A-Za-z0-9]*$/u.test(name)
+    : mode === 'camelCase' ? /^[a-z][A-Za-z0-9]*$/u.test(name)
+      : /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(name)
+  const findings: ComponentOptionNameFinding[] = []
+  const realBlocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const blocks = realBlocks.length ? realBlocks.map(block => ({ content: block.content,
+    offset: block.loc.start.offset })) : [{ content: source, offset: 0 }]
+  for (const block of blocks) {
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    traverse(file, { enter(path) {
+      if (!path.isExportDefaultDeclaration()) return
+      const object = componentObject(path)
+      const components = object && objectPropertyPath(object, 'components')
+      const value = components?.isObjectProperty() ? pathValue(components) : undefined
+      if (!value?.isObjectExpression()) return
+      for (const property of value.get('properties') as NodePath[]) {
+        const name = componentPropertyName(property)
+        if (name === null || matches(name)) continue
+        findings.push({ name, offset: block.offset + (property.node.start ?? 0) })
+      }
     } })
   }
   return findings

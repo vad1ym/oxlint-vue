@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { booleanDefaultFindings, componentDefinitionOffsets, componentNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { booleanDefaultFindings, componentDefinitionOffsets, componentNameFindings, componentOptionNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -1269,6 +1269,11 @@ const RULES: Rule[] = [
   },
   {
     name: 'vue/no-boolean-default',
+    severity: 'error',
+    check() {},
+  },
+  {
+    name: 'vue/component-options-name-casing',
     severity: 'error',
     check() {},
   },
@@ -2952,6 +2957,16 @@ export function checkTemplate(
         ...sourceLoc(source, finding.offset),
         message: mode === 'default-false' ? 'Boolean prop should only be defaulted to false.'
           : 'Boolean prop should not set a default (Vue defaults it to false).' } as Diagnostic)
+    }
+  }
+  const optionNameRule = active.find(entry => entry.rule.name === 'vue/component-options-name-casing')
+  if (optionNameRule) {
+    const mode = ruleOptions(config?.[optionNameRule.rule.name]).mode
+    for (const finding of componentOptionNameFindings(descriptor, source, mode)) {
+      out.push({ filename, rule: optionNameRule.rule.name, severity: optionNameRule.severity,
+        ...sourceLoc(source, finding.offset),
+        message: 'Component name "' + finding.name + '" is not in '
+          + String(mode ?? 'PascalCase') + '.' } as Diagnostic)
     }
   }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')

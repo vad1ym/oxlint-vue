@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 65,
     "native": 59,
-    "partial": 50,
-    "missing": 79
+    "partial": 51,
+    "missing": 78
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2318,17 +2318,19 @@
     },
     {
       "name": "component-options-name-casing",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 22,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/component-options-name-casing.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "custom-event-name-casing",
