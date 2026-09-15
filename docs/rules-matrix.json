@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 65,
     "native": 59,
-    "partial": 51,
-    "missing": 78
+    "partial": 52,
+    "missing": 77
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2512,17 +2512,19 @@
     },
     {
       "name": "html-comment-content-spacing",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 27,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-comment-content-spacing.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-comment-indent",

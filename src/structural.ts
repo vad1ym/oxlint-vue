@@ -1278,6 +1278,62 @@ const RULES: Rule[] = [
     check() {},
   },
   {
+    name: 'vue/html-comment-content-spacing',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.COMMENT || !node.loc) return
+      const content = node.content
+      if (!content || /^\s*\n/u.test(content) || /\n\s*$/u.test(content)
+        || /^\[if\b/iu.test(content) || /^<!\[endif\]/iu.test(content)) return
+      const exceptions = Array.isArray(options.secondary)
+        ? [] : ((options.secondary as { exceptions?: unknown } | undefined)?.exceptions)
+      const configured = Array.isArray(exceptions) ? exceptions.filter((value): value is string =>
+        typeof value === 'string' && value.length > 0) : []
+      const exceptionLength = (side: 'start' | 'end'): number => {
+        let best = 0
+        for (const exception of configured) {
+          if (side === 'start') {
+            let length = 0
+            while (content.startsWith(exception, length)) length += exception.length
+            best = Math.max(best, length)
+          } else {
+            let index = content.length
+            while (index >= exception.length
+              && content.slice(index - exception.length, index) === exception) index -= exception.length
+            best = Math.max(best, content.length - index)
+          }
+        }
+        return best
+      }
+      const leftException = exceptionLength('start')
+      const rightException = exceptionLength('end')
+      if (leftException + rightException >= content.length && (leftException || rightException)) return
+      const mode = options.mode === 'never' ? 'never' : 'always'
+      if (mode === 'always') {
+        if (!/\s/u.test(content[leftException] ?? '')) report({
+          ...relativeLoc(node, 4 + leftException),
+          message: leftException ? 'Expected space after exception block.' : "Expected space after '<!--'.",
+        })
+        const right = content.length - rightException
+        if (!/\s/u.test(content[right - 1] ?? '')) report({
+          ...relativeLoc(node, 4 + right),
+          message: rightException ? 'Expected space before exception block.' : "Expected space before '-->'.",
+        })
+      } else {
+        if (!leftException) {
+          const leading = content.match(/^[\t ]+/u)?.[0].length ?? 0
+          if (leading) report({ ...relativeLoc(node, 4),
+            message: "Unexpected space after '<!--'." })
+        }
+        if (!rightException) {
+          const trailing = content.match(/[\t ]+$/u)?.[0].length ?? 0
+          if (trailing) report({ ...relativeLoc(node, 4 + content.length - trailing),
+            message: "Unexpected space before '-->'." })
+        }
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {
