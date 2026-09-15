@@ -1049,6 +1049,71 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/multiline-html-element-content-newline',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type === NodeTypes.ROOT) {
+        const full = (node as RootNode & Annotations).__source ?? ''
+        const start = full.search(/<template\b/iu)
+        const openingEnd = start < 0 ? -1 : full.indexOf('>', start) + 1
+        const closingStart = full.lastIndexOf('</template')
+        if (openingEnd <= start || closingStart < openingEnd
+          || !full.slice(start, closingStart).includes('\n')) return
+        const inner = full.slice(openingEnd, closingStart)
+        if (inner.length === 0 && options.ignoreWhenEmpty !== false) return
+        const leading = inner.length - inner.trimStart().length
+        const trailing = inner.length - inner.trimEnd().length
+        const beforeBreaks = (inner.slice(0, leading).match(/\n/gu) ?? []).length
+        const afterBreaks = (inner.slice(inner.length - trailing).match(/\n/gu) ?? []).length
+        const invalid = (count: number): boolean => options.allowEmptyLines === true ? count === 0 : count !== 1
+        if (invalid(beforeBreaks)) report({ message: 'Expected one line break after the opening tag.',
+          ...sourceLoc(full, openingEnd) })
+        if (inner.trim().length > 0 && invalid(afterBreaks)) {
+          report({ message: 'Expected one line break before the closing tag.',
+            ...sourceLoc(full, closingStart - trailing) })
+        }
+        return
+      }
+      if (node.type !== NodeTypes.ELEMENT || node.isSelfClosing) return
+      const inline = ['a', 'abbr', 'audio', 'b', 'bdi', 'bdo', 'canvas', 'cite', 'code', 'data', 'del',
+        'dfn', 'em', 'i', 'iframe', 'ins', 'kbd', 'label', 'map', 'mark', 'noscript', 'object', 'output',
+        'picture', 'q', 'ruby', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'time', 'u',
+        'var', 'video']
+      const configuredIgnores = Array.isArray(options.ignores) ? options.ignores as string[]
+        : ['pre', 'textarea', ...inline]
+      const ignores = new Set(configuredIgnores.map(normalizedTagName))
+      let current: ElementNode | undefined = node
+      while (current) {
+        if (ignores.has(normalizedTagName(current.tag))) return
+        current = (current as AnnotatedElement).__parentElement
+      }
+      const source = node.loc.source
+      let quote = ''
+      let openingEnd = -1
+      for (let index = 1; index < source.length; index++) {
+        const character = source[index]
+        if (quote) { if (character === quote) quote = '' }
+        else if (character === "'" || character === '"') quote = character
+        else if (character === '>') { openingEnd = index + 1; break }
+      }
+      const closingStart = source.lastIndexOf('</')
+      if (openingEnd < 0 || closingStart < openingEnd || !source.slice(0, closingStart).includes('\n')) return
+      const inner = source.slice(openingEnd, closingStart)
+      if (inner.length === 0 && options.ignoreWhenEmpty !== false) return
+      const leading = inner.length - inner.trimStart().length
+      const trailing = inner.length - inner.trimEnd().length
+      const beforeBreaks = (inner.slice(0, leading).match(/\n/gu) ?? []).length
+      const afterBreaks = (inner.slice(inner.length - trailing).match(/\n/gu) ?? []).length
+      const invalid = (count: number): boolean => options.allowEmptyLines === true ? count === 0 : count !== 1
+      if (invalid(beforeBreaks)) report({ message: 'Expected one line break after the opening tag.',
+        ...relativeLoc(node, openingEnd) })
+      if (inner.trim().length > 0 && invalid(afterBreaks)) {
+        report({ message: 'Expected one line break before the closing tag.',
+          ...relativeLoc(node, closingStart - trailing) })
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {

@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 2260 upstream cases, 99 common structural rules | **2259 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1208/1208** |
-| Four pinned Nuxt components, each checked against all 99 rules | **396/396 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1722/1722 comparisons** |
+| 2305 upstream cases, 100 common structural rules | **2304 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1216/1216** |
+| Four pinned Nuxt components, each checked against all 100 rules | **400/400 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1734/1734 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. Five environment-dependent cases are explicitly excluded below. Ninety-eight
-of the ninety-nine suites currently match on every imported case.
+known failures. Five environment-dependent cases are explicitly excluded below. Ninety-nine
+of the one hundred suites currently match on every imported case.
 
 Ten newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
@@ -47,7 +47,7 @@ the private fixture's `Emits1` type. Runtime declarations, inline call signature
 Vue 3.3 object syntax and local type aliases remain covered.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 154 are not measured by this structural-rule harness,
+exports 253 rule names; 153 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

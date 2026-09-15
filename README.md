@@ -98,8 +98,8 @@ every virtual file parses. [Details →](./docs/internals.md)
 
 ## Compatibility regression tests
 
-`pnpm compat --json` compares 2260 cases from eslint-plugin-vue 10.11.0 against
-our 99 common structural rules. CI checks the reviewed differences and also
+`pnpm compat --json` compares 2305 cases from eslint-plugin-vue 10.11.0 against
+our 100 common structural rules. CI checks the reviewed differences and also
 runs generated scope/layout cases and pinned Nuxt fixtures through real oxlint.
 Ten additional rules have local unit/generated coverage and are marked partial
 until their complete upstream suites are imported.

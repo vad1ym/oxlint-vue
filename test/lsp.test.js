@@ -168,7 +168,9 @@ const clean = `<template>
     <li
       v-for="i in list"
       :key="i"
-    >{{ i }}</li>
+    >
+      {{ i }}
+    </li>
   </ul>
 </template>
 <script setup>
@@ -213,7 +215,9 @@ test('updates diagnostics on edit and cleans up on close', { timeout: 30000 }, a
     <li
       v-for="i in list"
       :key="i"
-    >{{ i }}</li>
+    >
+      {{ i }}
+    </li>
   </ul>
 </template>
 <script setup>

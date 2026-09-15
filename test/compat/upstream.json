@@ -100,7 +100,8 @@
     "tests/lib/rules/v-slot-style.test.ts": "3aa7a15cde9714f51615511aa61c14f1acaba2734d15f1f17fca8ac2c7d4ff4b",
     "tests/lib/rules/html-self-closing.test.ts": "42b118fec80bdcc503b9bf088ee0d771576d87d283d8c0da98ebafd7123eb2a8",
     "tests/lib/rules/no-multi-spaces.test.ts": "0580e0cc2caae282687f0c40b6030ed0935c5d77ce1b7700b775be332147b3b6",
-    "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976"
+    "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976",
+    "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -30632,6 +30633,635 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/1",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "<template><div class=\"panel\">content</div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/2",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "<template><div class=\"panel\"><div></div></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/3",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "<template><div class=\"panel\"><!-- comment --></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/4",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <slot\n          name=\"panel\"\n        ></slot>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/5",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div\n          ></div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/6",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div class=\"panel\">\n          content\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/7",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div\n          class=\"panel\"\n        >\n          content\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/8",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <a\n          href=\"/\"\n          class=\"link\"\n        >Home</a>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/9",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <a\n          href=\"/\"\n          class=\"link\"\n        >Home\n        </a>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/10",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <a\n          href=\"/\"\n          class=\"link\"\n        >\n          Home\n        </a>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/11",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <label\n            for=\"test\"\n            class=\"label\"\n          >Foo</label>\n          <input id=\"test\">\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/12",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <label\n            for=\"test\"\n            class=\"label\"\n          >Foo\n          </label>\n          <input id=\"test\">\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/13",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <label\n            for=\"test\"\n            class=\"label\"\n          >\n            Foo\n          </label>\n          <input id=\"test\">\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/14",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <div>\n            content\n            content\n          </div>\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/15",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <div>multiline end tag</div\n      >\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/16",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "<template><div class=\"panel\"></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/17",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div\n          class=\"panel\">\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/18",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\">\n\n          </div>\n        </template>",
+      "options": [
+        {
+          "allowEmptyLines": true,
+          "ignoreWhenEmpty": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/19",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\">\n\n            contents\n\n          </div>\n        </template>",
+      "options": [
+        {
+          "allowEmptyLines": true
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/20",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\">\n\n\n            contents\n\n\n          </div>\n        </template>",
+      "options": [
+        {
+          "allowEmptyLines": true
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/21",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <self-closing />\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/22",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <pre>content</pre>\n        <pre\n          id=\"test-pre\"\n        >content</pre>\n        <pre><div\n          >content</div></pre>\n        <pre>content\n          content</pre>\n        <textarea>content</textarea>\n        <textarea\n          id=\"test-textarea\"\n        >content</textarea>\n        <textarea>content\n          content</textarea>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/23",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <ignore-tag>content</ignore-tag>\n          <ignore-tag\n            id=\"test-pre\"\n          >content</ignore-tag>\n          <ignore-tag><div\n            >content</div></ignore-tag>\n          <ignore-tag>content\n            content</ignore-tag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "ignore-tag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/24",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <IgnoreTag>content</IgnoreTag>\n          <IgnoreTag\n            id=\"test-pre\"\n          >content</IgnoreTag>\n          <IgnoreTag><div\n            >content</div></IgnoreTag>\n          <IgnoreTag>content\n            content</IgnoreTag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/25",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <ignore-tag>content</ignore-tag>\n          <ignore-tag\n            id=\"test-pre\"\n          >content</ignore-tag>\n          <ignore-tag><div\n            >content</div></ignore-tag>\n          <ignore-tag>content\n            content</ignore-tag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/valid/26",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n      <template>\n        <div\n          id=\n          \"\"\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/1",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\"\n          >content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/2",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\"\n          >   content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/3",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div><div></div>\n          <div></div></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/4",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>multiline\n            content</div>\n        </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/5",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>multiline content\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/6",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>\n            multiline content</div>\n        </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/7",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div><!--comment-->\n          <!--comment--></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/8",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div><!--comment\n            comment--></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/9",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>content\n            content\n          </div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/10",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>\n          content\n          content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/11",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template><div>content<div>content\n        content</div>content</div></template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 6
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/12",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>\n\n            content\n            content\n\n          </div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/13",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            class=\"panel\">\n\n          </div>\n          <div\n            class=\"panel\"></div>\n        </template>",
+      "options": [
+        {
+          "allowEmptyLines": true,
+          "ignoreWhenEmpty": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/14",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>\n\n            content\n            content\n\n          </div>\n          <div>content\n            content</div>\n        </template>\n      ",
+      "options": [
+        {
+          "allowEmptyLines": true
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/15",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>{{content}}\n          {{content2}}</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/16",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>content\n          <child></child>\n          <!-- comment --></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/17",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            >content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/18",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            attr>content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "multiline-html-element-content-newline/invalid/19",
+      "rule": "vue/multiline-html-element-content-newline",
+      "code": "\n        <template>\n          <div\n            ></div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenEmpty": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }
