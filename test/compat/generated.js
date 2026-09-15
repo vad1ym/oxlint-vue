@@ -10,6 +10,7 @@ const seeds = [
   ['require-explicit-emits', '<button @click="$emit(\'save\')"/>'],
   ['v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>'],
   ['html-self-closing', '<div></div>'],
+  ['no-multi-spaces', '<div   class="foo" />'],
   ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],

@@ -935,6 +935,74 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/no-multi-spaces',
+    severity: 'error',
+    check(node, report, options) {
+      const scan = (text: string, base: number, expression = false): void => {
+        const masked = [...text]
+        if (expression) {
+          let quote = ''
+          for (let index = 0; index < text.length; index++) {
+            const character = text[index]
+            if (quote) {
+              masked[index] = 'x'
+              if (character === '\\') { if (index + 1 < text.length) masked[++index] = 'x' }
+              else if (character === quote) quote = ''
+            } else if (character === "'" || character === '"' || character === '`') {
+              quote = character
+              masked[index] = 'x'
+            }
+          }
+        }
+        const visible = masked.join('')
+        for (const match of visible.matchAll(/[^\S\r\n]{2,}/gu)) {
+          const index = match.index
+          const lineStart = visible.lastIndexOf('\n', index - 1) + 1
+          if (lineStart > 0 && visible.slice(lineStart, index).trim() === '') continue
+          const before = visible.slice(0, index).trimEnd().at(-1)
+          const after = visible.slice(index + match[0].length).trimStart()
+          if (options.ignoreProperties === true && (before === ':' || after.startsWith(':'))) continue
+          if (options.ignoreEOLComments === true && (after.startsWith('//') || after.startsWith('/*'))) continue
+          report({ message: 'Multiple spaces found.',
+            ...relativeLoc(node, base + index - node.loc.start.offset) })
+        }
+      }
+      if (node.type === NodeTypes.INTERPOLATION) {
+        const inner = node.loc.source.slice(2, -2)
+        scan(inner, node.loc.start.offset + 2, true)
+        return
+      }
+      if (node.type !== NodeTypes.ELEMENT) return
+      const opening = node.loc.source
+      let quote = ''
+      let close = -1
+      for (let index = 1; index < opening.length; index++) {
+        const character = opening[index]
+        if (quote) {
+          if (character === quote) quote = ''
+        } else if (character === "'" || character === '"') quote = character
+        else if (character === '>') { close = index; break }
+      }
+      if (close >= 0) {
+        const ranges: [number, number][] = node.props.length > 0
+          ? [[node.tag.length + 1, node.props[0]!.loc.start.offset - node.loc.start.offset],
+            ...node.props.slice(1).map((prop, index) => [
+              node.props[index]!.loc.end.offset - node.loc.start.offset,
+              prop.loc.start.offset - node.loc.start.offset,
+            ] as [number, number]),
+            [(node.props.at(-1)?.loc.end.offset ?? node.loc.start.offset) - node.loc.start.offset,
+              close - (node.isSelfClosing ? 1 : 0)]]
+          : [[node.tag.length + 1, close - (node.isSelfClosing ? 1 : 0)]]
+        for (const [start, end] of ranges) scan(opening.slice(start, end), node.loc.start.offset + start)
+      }
+      for (const prop of node.props) {
+        if (prop.type === NodeTypes.DIRECTIVE && prop.exp) {
+          scan(prop.exp.loc.source, prop.exp.loc.start.offset, true)
+        }
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {

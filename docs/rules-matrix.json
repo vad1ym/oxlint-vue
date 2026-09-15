@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 44,
-    "missing": 86
+    "partial": 45,
+    "missing": 85
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1706,20 +1706,22 @@
     },
     {
       "name": "no-multi-spaces",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 41,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-multi-spaces.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-spaces-around-equal-signs-in-attribute",
