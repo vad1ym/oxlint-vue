@@ -62,6 +62,8 @@ const CASES = [
   ['vue/no-lone-template', '<div><template><span /></template></div>', true],
   ['vue/max-template-depth', '<div><span /></div>', false],
   ['vue/no-root-v-if', '<div v-if="ok" />', true],
+  ['vue/html-button-has-type', '<button>Save</button>', true],
+  ['vue/no-multiple-objects-in-class', '<div :class="[{ a: yes }, { b: no }]" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

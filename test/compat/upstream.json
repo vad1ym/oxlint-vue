@@ -40,6 +40,8 @@
     "tests/lib/rules/no-lone-template.test.ts": "9fb2e2cb882eacf1200315ad2546b42fb97a0ad255ed2d9e5a9ee500b6847d52",
     "tests/lib/rules/max-template-depth.test.ts": "27ddd43c06fb2924b256376465ed2afad3ea0d375cacedfd8ad384f24b0abb65",
     "tests/lib/rules/no-root-v-if.test.ts": "88db9dab4b695dd6d0239dd9485c24736254d5d13a16a068c122f2b38927cedf",
+    "tests/lib/rules/html-button-has-type.test.ts": "539426d91caa3528edc7ac8a3a18dc2df3b1d360bfe84c89cd20ab2a2bec533c",
+    "tests/lib/rules/no-multiple-objects-in-class.test.ts": "c014657ea589ffc98508498138518de4ae3b50c18614e2edd3cc3873f43dfe6c",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -7241,6 +7243,336 @@
       "filename": "test.vue",
       "languageOptions": {
         "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/valid/1",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"button\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/2",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"submit\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/3",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"reset\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/4",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><slot><button type=\"button\">Hello World</button></slot></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/5",
+      "rule": "vue/html-button-has-type",
+      "code": "<template>\n                <button type=\"button\">Hello World</button>\n                <button type=\"submit\">Hello World</button>\n                <button type=\"reset\">Hello World</button>\n             </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/6",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button :type=\"buttonType\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/7",
+      "rule": "vue/html-button-has-type",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/valid/8",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><Button>Hello World</Button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-button-has-type/invalid/1",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button>Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/2",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/3",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type>Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/4",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"foo\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/5",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"button\">Hello World</button></template>",
+      "options": [
+        {
+          "button": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/6",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"submit\">Hello World</button></template>",
+      "options": [
+        {
+          "submit": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/7",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button type=\"reset\">Hello World</button></template>",
+      "options": [
+        {
+          "reset": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "html-button-has-type/invalid/8",
+      "rule": "vue/html-button-has-type",
+      "code": "<template>\n                <button type=\"button\">Hello World</button>\n                <button type=\"submit\">Hello World</button>\n                <button type=\"reset\">Hello World</button>\n             </template>",
+      "options": [
+        {
+          "button": false,
+          "submit": false,
+          "reset": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "html-button-has-type/invalid/9",
+      "rule": "vue/html-button-has-type",
+      "code": "<template>\n                <button type=\"button\">Hello World</button>\n                <button type=\"submit\">Hello World</button>\n                <button type=\"reset\">Hello World</button>\n                <button type=\"\">Hello World</button>\n                <button type=\"foo\">Hello World</button>\n             </template>",
+      "options": [
+        {
+          "button": true,
+          "submit": true,
+          "reset": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "html-button-has-type/invalid/10",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button>Hello World</button><button>Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-button-has-type/invalid/11",
+      "rule": "vue/html-button-has-type",
+      "code": "<template><button :type=\"\">Hello World</button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-objects-in-class/valid/1",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div :class=\"[{'foo': isFoo}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-objects-in-class/valid/2",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div :class=\"[{'foo': isFoo, 'bar': isBar}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-objects-in-class/valid/3",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div v-foo:class=\"[{'foo': isFoo}, {'bar': isBar}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-objects-in-class/invalid/1",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div v-bind:class=\"[{'foo': isFoo}, {'bar': isBar}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-objects-in-class/invalid/2",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div :class=\"[{'foo': isFoo}, {'bar': isBar}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-objects-in-class/invalid/3",
+      "rule": "vue/no-multiple-objects-in-class",
+      "code": "<template><div v-bind:class=\"[,{'foo': isFoo}, {'bar': isBar}]\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "sourceType": "module"
       },
       "settings": {},
       "expectedCount": 1

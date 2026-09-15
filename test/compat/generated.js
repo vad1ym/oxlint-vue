@@ -74,6 +74,8 @@ const seeds = [
   ['no-lone-template', '<div><template class="plain"><span/></template></div>'],
   ['max-template-depth', '<div><span><b/></span></div>', [{ maxDepth: 1 }]],
   ['no-root-v-if', '<div v-if="ok"/>'],
+  ['html-button-has-type', '<button>Save</button>'],
+  ['no-multiple-objects-in-class', '<div :class="[{ a: yes }, { b: no }]"/>'],
   ['require-v-for-key', '<li v-for="item in items"/>'],
   ['require-v-for-key', '<li v-for="item in items" :key="item.id"/>'],
   ['no-v-for-template-key-on-child', '<template v-for="item in items"><p :key="item.id"/></template>'],

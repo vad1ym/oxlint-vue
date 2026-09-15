@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 44,
+    "implemented": 46,
     "native": 46,
     "partial": 13,
-    "missing": 150
+    "missing": 148
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2419,11 +2419,11 @@
     },
     {
       "name": "html-button-has-type",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 19,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -2863,11 +2863,11 @@
     },
     {
       "name": "no-multiple-objects-in-class",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 6,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

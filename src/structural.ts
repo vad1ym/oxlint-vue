@@ -913,6 +913,52 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/html-button-has-type',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'button') return
+      const attr = findAttr(node, 'type')
+      if (attr) {
+        const value = attr.value?.content
+        if (!value) report({ message: 'A button type value is required.', ...loc(attr.value ?? attr) })
+        else if (!['button', 'submit', 'reset'].includes(value)) report({
+          message: `${value} is not a valid button type.`, ...loc(attr.value!),
+        })
+        else if (options[value] === false) report({
+          message: `${value} is forbidden by the button type configuration.`, ...loc(attr.value!),
+        })
+        return
+      }
+      const bound = node.props.find((prop): prop is DirectiveNode => prop.type === NodeTypes.DIRECTIVE
+        && prop.name === 'bind' && argContent(prop) === 'type')
+      if (bound) {
+        if (!bound.exp?.loc.source) {
+          const equals = bound.loc.source.indexOf('=')
+          report({
+            message: 'A button type value is required.',
+            ...(equals < 0 ? loc(bound) : relativeLoc(bound, equals + 1)),
+          })
+        }
+        return
+      }
+      report({ message: 'Add an explicit type to this button.', ...loc(node) })
+    },
+  },
+  {
+    name: 'vue/no-multiple-objects-in-class',
+    severity: 'warning',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const binding = node.props.find((prop): prop is DirectiveNode => prop.type === NodeTypes.DIRECTIVE
+        && prop.name === 'bind' && argContent(prop) === 'class')
+      const expression = expressionAst(binding?.exp)
+      if (!binding || expression?.type !== 'ArrayExpression') return
+      if (expression.elements.filter(element => element?.type === 'ObjectExpression').length > 1) report({
+        message: 'Merge the objects in this class binding.', ...loc(binding),
+      })
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {
