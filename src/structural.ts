@@ -410,6 +410,10 @@ const VALID_V_ON_MODIFIERS = new Set([
   'up', 'down', 'delete', 'exact', 'arrow-down', 'arrow-left', 'arrow-right',
   'arrow-up',
 ])
+const HTML_VOID_TAGS = new Set([
+  'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta',
+  'param', 'source', 'track', 'wbr',
+])
 
 interface EventDirective {
   directive: DirectiveNode
@@ -956,6 +960,54 @@ const RULES: Rule[] = [
       if (expression.elements.filter(element => element?.type === 'ObjectExpression').length > 1) report({
         message: 'Merge the objects in this class binding.', ...loc(binding),
       })
+    },
+  },
+  {
+    name: 'vue/html-end-tags',
+    severity: 'warning',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || HTML_VOID_TAGS.has(node.tag) || node.isSelfClosing) return
+      const source = node.loc.source
+      if (source.includes('<!--') && !source.includes('-->')
+        || source.includes('<![CDATA[') && !source.includes(']]>')) return
+      const escaped = node.tag.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')
+      const tags = source.match(new RegExp(`</?${escaped}(?:\\s[^>]*)?/?>`, 'giu')) ?? []
+      const openings = tags.filter(tag => !tag.startsWith('</') && !tag.endsWith('/>')).length
+      const closings = tags.filter(tag => tag.startsWith('</')).length
+      if (closings < openings) report({
+        message: `<${node.tag}> requires an end tag.`, ...loc(node),
+      })
+    },
+  },
+  {
+    name: 'vue/no-spaces-around-equal-signs-in-attribute',
+    severity: 'warning',
+    check(node, report) {
+      for (const prop of propsOf(node)) {
+        const raw = prop.loc.source
+        const equals = raw.indexOf('=')
+        if (equals < 0) continue
+        const keyLength = prop.type === NodeTypes.ATTRIBUTE
+          ? prop.name.length : (prop.rawName?.length ?? equals)
+        if (raw.slice(keyLength, equals).length || /^=\s/u.test(raw.slice(equals))) report({
+          message: 'Remove spaces around the equal sign.', ...relativeLoc(prop, keyLength),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/v-on-style',
+    severity: 'warning',
+    check(node, report, options) {
+      const longform = options.mode === 'longform'
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on' || !dir.arg) continue
+        const shorthand = dir.loc.source.startsWith('@')
+        if (shorthand === !longform) continue
+        report({
+          message: longform ? 'Use v-on: instead of @.' : 'Use @ instead of v-on:.', ...loc(dir),
+        })
+      }
     },
   },
   {
