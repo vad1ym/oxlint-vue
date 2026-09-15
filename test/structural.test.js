@@ -69,6 +69,7 @@ const CASES = [
   ['vue/v-on-style', '<button v-on:click="go" />', true],
   ['vue/mustache-interpolation-spacing', '<p>{{value}}</p>', true],
   ['vue/max-attributes-per-line', '<div id="a" class="b" />', true],
+  ['vue/first-attribute-linebreak', '<div id="a"\n  class="b" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

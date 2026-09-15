@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 46,
     "native": 46,
-    "partial": 18,
-    "missing": 143
+    "partial": 19,
+    "missing": 142
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1510,20 +1510,22 @@
     },
     {
       "name": "first-attribute-linebreak",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 10,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/first-attribute-linebreak.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-closing-bracket-newline",

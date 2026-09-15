@@ -80,6 +80,7 @@ const seeds = [
   ['v-on-style', '<button v-on:click="go"/>'],
   ['mustache-interpolation-spacing', '<p>{{value}}</p>'],
   ['max-attributes-per-line', '<div id="a" class="b"/>'],
+  ['first-attribute-linebreak', '<div id="a"\n class="b"/>'],
   ['require-v-for-key', '<li v-for="item in items"/>'],
   ['require-v-for-key', '<li v-for="item in items" :key="item.id"/>'],
   ['no-v-for-template-key-on-child', '<template v-for="item in items"><p :key="item.id"/></template>'],

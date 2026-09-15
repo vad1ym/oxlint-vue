@@ -1065,6 +1065,26 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/first-attribute-linebreak',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const first = node.props[0]
+      const last = node.props.at(-1)
+      if (!first || !last) return
+      const singleline = first.loc.start.line === last.loc.end.line
+      const placement = options[singleline ? 'singleline' : 'multiline']
+        ?? (singleline ? 'ignore' : 'below')
+      if (placement === 'ignore') return
+      const beside = node.loc.start.line === first.loc.start.line
+      if (placement === 'below' ? beside : placement === 'beside' && !beside) report({
+        message: placement === 'below'
+          ? 'Move the first attribute to a new line.' : 'Move the first attribute beside the tag name.',
+        ...loc(first),
+      })
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {
