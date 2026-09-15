@@ -146,6 +146,25 @@ function ruleOptions(config: RuleConfig | undefined): Record<string, unknown> {
     : { mode: option, secondary, rawOptions, configured: config !== undefined }
 }
 
+function restrictedEventMessage(options: Record<string, unknown>, name: string): string | undefined {
+  const raw = Array.isArray(options.rawOptions) ? options.rawOptions : []
+  for (const option of raw) {
+    const record = option && typeof option === 'object' && !Array.isArray(option)
+      ? option as { event?: unknown, message?: unknown } : undefined
+    const pattern = String(record?.event ?? option)
+    let matches = pattern === name
+    if (pattern.startsWith('/') && pattern.lastIndexOf('/') > 0) {
+      const end = pattern.lastIndexOf('/')
+      try {
+        matches = new RegExp(pattern.slice(1, end), pattern.slice(end + 1).replaceAll('g', '')).test(name)
+      } catch { matches = false }
+    }
+    if (matches) return typeof record?.message === 'string' ? record.message
+      : 'Using ' + name + ' event is not allowed.'
+  }
+  return undefined
+}
+
 /** Free names only: callback parameters do not refer to loop bindings. */
 function referencesAny(exp: DirectiveNode['exp'], names: Set<string>): boolean {
   const ast = expressionAst(exp)
@@ -914,6 +933,27 @@ const RULES: Rule[] = [
     name: 'vue/one-component-per-file',
     severity: 'error',
     check() {},
+  },
+  {
+    name: 'vue/no-restricted-custom-event',
+    severity: 'error',
+    check(node, report, options) {
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        visitExpression(ast, candidate => {
+          if (candidate.type !== 'CallExpression' || candidate.callee.type !== 'Identifier'
+            || candidate.callee.name !== '$emit') return
+          const first = candidate.arguments[0]
+          if (!first || first.type !== 'StringLiteral') return
+          const message = restrictedEventMessage(options, first.value)
+          if (message) report({ ...astLoc(exp, first, ast), message })
+        })
+      }
+    },
   },
   {
     name: 'vue/v-slot-style',
@@ -3081,14 +3121,25 @@ export function checkTemplate(
   const templateScriptNames = new Set([...script.bindings, ...script.props.keys(),
     ...script.instanceProps, ...componentPublicNames(descriptor)])
   const explicitEmitsRule = active.find(entry => entry.rule.name === 'vue/require-explicit-emits')
-  const emitInfo = explicitEmitsRule
-    ? explicitEmitInfo(descriptor, ruleOptions(config?.[explicitEmitsRule.rule.name]).allowProps === true)
+  const restrictedEventRule = active.find(entry => entry.rule.name === 'vue/no-restricted-custom-event')
+  const allowProps = explicitEmitsRule
+    ? ruleOptions(config?.[explicitEmitsRule.rule.name]).allowProps === true : false
+  const emitInfo = explicitEmitsRule || restrictedEventRule
+    ? explicitEmitInfo(descriptor, allowProps)
     : undefined
   if (emitInfo && /<script\b[^>]*\bsetup(?:\s|>|=)/iu.test(source)) emitInfo.hasDefinition = true
   if (explicitEmitsRule && emitInfo) for (const finding of emitInfo.findings) out.push({ filename,
     rule: explicitEmitsRule.rule.name, severity: explicitEmitsRule.severity,
     ...sourceLoc(source, finding.offset),
     message: `The "${finding.name}" event has been triggered but not declared.` } as Diagnostic)
+  if (restrictedEventRule && emitInfo) {
+    const options = ruleOptions(config?.[restrictedEventRule.rule.name])
+    for (const finding of emitInfo.emissions) {
+      const message = restrictedEventMessage(options, finding.name)
+      if (message) out.push({ filename, rule: restrictedEventRule.rule.name,
+        severity: restrictedEventRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
+    }
+  }
   const componentFileRule = active.find(entry => entry.rule.name === 'vue/one-component-per-file')
   if (componentFileRule) for (const offset of componentDefinitionOffsets(descriptor, source, filename)) {
     out.push({ filename, rule: componentFileRule.rule.name, severity: componentFileRule.severity,

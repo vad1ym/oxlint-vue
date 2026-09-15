@@ -71,6 +71,7 @@ export interface ExplicitEmitInfo {
   hasDefinition: boolean
   templateEmitters: Set<string>
   findings: { name: string, offset: number }[]
+  emissions: { name: string, offset: number }[]
 }
 
 /** Component definition locations for one-component-per-file. */
@@ -548,7 +549,8 @@ function memberParts(path: NodePath): { object: NodePath, name: string | null } 
 /** Declared and triggered component events for require-explicit-emits. */
 export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean): ExplicitEmitInfo {
   const info: ExplicitEmitInfo = { declared: new Set(), props: new Set(), acceptsAny: false,
-    hasDefinition: Boolean(descriptor.scriptSetup), templateEmitters: new Set(['$emit']), findings: [] }
+    hasDefinition: Boolean(descriptor.scriptSetup), templateEmitters: new Set(['$emit']), findings: [],
+    emissions: [] }
   const typeDeclarations = new Map<string, NodePath>()
   const readDeclarations = (value: NodePath | undefined, target: Set<string>): boolean => {
     if (!value) return false
@@ -736,6 +738,7 @@ export function explicitEmitInfo(descriptor: SFCDescriptor, allowProps: boolean)
           context = binding ? contextBindings.get(binding) : undefined
         }
       }
+      if (context) info.emissions.push({ name, offset: block.loc.start.offset + (first?.node.start ?? 0) })
       if (context && !context.acceptsAny && !context.declared.has(name)
         && !(allowProps && context.props.has(`on${name.charAt(0).toUpperCase()}${name.slice(1)}`))) {
         info.findings.push({ name, offset: block.loc.start.offset + (first?.node.start ?? 0) })

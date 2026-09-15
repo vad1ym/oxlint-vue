@@ -31,6 +31,7 @@ const CASES = [
   ['vue/no-use-computed-property-like-method', '<div />', false],
   ['vue/no-template-shadow', '<div v-for="item in items"><i v-for="item in item" /></div>', true],
   ['vue/require-explicit-emits', '<button @click="$emit(\'save\')" />', true],
+  ['vue/no-restricted-custom-event', '<button @click="$emit(\'save\')" />', false],
   ['vue/one-component-per-file', '<div />', true,
     'Vue.component(\'FirstComp\', {}); Vue.component(\'SecondComp\', {})'],
   ['vue/v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>', true],

@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 67,
     "native": 59,
-    "partial": 54,
-    "missing": 73
+    "partial": 55,
+    "missing": 72
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -3114,17 +3114,19 @@
     },
     {
       "name": "no-restricted-custom-event",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 14,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-restricted-custom-event.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-restricted-html-elements",
