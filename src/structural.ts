@@ -270,6 +270,8 @@ function matchesConfiguredName(patterns: unknown, name: string): boolean {
   })
 }
 
+const validXmlName = (name: string): boolean => /^[A-Za-z_:][A-Za-z0-9_.:-]*$/u.test(name)
+
 type Ast = import('./ast.js').AstNode
 function splitConditions(ast: Ast, operator: string): Ast[] {
   return ast.type === 'LogicalExpression' && ast.operator === operator
@@ -401,6 +403,12 @@ const GLOBAL_EVENT_MODIFIERS = new Set([
   'stop', 'prevent', 'capture', 'self', 'once', 'passive', 'native',
 ])
 const KEYBOARD_EVENTS = new Set(['keydown', 'keypress', 'keyup'])
+const VALID_V_ON_MODIFIERS = new Set([
+  'stop', 'prevent', 'capture', 'self', 'ctrl', 'shift', 'alt', 'meta', 'native',
+  'once', 'left', 'right', 'middle', 'passive', 'esc', 'tab', 'enter', 'space',
+  'up', 'down', 'delete', 'exact', 'arrow-down', 'arrow-left', 'arrow-right',
+  'arrow-up',
+])
 
 interface EventDirective {
   directive: DirectiveNode
@@ -733,6 +741,65 @@ const RULES: Rule[] = [
       report({
         message: 'The element inside <transition> must control whether it is displayed.', ...loc(node),
       })
+    },
+  },
+  {
+    name: 'vue/valid-v-bind',
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'bind') continue
+        for (const modifier of dir.modifiers) if (!['prop', 'camel', 'sync', 'attr'].includes(modifier.content)) report({
+          message: `v-bind does not support the .${modifier.content} modifier.`, ...loc(modifier),
+        })
+        const sameNameShorthand = dir.arg != null && !dir.loc.source.includes('=')
+        if (!sameNameShorthand && !dir.exp?.loc.source) report({
+          message: 'v-bind requires a value.', ...loc(dir),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/valid-v-on',
+    severity: 'error',
+    check(node, report, options) {
+      const custom = new Set(Array.isArray(options.modifiers)
+        ? options.modifiers.filter((name): name is string => typeof name === 'string') : [])
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') continue
+        for (const modifier of dir.modifiers) {
+          const name = modifier.content
+          const numeric = Number.isSafeInteger(Number.parseInt(name, 10))
+          if (!VALID_V_ON_MODIFIERS.has(name) && !numeric
+            && [...name].length !== 1 && !custom.has(name)) report({
+            message: `v-on does not support the .${name} modifier.`, ...loc(modifier),
+          })
+        }
+        if (dir.modifiers.some(modifier => ['stop', 'prevent'].includes(modifier.content))) continue
+        const raw = dir.exp?.loc.source ?? ''
+        const expression = expressionAst(dir.exp)
+        if (!raw) report({ message: 'v-on requires a value or stop/prevent modifier.', ...loc(dir) })
+        else if (!expression && /^\w+$/u.test(raw)) report({
+          message: `Avoid the JavaScript keyword ${raw} as a v-on value.`, ...directiveValueLoc(dir),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/valid-attribute-name',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || customComponent(node)) return
+      for (const prop of node.props) {
+        if (prop.type === NodeTypes.ATTRIBUTE && !validXmlName(prop.name)) report({
+          message: `Attribute name ${prop.name} is invalid.`, ...loc(prop),
+        })
+        if (prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind'
+          && prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION && prop.arg.isStatic
+          && !validXmlName(prop.arg.content)) report({
+          message: `Attribute name ${prop.arg.content} is invalid.`, ...loc(prop),
+        })
+      }
     },
   },
   {

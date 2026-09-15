@@ -50,6 +50,9 @@ const CASES = [
   ['vue/no-useless-template-attributes', '<div><template v-if="ok" class="bad" /></div>', true],
   ['vue/valid-template-root', '', true],
   ['vue/require-toggle-inside-transition', '<transition><div /></transition>', true],
+  ['vue/valid-v-bind', '<div :title.unknown="title" />', true],
+  ['vue/valid-v-on', '<button @click.unknown="go" />', true],
+  ['vue/valid-attribute-name', '<div 0invalid />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
