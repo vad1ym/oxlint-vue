@@ -5,6 +5,7 @@ const seeds = [
   ['no-unused-components', '<div/>'],
   ['no-ref-as-operand', '<div/>'],
   ['require-valid-default-prop', '<div/>'],
+  ['no-use-computed-property-like-method', '<div/>'],
   ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],

@@ -28,6 +28,7 @@ const CASES = [
   ['vue/no-unused-components', '<div />', false],
   ['vue/no-ref-as-operand', '<div />', false],
   ['vue/require-valid-default-prop', '<div />', false],
+  ['vue/no-use-computed-property-like-method', '<div />', false],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

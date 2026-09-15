@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { componentNameFindings, computedPropertyInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -58,6 +58,7 @@ interface Annotations {
   __script?: ScriptAnalysis
   __locals?: Set<string>
   __outerLocals?: Set<string>
+  __computedNames?: Set<string>
 }
 
 type AnnotatedElement = ElementNode & Annotations
@@ -810,6 +811,27 @@ const RULES: Rule[] = [
   { name: 'vue/no-unused-components', severity: 'error', check() {} },
   { name: 'vue/no-ref-as-operand', severity: 'error', check() {} },
   { name: 'vue/require-valid-default-prop', severity: 'error', check() {} },
+  {
+    name: 'vue/no-use-computed-property-like-method',
+    severity: 'error',
+    check(node, report) {
+      const context = node as AnyNode & Annotations
+      if (!context.__computedNames?.size) return
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        const free = new Set(freeIdentifiers(ast, context.__computedNames, context.__locals))
+        visitExpression(ast, candidate => {
+          if (candidate.type === 'CallExpression' && candidate.callee.type === 'Identifier'
+            && free.has(candidate.callee)) report({ ...astLoc(exp, candidate, ast),
+              message: `Use ${candidate.callee.name} instead of ${candidate.callee.name}().` })
+        })
+      }
+    },
+  },
   {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
@@ -2457,6 +2479,11 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')
+  const computedInfo = computedRule ? computedPropertyInfo(descriptor) : { names: new Set<string>(), findings: [] }
+  if (computedRule) for (const finding of computedInfo.findings) out.push({ filename,
+    rule: computedRule.rule.name, severity: computedRule.severity, ...sourceLoc(source, finding.offset),
+    message: 'Use the computed property without calling it.' } as Diagnostic)
   const refOperandRule = active.find(entry => entry.rule.name === 'vue/no-ref-as-operand')
   if (refOperandRule) for (const finding of refOperandFindings(descriptor, source,
     ruleOptions(config?.[refOperandRule.rule.name]).globalRef === true)) {
@@ -2717,6 +2744,7 @@ export function checkTemplate(
     context.__outerLocals = inherited
     context.__insideVFor = insideVFor
     context.__depth = depth
+    context.__computedNames = computedInfo.names
     const children = childrenOf(node)
     if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
     for (const { rule, severity } of active) {

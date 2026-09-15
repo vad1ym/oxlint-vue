@@ -92,7 +92,8 @@
     "tests/lib/rules/no-deprecated-filter.test.ts": "bde70db241de5f3b38d8f885bcad148c8fe576fed29cb13aad38b7ec77812c5c",
     "tests/lib/rules/no-unused-components.test.ts": "f74014193754aabfef3cb4949504bd1ca469a4199e327a8974e6e6abe486a282",
     "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10",
-    "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8"
+    "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8",
+    "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -26153,6 +26154,538 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/1",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          data() {\n            return {\n              dataString: 'dataString',\n              dataNumber: 10,\n              dataObject: {\n                inside: \"inside\"\n              },\n              dataArray: [1,2,3,4,5],\n              dataBoolean: true,\n            }\n          },\n          computed: {\n            computedReturnDataString() {\n              return this.dataString\n            },\n            computedReturnDataNumber() {\n              return this.dataNumber\n            },\n            computedReturnDataObject() {\n              return this.dataObject\n            },\n            computedReturnDataArray() {\n              return this.dataArray\n            },\n            computedReturnDataBoolean() {\n              return this.dataBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnDataString\n              this.computedReturnDataNumber\n              this.computedReturnDataObject\n              this.computedReturnDataArray\n              this.computedReturnDataBoolean\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/2",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          data() {\n            return {\n              dataFunction() {\n                alert('dataFunction')\n              }\n            }\n          },\n          computed: {\n            computedReturnDataFunction() {\n              return this.dataFunction\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnDataFunction\n              this.computedReturnDataFunction()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/3",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsString: String,\n            propsNumber: Number,\n            propsObject: Object,\n            propsArray: Array,\n            propsBoolean: Boolean\n          },\n          computed: {\n            computedReturnPropsString() {\n              return this.propsString\n            },\n            computedReturnPropsNumber() {\n              return this.propsNumber\n            },\n            computedReturnPropsObject() {\n              return this.propsObject\n            },\n            computedReturnPropsArray() {\n              return this.propsArray\n            },\n            computedReturnPropsBoolean() {\n              return this.propsBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsString\n              this.computedReturnPropsNumber\n              this.computedReturnPropsObject\n              this.computedReturnPropsArray\n              this.computedReturnPropsBoolean\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/4",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsString: {\n              type: String\n            },\n            propsNumber: {\n              type: Number\n            },\n            propsObject: {\n              type: Object\n            },\n            propsArray: {\n              type: Array\n            },\n            propsBoolean: {\n              type: Boolean\n            }\n          },\n          computed: {\n            computedReturnPropsString() {\n              return this.propsString\n            },\n            computedReturnPropsNumber() {\n              return this.propsNumber\n            },\n            computedReturnPropsObject() {\n              return this.propsObject\n            },\n            computedReturnPropsArray() {\n              return this.propsArray\n            },\n            computedReturnPropsBoolean() {\n              return this.propsBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsString\n              this.computedReturnPropsNumber\n              this.computedReturnPropsObject\n              this.computedReturnPropsArray\n              this.computedReturnPropsBoolean\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/5",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsFunction: {\n              type: Function\n            },\n          },\n          computed: {\n            computedReturnPropsFunction() {\n              return this.propsFunction\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsFunction\n              this.computedReturnPropsFunction()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/6",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: [\n            \"propsString\",\n            \"propsNumber\",\n            \"propsObject\",\n            \"propsArray\",\n            \"propsBoolean\",\n            \"propsFunction\"\n          ],\n          computed: {\n            computedReturnPropsString() {\n              return this.propsString\n            },\n            computedReturnPropsNumber() {\n              return this.propsNumber\n            },\n            computedReturnPropsObject() {\n              return this.propsObject\n            },\n            computedReturnPropsArray() {\n              return this.propsArray\n            },\n            computedReturnPropsBoolean() {\n              return this.propsBoolean\n            },\n            computedReturnPropsFunction() {\n              return this.propsFunction\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsString\n              this.computedReturnPropsString()\n\n              this.computedReturnPropsNumber\n              this.computedReturnPropsNumber()\n\n              this.computedReturnPropsObject\n              this.computedReturnPropsObject()\n\n              this.computedReturnPropsArray\n              this.computedReturnPropsArray()\n\n              this.computedReturnPropsBoolean\n              this.computedReturnPropsBoolean()\n\n              this.computedReturnPropsFunction\n              this.computedReturnPropsFunction()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/7",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnString() {\n              return 'computedReturnString'\n            },\n            computedReturnNumber() {\n              return 10\n            },\n            computedReturnObject() {\n              return {\n                inside: \"inside\"\n              }\n            },\n            computedReturnArray() {\n              return [1,2,3,4,5]\n            },\n            computedReturnBoolean() {\n              return true\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnString\n              this.computedReturnNumber\n              this.computedReturnObject\n              this.computedReturnArray\n              this.computedReturnBoolean\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/8",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnFunction() {\n              const fn = () => alert('computedReturnFunction')\n              return fn\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnFunction\n              this.computedReturnFunction()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/9",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnMethodsReturnString() {\n              return this.methodsReturnString\n            },\n            computedReturnMethodsReturnNumber() {\n              return this.methodsReturnNumber\n            },\n            computedReturnMethodsReturnObject() {\n              return this.methodsReturnObject\n            },\n            computedReturnMethodsReturnArray() {\n              return this.methodsReturnArray\n            },\n            computedReturnMethodsReturnBoolean() {\n              return this.methodsReturnBoolean\n            }\n          },\n          methods: {\n            methodsReturnString() {\n              return 'methodsReturnString'\n            },\n            methodsReturnNumber() {\n              return 'methodsReturnNumber'\n            },\n            methodsReturnObject() {\n              return {\n                inside: \"inside\"\n              }\n            },\n            methodsReturnArray() {\n              return [1,2,3,4,5]\n            },\n            methodsReturnBoolean() {\n              return true\n            },\n            fn() {\n              this.computedReturnMethodsReturnString\n              this.computedReturnMethodsReturnNumber\n              this.computedReturnMethodsReturnObject\n              this.computedReturnMethodsReturnArray\n              this.computedReturnMethodsReturnBoolean\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/10",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnMethodsReturnFunction() {\n              return this.methodsReturnFunction\n            }\n          },\n          methods: {\n            methodsReturnFunction() {\n              const fn = () => alert('methodsReturnFunction')\n              return fn\n            },\n            fn() {\n              this.computedReturnMethodsReturnFunction\n              this.computedReturnMethodsReturnFunction()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/11",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          methods: {\n            fn() {\n              this.foo()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/12",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnArray() {\n              return [1,2,3,4,5]\n            },\n            computedReturnArray2() {\n              return [1,2,3,4,5]\n            },\n            computedReturnComputedReturnString() {\n              return this.computedReturnArray.map(() => this.computedReturnArray2)\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/13",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n      import { mapGetters } from 'vuex'\n\n      export default {\n        props: [`user`],\n        computed: {\n          ...mapGetters(`auth`, [`statusForUser`]),\n          status () {\n            return this.statusForUser(this.user)\n          },\n        },\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/14",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        const s = s\n        export default {\n          props: {\n            str: s\n          },\n          computed: {\n            x() {\n              const str = this.str\n              return str\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/15",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        const s = String\n        export default {\n          computed: {\n            x() {\n              return s\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/16",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            x() {\n              return this.x\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/17",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            x() {\n              return this.foo()\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            },\n            foo () {\n              return this.foo()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/18",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            val: b ? [String] : Function\n          },\n          computed: {\n            x() {\n              return this.val\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/19",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsFunction: {\n              type: Function,\n              default: undefined\n            },\n            propsNumber: {\n              type: Number,\n            }\n          },\n          computed: {\n            computedReturnPropsFunction() {\n              return this.propsFunction ? this.propsFunction : this.propsFunctionDefault\n            },\n            computedReturnMaybeFunction() {\n              return this.propsFunction ? this.propsFunction : this.propsNumber\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsFunction\n              this.computedReturnPropsFunction()\n              this.computedReturnMaybeFunction\n              this.computedReturnMaybeFunction()\n            },\n            propsFunctionDefault() {}\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/valid/20",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsFunction: {\n              type: Function,\n              default: undefined\n            },\n            propsNumber: {\n              type: Number,\n            }\n          },\n          computed: {\n            computedReturnPropsFunction() {\n              return this.propsFunction || this.propsFunctionDefault\n            },\n            computedReturnMaybeFunction() {\n              return this.propsFunction || this.propsNumber\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsFunction\n              this.computedReturnPropsFunction()\n              this.computedReturnMaybeFunction\n              this.computedReturnMaybeFunction()\n            },\n            propsFunctionDefault() {}\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/1",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          data() {\n            return {\n              dataString: 'dataString',\n              dataNumber: 10,\n              dataObject: {\n                inside: \"inside\"\n              },\n              dataArray: [1,2,3,4,5],\n              dataBoolean: true,\n            }\n          },\n          computed: {\n            computedReturnDataString() {\n              return this.dataString\n            },\n            computedReturnDataNumber() {\n              return this.dataNumber\n            },\n            computedReturnDataObject() {\n              return this.dataObject\n            },\n            computedReturnDataArray() {\n              return this.dataArray\n            },\n            computedReturnDataBoolean() {\n              return this.dataBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnDataString()\n              this.computedReturnDataNumber()\n              this.computedReturnDataObject()\n              this.computedReturnDataArray()\n              this.computedReturnDataBoolean()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/2",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsString: String,\n            propsNumber: Number,\n            propsObject: Object,\n            propsArray: Array,\n            propsBoolean: Boolean\n          },\n          computed: {\n            computedReturnPropsString() {\n              return this.propsString\n            },\n            computedReturnPropsNumber() {\n              return this.propsNumber\n            },\n            computedReturnPropsObject() {\n              return this.propsObject\n            },\n            computedReturnPropsArray() {\n              return this.propsArray\n            },\n            computedReturnPropsBoolean() {\n              return this.propsBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsString()\n              this.computedReturnPropsNumber()\n              this.computedReturnPropsObject()\n              this.computedReturnPropsArray()\n              this.computedReturnPropsBoolean()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/3",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsString: {\n              type: String\n            },\n            propsNumber: {\n              type: Number\n            },\n            propsObject: {\n              type: Object\n            },\n            propsArray: {\n              type: Array\n            },\n            propsBoolean: {\n              type: Boolean\n            }\n          },\n          computed: {\n            computedReturnPropsString() {\n              return this.propsString\n            },\n            computedReturnPropsNumber() {\n              return this.propsNumber\n            },\n            computedReturnPropsObject() {\n              return this.propsObject\n            },\n            computedReturnPropsArray() {\n              return this.propsArray\n            },\n            computedReturnPropsBoolean() {\n              return this.propsBoolean\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnPropsString()\n              this.computedReturnPropsNumber()\n              this.computedReturnPropsObject()\n              this.computedReturnPropsArray()\n              this.computedReturnPropsBoolean()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/4",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnString() {\n              return 'computedReturnString'\n            },\n            computedReturnNumber() {\n              return 10\n            },\n            computedReturnObject() {\n              return {\n                inside: \"inside\"\n              }\n            },\n            computedReturnArray() {\n              return [1,2,3,4,5]\n            },\n            computedReturnBoolean() {\n              return true\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnString()\n              this.computedReturnNumber()\n              this.computedReturnObject()\n              this.computedReturnArray()\n              this.computedReturnBoolean()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/5",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnString() {\n              return 'computedReturnString'\n            },\n            computedReturnComputedReturnString() {\n              return this.computedReturnString\n            }\n          },\n          methods: {\n            fn() {\n              this.computedReturnComputedReturnString()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/6",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnObject() {\n              return {\n                insideFn() {\n                  return \"insideFn\"\n                }\n              }\n            },\n          },\n          methods: {\n            fn() {\n              this.computedReturnObject().insideFn\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/7",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnNothing() {\n              return\n            },\n          },\n          methods: {\n            fn() {\n              this.computedReturnNothing()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/8",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnString() {\n              return 'computedReturnString'\n            },\n            computedReturnComputedReturnString() {\n              return this.computedReturnString()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/9",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            computedReturnArray() {\n              return [1,2,3,4,5]\n            },\n            computedReturnArray2() {\n              return [1,2,3,4,5]\n            },\n            computedReturnComputedReturnString() {\n              return this.computedReturnArray.map([...this.computedReturnArray(), ...this.computedReturnArray2()])\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/10",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            str: String\n          },\n          computed: {\n            x() {\n              const str = this.str\n              return str\n            },\n            y() {\n              return\n            }\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/11",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        const s = String\n        export default {\n          props: {\n            str: s\n          },\n          computed: {\n            x() {\n              const str = this.str\n              return str\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/12",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        const s = String\n        export default {\n          props: {\n            val: [s, Number]\n          },\n          computed: {\n            x() {\n              return this.val\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/13",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            x: {\n              get: () => 42\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/14",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          computed: {\n            x() {\n              return b ? this.foo() : 'str'\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            },\n            foo () {\n              return 42\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/15",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            val: b ? [String] : Number\n          },\n          computed: {\n            x() {\n              return this.val\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/16",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        let t = [String]\n        if (b) {\n          t = Number\n        }\n        let t2 = [String]\n        if (b) {\n          t2 = Function\n        }\n        export default {\n          props: {\n            val: t,\n            f: t2\n          },\n          computed: {\n            x() {\n              return this.val\n            },\n            y() {\n              return this.f\n            },\n          },\n          methods: {\n            fn() {\n              const vm = this\n              vm.x()\n              vm.y()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/17",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <template>\n        {{x()}}\n        {{y()}}\n        {{y(x)}}\n      </template>\n      <script>\n        export default {\n          computed: {\n            x() {\n              return 42\n            },\n            y() {\n              return String\n            },\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-use-computed-property-like-method/invalid/18",
+      "rule": "vue/no-use-computed-property-like-method",
+      "code": "\n      <script>\n        export default {\n          props: {\n            propsNumber: {\n              type: Number\n            },\n            propsString: {\n              type: String\n            },\n          },\n          computed: {\n            computedReturnNotFunction1() {\n              return this.propsString ? this.propsString : this.propsNumber\n            },\n            computedReturnNotFunction2() {\n              return this.propsString || this.propsNumber\n            },\n          },\n          methods: {\n            fn() {\n              this.computedReturnNotFunction1()\n              this.computedReturnNotFunction2()\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
     }
   ]
 }

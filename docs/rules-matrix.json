@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 61,
+    "implemented": 62,
     "native": 59,
     "partial": 41,
-    "missing": 92
+    "missing": 91
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -803,14 +803,14 @@
     },
     {
       "name": "no-use-computed-property-like-method",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 38,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

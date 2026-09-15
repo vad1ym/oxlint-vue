@@ -58,6 +58,7 @@ function componentObject(path: NodePath): NodePath | undefined {
 export interface RegisteredComponent { name: string, offset: number }
 export interface RefOperandFinding { method: string, offset: number }
 export interface DefaultPropFinding { offset: number }
+export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
 
 const nativePropTypes = new Set(['String', 'Number', 'Boolean', 'Function', 'Object', 'Array', 'Symbol', 'BigInt'])
 
@@ -115,6 +116,15 @@ function inferTsTypes(node: AstNode | undefined, aliases: Map<string, AstNode>):
   if (node.type === 'TSLiteralType' && node.literal.type === 'BigIntLiteral') return ['BigInt']
   if (node.type === 'TSTemplateLiteralType') return ['String']
   return []
+}
+
+function functionReturnValues(fn: NodePath): NodePath[] {
+  if (fn.isArrowFunctionExpression() && !fn.get('body').isBlockStatement()) return [fn.get('body') as NodePath]
+  const values: NodePath[] = []
+  fn.traverse({ ReturnStatement(path) {
+    if (path.getFunctionParent() === fn && path.node.argument) values.push(path.get('argument') as NodePath)
+  } })
+  return values
 }
 
 /** Invalid runtime prop defaults. Type-only edge cases are intentionally inferred separately. */
@@ -257,6 +267,143 @@ export function validDefaultPropFindings(descriptor: SFCDescriptor, source: stri
     } })
   }
   return findings
+}
+
+/** Computed properties that cannot return functions, plus `this.foo()` calls in component code. */
+export function computedPropertyInfo(descriptor: SFCDescriptor): ComputedPropertyInfo {
+  const names = new Set<string>()
+  const findings: { offset: number }[] = []
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    traverse(file, { enter(exportPath) {
+      if (!exportPath.isExportDefaultDeclaration()) return
+      const object = componentObject(exportPath)
+      if (!object) return
+      const groups = (group: string): NodePath | undefined => {
+        const property = objectPropertyPath(object, group)
+        return property && (property.isObjectProperty() || property.isObjectMethod())
+          ? pathValue(property) : undefined
+      }
+      const dataValues = new Map<string, NodePath>()
+      const propFunctions = new Map<string, boolean>()
+      const functions = new Map<string, NodePath>()
+      const computed = new Map<string, NodePath>()
+      const maybeFunctionType = (value: NodePath, seen = new Set<Binding>()): boolean => {
+        while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+        if (value.isIdentifier()) {
+          if (nativePropTypes.has(value.node.name)) return value.node.name === 'Function'
+          const binding = value.scope.getBinding(value.node.name)
+          if (!binding || seen.has(binding)) return true
+          seen.add(binding)
+          const expressions: NodePath[] = []
+          if (binding.path.isVariableDeclarator() && binding.path.node.init) expressions.push(binding.path.get('init') as NodePath)
+          for (const violation of binding.constantViolations) {
+            if (violation.isAssignmentExpression()) expressions.push(violation.get('right') as NodePath)
+          }
+          return !expressions.length || expressions.some(expression => maybeFunctionType(expression, seen))
+        }
+        if (value.isArrayExpression()) return (value.get('elements') as NodePath[])
+          .some(element => element && maybeFunctionType(element, seen))
+        if (value.isConditionalExpression()) return maybeFunctionType(value.get('consequent') as NodePath, seen)
+          || maybeFunctionType(value.get('alternate') as NodePath, seen)
+        if (value.isLogicalExpression()) return maybeFunctionType(value.get('left') as NodePath, seen)
+          || maybeFunctionType(value.get('right') as NodePath, seen)
+        return true
+      }
+      const data = groups('data')
+      if (data?.isFunction()) data.traverse({ ReturnStatement(path) {
+        if (path.getFunctionParent() !== data || !path.get('argument').isObjectExpression()) return
+        for (const property of (path.get('argument') as NodePath).get('properties') as NodePath[]) {
+          if (!property.isObjectProperty()) continue
+          const name = staticName(property.node.key)
+          if (name !== null) dataValues.set(name, pathValue(property))
+        }
+      } })
+      const props = groups('props')
+      if (props?.isObjectExpression()) for (const property of props.get('properties') as NodePath[]) {
+        if (!property.isObjectProperty()) continue
+        const name = staticName(property.node.key)
+        if (name === null) continue
+        const value = pathValue(property)
+        const type = value.isObjectExpression() ? objectPropertyPath(value, 'type') : undefined
+        propFunctions.set(name, maybeFunctionType(type ? pathValue(type) : value))
+      }
+      for (const group of ['methods', 'computed']) {
+        const value = groups(group)
+        if (!value?.isObjectExpression()) continue
+        for (const property of value.get('properties') as NodePath[]) {
+          if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+          const name = staticName(property.node.key)
+          if (name === null) continue
+          let fn = pathValue(property)
+          if (group === 'computed' && fn.isObjectExpression()) {
+            const getter = objectPropertyPath(fn, 'get')
+            if (getter) fn = pathValue(getter)
+          }
+          if (!fn.isFunction()) continue
+          ;(group === 'computed' ? computed : functions).set(name, fn)
+        }
+      }
+      const maybeFunction = (value: NodePath, seen = new Set<string>()): boolean => {
+        while (['TSAsExpression', 'TSTypeAssertion', 'TSNonNullExpression', 'TSSatisfiesExpression', 'ParenthesizedExpression'].includes(value.node.type)) value = value.get('expression') as NodePath
+        if (value.isFunction()) return true
+        if (value.isLiteral() || value.isArrayExpression() || value.isObjectExpression()
+          || value.isBinaryExpression() || value.isUnaryExpression() || value.isUpdateExpression()
+          || value.isTemplateLiteral()) return false
+        if (value.isConditionalExpression()) return maybeFunction(value.get('consequent') as NodePath, seen)
+          || maybeFunction(value.get('alternate') as NodePath, seen)
+        if (value.isLogicalExpression()) return maybeFunction(value.get('left') as NodePath, seen)
+          || maybeFunction(value.get('right') as NodePath, seen)
+        if (value.isMemberExpression() && value.get('object').isThisExpression()) {
+          const name = staticName(value.node.property)
+          if (name && dataValues.has(name)) return maybeFunction(dataValues.get(name)!, seen)
+          if (name && propFunctions.has(name)) return propFunctions.get(name)!
+          if (name && computed.has(name) && !seen.has(name)) {
+            seen.add(name)
+            return functionReturnValues(computed.get(name)!).some(result => maybeFunction(result, seen))
+          }
+        }
+        if (value.isCallExpression() && value.get('callee').isMemberExpression()) {
+          const callee = value.get('callee') as NodePath
+          if (callee.get('object').isThisExpression()) {
+            const name = staticName(value.node.callee.type === 'MemberExpression'
+              ? value.node.callee.property : callee.node)
+            if (name && functions.has(name) && !seen.has(name)) {
+              seen.add(name)
+              return functionReturnValues(functions.get(name)!).some(result => maybeFunction(result, seen))
+            }
+          }
+        }
+        if (value.isIdentifier()) {
+          const binding = value.scope.getBinding(value.node.name)
+          if (binding?.path.isVariableDeclarator() && binding.path.node.init) return maybeFunction(binding.path.get('init') as NodePath, seen)
+        }
+        return true
+      }
+      for (const [name, fn] of computed) {
+        if (!functionReturnValues(fn).some(value => maybeFunction(value))) names.add(name)
+      }
+      const instanceAliases = new Set<Binding>()
+      object.traverse({ VariableDeclarator(path) {
+        if (path.node.id.type !== 'Identifier' || path.node.init?.type !== 'ThisExpression') return
+        const binding = path.scope.getBinding(path.node.id.name)
+        if (binding?.constant) instanceAliases.add(binding)
+      } })
+      object.traverse({ CallExpression(path) {
+        const callee = path.get('callee') as NodePath
+        if (!callee.isMemberExpression()) return
+        const receiver = callee.get('object') as NodePath
+        const binding = receiver.isIdentifier() ? receiver.scope.getBinding(receiver.node.name) : undefined
+        if (!receiver.isThisExpression() && !(binding && instanceAliases.has(binding))) return
+        const name = staticName(callee.node.property)
+        if (name && names.has(name)) findings.push({ offset: block.loc.start.offset + (path.node.start ?? 0) })
+      } })
+    } })
+  }
+  return { names, findings }
 }
 
 /** References to ref-like values used where JavaScript does not auto-unwrap them. */
