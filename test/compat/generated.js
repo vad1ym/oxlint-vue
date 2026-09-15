@@ -1,0 +1,50 @@
+// Original cases. The Cartesian product checks layout/scope invariance against
+// the reference engine, including multiple findings on one source line.
+const seeds = [
+  ['require-v-for-key', '<li v-for="item in items"/>'],
+  ['require-v-for-key', '<li v-for="item in items" :key="item.id"/>'],
+  ['no-v-for-template-key-on-child', '<template v-for="item in items"><p :key="item.id"/></template>'],
+  ['no-v-for-template-key-on-child', '<template v-for="item in items" :key="item.id"><p :key="item.id"/></template>'],
+  ['valid-v-for', '<Comp v-for="item in items" :key="constant"/>'],
+  ['valid-v-for', '<Comp v-for="item in items" :key="item.id"/>'],
+  ['valid-v-model', '<input v-model:bad.custom="a + b"/>'],
+  ['valid-v-model', '<Comp v-model:title.custom="state.title"/>'],
+  ['no-v-html', '<p v-html="html"/>'],
+  ['no-use-v-if-with-v-for', '<p v-for="item in items" v-if="item.visible"/>'],
+  ['no-template-key', '<template :key="id"><i/></template>'],
+  ['no-useless-mustaches', '<p>{{ `hello` }} {{ "world" }}</p>'],
+  ['no-useless-mustaches', '<p>{{ `hello ${name}` }}</p>'],
+  ['no-duplicate-attributes', '<p class="a" :class="b"/>'],
+  ['no-duplicate-attributes', '<p :[key]="a" :key="b"/>'],
+  ['require-component-is', '<component/>'],
+  ['require-component-is', '<component :is="current"/>'],
+  ['no-v-text-v-html-on-component', '<Comp v-html="html"/>'],
+  ['no-v-text-v-html-on-component', '<g v-text="content"/>'],
+  ['no-v-text-v-html-on-component', '<g v-text="content"/>', [{ ignoreElementNamespaces: true }]],
+  ['no-v-text-v-html-on-component', '<svg><g v-text="content"/></svg>'],
+  ['no-v-text-v-html-on-component', '<math><mi v-text="content"/></math>'],
+  ['no-useless-v-bind', '<input :title="`hello`"/>'],
+  ['no-useless-v-bind', '<input :title.prop="`hello`"/>'],
+  ['this-in-template', '<p>{{ this.first }} {{ this.second }}</p>'],
+  ['this-in-template', '<p :title="`Hello ${this.name}`"/>'],
+  ['this-in-template', '<p :title="&quot;😀&quot; + this.name"/>'],
+  ['no-static-inline-styles', '<p :style="{color: tone, display: \'flex\'}"/>'],
+  ['no-dupe-v-else-if', '<p v-if="a || b"/><!-- chain --><p v-else-if="a &amp;&amp; b"/>'],
+  ['no-dupe-v-else-if', '<p v-if="a"/><span/><p v-else-if="a"/>'],
+  ['no-textarea-mustache', '<textarea>{{ first }} {{ second }}</textarea>'],
+  ['no-child-content', '<p title=">" v-html="html"> overwritten </p>'],
+  ['no-child-content', '<p v-text="text"><!-- comment --></p>'],
+]
+
+export const generatedCases = seeds.flatMap(([name, template, options = []], index) =>
+  ['\n', '\r\n'].flatMap((newline, layout) => [
+    template,
+    `<section data-label="😀 тест">\n  ${template}\n</section>`,
+    `<section v-for="row in rows" :key="row.id">\n${template}\n</section>`,
+    `<Panel #default="{ value }">\n${template}\n</Panel>`,
+  ].map((body, scope) => ({
+    id: `generated/${name}/${index}/${layout}/${scope}`,
+    rule: `vue/${name}`, options,
+    code: `<template>\n${body}\n</template>\n<script setup>\nconst sentinel = '😀'\n</script>\n`.replaceAll('\n', newline),
+  }))),
+)

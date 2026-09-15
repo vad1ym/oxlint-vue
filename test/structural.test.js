@@ -291,7 +291,7 @@ for (const [first, second, expected] of [
   ['a && b', '(a)  && /* same */ b', true],
   ['`a b ${value}`', '`ab ${value}`', false],
   ['/a b/.test(value)', '/ab/.test(value)', false],
-  ['a || b', 'a && b', false],
+  ['a || b', 'a && b', true] // Every a && b case is already covered by a || b.,
 ]) {
   test(`condition AST: ${first} / ${second}`, () => {
     const template = `<i v-if="${first.replaceAll('"', '&quot;')}"/><!-- comment --><i v-else-if="${second.replaceAll('"', '&quot;')}"/>`
@@ -317,7 +317,7 @@ test('Vue 3 template keys identify the fragment or conditional branch', () => {
     assert.ok(!check(`<template ${directive} :key="id"><div/></template>`).rules.includes('vue/no-template-key'))
   }
   const rules = check('<template v-for="item in items"><div :key="item.id"/></template>').rules
-  assert.ok(rules.includes('vue/require-v-for-key'))
+  assert.ok(!rules.includes('vue/require-v-for-key')) // Child key satisfies this rule; the Vue 3 placement rule rejects it.
   assert.ok(rules.includes('vue/no-v-for-template-key-on-child'))
   assert.ok(!check('<template v-for="row in rows" :key="row.id"><i v-for="cell in row.cells" :key="cell.id"/></template>').rules.includes('vue/no-v-for-template-key-on-child'))
 })

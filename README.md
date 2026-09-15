@@ -96,6 +96,13 @@ usage tracking also accounts for template assignments and CSS `v-bind()` in
 Verified on 4726 real `.vue` files: the invariant holds on every one, and
 every virtual file parses. [Details →](./docs/internals.md)
 
+## Compatibility regression tests
+
+`pnpm compat --json` compares 568 cases from eslint-plugin-vue 10.11.0 against
+our 18 common structural rules. CI checks the reviewed differences and also
+runs generated scope/layout cases and pinned Nuxt fixtures through real oxlint.
+See [the compatibility report and limitations](docs/compatibility.md).
+
 ## License
 
 [MIT](./LICENSE)

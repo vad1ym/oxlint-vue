@@ -18,10 +18,11 @@ import type { Diagnostic, RuleConfig, RulesMap } from './types.js'
  *
  * Node type constants from @vue/compiler-core NodeTypes.
  */
+import { isHTMLTag, isSVGTag, isMathMLTag } from '@vue/shared'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { bindingNames, expressionAst, expressionKey, staticName, unwrap } from './ast.js'
-import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
+import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
+import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
 /** Any node the walker may hand a rule. */
 type AnyNode = RootNode | TemplateChildNode
@@ -62,7 +63,7 @@ type Report = (d: ReportPayload) => void
 interface Rule {
   name: string
   severity: 'error' | 'warning'
-  check: (node: AnyNode, report: Report) => void
+  check: (node: AnyNode, report: Report, options: Record<string, unknown>) => void
 }
 
 function loc(node: { loc?: AnyNode['loc'] }): {
@@ -72,28 +73,6 @@ function loc(node: { loc?: AnyNode['loc'] }): {
 } {
   const s = node.loc?.start
   return { line: s?.line ?? 1, column: s?.column ?? 1, offset: s?.offset }
-}
-
-/**
- * Blank out string and template-literal contents, preserving length so any
- * offsets computed against the result still line up. Lets a rule scan real
- * code without matching text that merely looks like code.
- */
-function stripLiterals(text: string): string {
-  let out = ''
-  let quote: string | null = null
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i]
-    if (quote) {
-      if (c === '\\') { out += '  '; i++; continue }
-      if (c === quote) { quote = null; out += c; continue }
-      out += ' '
-      continue
-    }
-    if (c === '"' || c === '\'' || c === '`') { quote = c; out += c; continue }
-    out += c
-  }
-  return out
 }
 
 /** The props array is only present on elements; other nodes have none. */
@@ -116,7 +95,7 @@ function findAttr(node: AnyNode, name: string): AttributeNode | undefined {
 /** The `content` of a directive argument, when it is a static simple expression. */
 function argContent(prop: DirectiveNode): string | undefined {
   const arg = prop.arg
-  if (!arg || arg.type !== NodeTypes.SIMPLE_EXPRESSION) return undefined
+  if (!arg || arg.type !== NodeTypes.SIMPLE_EXPRESSION || !arg.isStatic) return undefined
   return arg.content
 }
 
@@ -132,8 +111,109 @@ function hasKeyBinding(node: AnyNode): boolean {
 /** Optional computed keys are fine; an optional receiver is not writable. */
 function hasOptionalReceiver(node: import('./ast.js').AstNode): boolean {
   node = unwrap(node)
-  if (node.type === 'OptionalMemberExpression' || node.type === 'OptionalCallExpression') return true
+  if (node.type === 'NullLiteral' || node.type === 'OptionalMemberExpression' || node.type === 'OptionalCallExpression') return true
   return node.type === 'MemberExpression' && hasOptionalReceiver(node.object)
+}
+
+function ruleOptions(config: RuleConfig | undefined): Record<string, unknown> {
+  const option = Array.isArray(config) ? config[1] : undefined
+  return option && typeof option === 'object' ? option as Record<string, unknown> : { mode: option }
+}
+
+/** Free names only: callback parameters do not refer to loop bindings. */
+function referencesAny(exp: DirectiveNode['exp'], names: Set<string>): boolean {
+  const ast = expressionAst(exp)
+  let found = false
+  if (ast) walkIdentifiers(ast, id => { if (names.has(id.name)) found = true })
+  return found
+}
+
+function stringLiteral(exp: DirectiveNode['exp'], options: Record<string, unknown>): boolean {
+  const ast = expressionAst(exp)
+  if (!ast || (ast.type !== 'StringLiteral'
+    && !(ast.type === 'TemplateLiteral' && ast.expressions.length === 0))) return false
+  if (options.ignoreIncludesComment && ('comments' in ast && Array.isArray(ast.comments) && ast.comments.length
+    || ast.leadingComments?.length || ast.trailingComments?.length)) return false
+  const raw = ast.type === 'StringLiteral' ? String(ast.extra?.raw ?? '').slice(1, -1)
+    : ast.quasis[0]?.value.raw ?? ''
+  // Escaped quotes/backslashes are harmless; control/unicode escapes aren't.
+  if (options.ignoreStringEscape) {
+    for (let i = 0; i < raw.length; i++) {
+      if (raw[i] === '\\' && 'nrvtbfux'.includes(raw[++i] ?? '')) return false
+    }
+  }
+  return true
+}
+
+function customComponent(node: ElementNode, ignoreElementNamespaces = false): boolean {
+  const native = node.tag === 'slot' || (ignoreElementNamespaces
+    ? isHTMLTag(node.tag) || isSVGTag(node.tag) || isMathMLTag(node.tag)
+    : node.ns === 0 ? isHTMLTag(node.tag) : node.ns === 1 ? isSVGTag(node.tag) : isMathMLTag(node.tag))
+  return !native || !!findAttr(node, 'is')
+    || node.props.some(p => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'is')
+}
+
+/** Locate a token relative to a compiler node without losing multiline offsets. */
+function relativeLoc(node: { loc: AnyNode['loc'] }, relative: number): ReturnType<typeof loc> {
+  const prefix = node.loc.source.slice(0, Math.max(0, relative))
+  const lines = prefix.split('\n')
+  return {
+    offset: node.loc.start.offset + relative,
+    line: node.loc.start.line + lines.length - 1,
+    column: lines.length > 1 ? lines.at(-1)!.length + 1 : node.loc.start.column + relative,
+  }
+}
+
+function astLoc(exp: NonNullable<DirectiveNode['exp']>, node: import('./ast.js').AstNode, root: import('./ast.js').AstNode): ReturnType<typeof loc> {
+  const decodedOffset = Math.max(0, (node.start ?? 0) - (root.type === 'Program' ? 0 : 1))
+  if (exp.type !== NodeTypes.SIMPLE_EXPRESSION || exp.content === exp.loc.source) return relativeLoc(exp, decodedOffset)
+  // Babel sees decoded entities; compiler locations refer to the original SFC.
+  // Decode only entity tokens, using the same compiler as the template parser.
+  let raw = 0
+  let decoded = 0
+  while (raw < exp.loc.source.length && decoded < decodedOffset) {
+    const entity = /^&(?:#x[\da-f]+|#\d+|[a-z][\da-z]*);/i.exec(exp.loc.source.slice(raw))?.[0]
+    if (entity) {
+      const text = baseParse(entity).children[0]
+      if (text?.type === NodeTypes.TEXT && exp.content.startsWith(text.content, decoded)) {
+        if (decoded + text.content.length > decodedOffset) break
+        decoded += text.content.length
+        raw += entity.length
+        continue
+      }
+    }
+    raw++
+    decoded++
+  }
+  return relativeLoc(exp, raw)
+}
+
+function visitExpression(node: import('./ast.js').AstNode, visit: (node: import('./ast.js').AstNode) => void): void {
+  visit(node)
+  for (const [key, value] of Object.entries(node)) {
+    if (['loc', 'extra', 'comments', 'leadingComments', 'trailingComments', 'innerComments'].includes(key)) continue
+    for (const child of Array.isArray(value) ? value : [value]) {
+      if (child && typeof child === 'object' && typeof child.type === 'string') visitExpression(child, visit)
+    }
+  }
+}
+
+const normalizeComponentName = (name: string): string => name.replace(/-/g, '').toLowerCase()
+
+type Ast = import('./ast.js').AstNode
+function splitConditions(ast: Ast, operator: string): Ast[] {
+  return ast.type === 'LogicalExpression' && ast.operator === operator
+    ? [...splitConditions(ast.left, operator), ...splitConditions(ast.right, operator)] : [ast]
+}
+
+function equalConditions(a: Ast, b: Ast): boolean {
+  if (a.type !== b.type) return false
+  if (a.type === 'LogicalExpression' && b.type === 'LogicalExpression'
+    && ['&&', '||'].includes(a.operator) && a.operator === b.operator) {
+    return equalConditions(a.left, b.left) && equalConditions(a.right, b.right)
+      || equalConditions(a.left, b.right) && equalConditions(a.right, b.left)
+  }
+  return astKey(a) === astKey(b)
 }
 
 const RULES: Rule[] = [
@@ -144,12 +224,17 @@ const RULES: Rule[] = [
       if (node.type !== NodeTypes.ELEMENT) return
       const vFor = findDir(node, 'for')
       if (!vFor) return
-      if (hasKeyBinding(node)) return
-      report({
-        ...loc(vFor),
-        message: `<${node.tag}> with 'v-for' must have a ':key'.`,
-        help: 'Add a unique :key binding to help Vue track each item.',
-      })
+      const checkKey = (element: ElementNode): void => {
+        if (element.props.some(p => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'key')) return
+        if (element.tag === 'template' || element.tag === 'slot') {
+          for (const child of element.children) if (child.type === NodeTypes.ELEMENT) checkKey(child)
+        } else if (!customComponent(element)) report({
+          ...loc(element),
+          message: `<${element.tag}> with 'v-for' must have a ':key'.`,
+          help: 'Add a unique :key binding to help Vue track each item.',
+        })
+      }
+      checkKey(node)
     },
   },
   {
@@ -157,10 +242,16 @@ const RULES: Rule[] = [
     severity: 'error',
     check(node, report) {
       if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template' || !findDir(node, 'for')) return
+      const loop = findDir(node, 'for')?.forParseResult
+      const names = new Set([loop?.value, loop?.key, loop?.index].flatMap(bindingNames))
+      const key = node.props.find((p): p is DirectiveNode => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'key')
+      if (key && referencesAny(key.exp, names)) return
       for (const child of node.children) {
-        if (child.type !== NodeTypes.ELEMENT || findDir(child, 'for') || !hasKeyBinding(child)) continue
+        if (child.type !== NodeTypes.ELEMENT || ['for', 'if', 'else-if', 'else'].some(name => findDir(child, name))) continue
+        const childKey = child.props.find((p): p is DirectiveNode => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'key')
+        if (!childKey || !referencesAny(childKey.exp, names)) continue
         report({
-          ...loc(child),
+          ...loc(childKey),
           message: "Place the v-for key on <template>, not its child.",
           help: 'The key identifies the whole iteration fragment in Vue 3.',
         })
@@ -175,33 +266,38 @@ const RULES: Rule[] = [
       const context = node as AnnotatedElement
       for (const prop of node.props) {
         if (prop.type !== NodeTypes.DIRECTIVE || prop.name !== 'model') continue
-        const raw = expressionAst(prop.exp)
-        const target = raw && unwrap(raw)
-        const native = node.tagType === ElementTypes.ELEMENT
-        let problem: string | null = null
-        if (!target) problem = 'requires a writable expression'
-        else if (target.type !== 'Identifier' && target.type !== 'MemberExpression') problem = 'requires an assignable variable or member expression'
-        else if (hasOptionalReceiver(target)) problem = 'cannot assign through optional chaining'
-        else if (target.type === 'Identifier' && context.__locals?.has(target.name)) problem = 'cannot assign directly to a loop or slot variable'
-        else if (native && !['input', 'textarea', 'select'].includes(node.tag)) problem = `is not supported on <${node.tag}>`
-        else if (native && prop.arg) problem = 'cannot have an argument on a native element'
-        else if (native && prop.modifiers.some(modifier => !['lazy', 'trim', 'number'].includes(modifier.content))) problem = 'has an unsupported modifier on a native element'
-        else if (native && node.tag === 'input' && findAttr(node, 'type')?.value?.content.toLowerCase() === 'file') problem = 'cannot write to a file input'
-        if (problem) report({
-          ...loc(prop),
-          message: `v-model ${problem}.`,
+        const emit = (problem: string, position = loc(prop)): void => report({
+          ...position, message: `v-model ${problem}.`,
           help: 'Bind a writable state variable or property on an input, textarea, select, or component.',
         })
+        const native = !customComponent(node)
+        if ((native && !['input', 'textarea', 'select'].includes(node.tag))
+          || ['slot', 'keep-alive', 'transition', 'transition-group'].includes(node.tag)) emit(`is not supported on <${node.tag}>`)
+        if (node.tag === 'input' && findAttr(node, 'type')?.value?.content === 'file') emit('cannot write to a file input')
+        if (native && prop.arg) emit('cannot have an argument on a native element', loc(prop.arg))
+        if (native) for (const modifier of prop.modifiers) {
+          if (!['lazy', 'trim', 'number'].includes(modifier.content)) emit('has an unsupported modifier on a native element', loc(modifier))
+        }
+        if (!expContent(prop.exp)?.trim()) { emit('requires a writable expression'); continue }
+        const raw = expressionAst(prop.exp)
+        // Syntax errors belong to no-parsing-error, not this rule.
+        if (!raw || raw.type === 'Program') continue
+        const target = unwrap(raw)
+        const position = astLoc(prop.exp!, raw, raw)
+        if (target.type !== 'Identifier' && target.type !== 'MemberExpression') emit('requires an assignable variable or member expression', position)
+        else if (hasOptionalReceiver(target)) emit('cannot assign through optional or null receivers', position)
+        if (target.type === 'Identifier' && context.__locals?.has(target.name)) emit('cannot assign directly to a loop or slot variable', astLoc(prop.exp!, target, raw))
       }
     },
   },
   {
     name: 'vue/no-v-html',
     severity: 'warning',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
       const dir = findDir(node, 'html')
       if (!dir) return
+      if (typeof options.ignorePattern === 'string' && new RegExp(options.ignorePattern).test(expContent(dir.exp) ?? '')) return
       report({
         ...loc(dir),
         message: `'v-html' directive can lead to XSS attacks.`,
@@ -212,11 +308,13 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-use-v-if-with-v-for',
     severity: 'error',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
       const vFor = findDir(node, 'for')
       const vIf = findDir(node, 'if')
       if (!vFor || !vIf) return
+      const loop = vFor.forParseResult
+      if (options.allowUsingIterationVar && referencesAny(vIf.exp, new Set([loop?.value, loop?.key, loop?.index].flatMap(bindingNames)))) return
       report({
         ...loc(vIf),
         message: `'v-if' should not be used together with 'v-for' on <${node.tag}>.`,
@@ -233,7 +331,7 @@ const RULES: Rule[] = [
       if (['for', 'if', 'else-if', 'else'].some(name => findDir(node, name))) return
       if (!hasKeyBinding(node)) return
       report({
-        ...loc(node),
+        ...loc(findAttr(node, 'key') ?? propsOf(node).find(p => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'key')!),
         message: `'<template>' cannot be keyed.`,
         help: 'Place the key on a real element instead.',
       })
@@ -242,13 +340,11 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-useless-mustaches',
     severity: 'warning',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.INTERPOLATION) return
       const c = node.content
       if (!c || c.type !== NodeTypes.SIMPLE_EXPRESSION) return
-      const text = (c.content || '').trim()
-      // A mustache wrapping nothing but a string literal is just static text.
-      if (!/^(['"])(?:(?!\1)[^\\])*\1$/.test(text)) return
+      if (!stringLiteral(c, options)) return
       report({
         ...loc(node),
         message: 'Unnecessary mustache interpolation around a literal.',
@@ -259,7 +355,7 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-duplicate-attributes',
     severity: 'error',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
       const seen = new Map<string, AttributeNode | DirectiveNode>()
       for (const p of node.props) {
@@ -267,8 +363,11 @@ const RULES: Rule[] = [
         const name = p.type === NodeTypes.DIRECTIVE
           ? (p.name === 'bind' && argContent(p)) || null
           : p.name
-        if (!name || name === 'class' || name === 'style') continue
-        if (seen.has(name)) {
+        if (!name) continue
+        const coexist = name === 'class' && options.allowCoexistClass !== false
+          || name === 'style' && options.allowCoexistStyle !== false
+        const identity = coexist ? `${name}:${p.type}` : name
+        if (seen.has(identity)) {
           report({
             ...loc(p),
             message: `Duplicate attribute '${name}'.`,
@@ -276,7 +375,7 @@ const RULES: Rule[] = [
           })
           continue
         }
-        seen.set(name, p)
+        seen.set(identity, p)
       }
     },
   },
@@ -286,8 +385,7 @@ const RULES: Rule[] = [
     check(node, report) {
       if (node.type !== NodeTypes.ELEMENT || node.tag !== 'component') return
       const hasIs = node.props.some(p =>
-        (p.type === NodeTypes.ATTRIBUTE && p.name === 'is')
-        || (p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'is'))
+        (p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'is'))
       if (hasIs) return
       report({
         ...loc(node),
@@ -299,8 +397,9 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-v-text-v-html-on-component',
     severity: 'error',
-    check(node, report) {
-      if (node.type !== NodeTypes.ELEMENT || node.tagType !== ElementTypes.COMPONENT) return
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node, options.ignoreElementNamespaces === true)) return
+      if (Array.isArray(options.allow) && options.allow.some(name => typeof name === 'string' && normalizeComponentName(name) === normalizeComponentName(node.tag))) return
       for (const name of ['html', 'text']) {
         const dir = findDir(node, name)
         if (!dir) continue
@@ -315,32 +414,61 @@ const RULES: Rule[] = [
   {
     name: 'vue/valid-v-for',
     severity: 'error',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
       const dir = findDir(node, 'for')
       if (!dir) return
-      // compiler-sfc leaves forParseResult undefined when the expression is
-      // not a valid `alias in expression` form.
-      if (dir.forParseResult?.source) return
-      report({
-        ...loc(dir),
-        message: `'v-for' has an invalid expression.`,
-        help: 'Use the form "item in items" or "(item, index) in items".',
+      const emit = (message: string, position = loc(dir)): void => report({ ...position, message })
+      const loop = dir.forParseResult
+      const names = new Set([loop?.value, loop?.key, loop?.index].flatMap(bindingNames))
+      const checkKey = (element: ElementNode): void => {
+        const key = element.props.find((p): p is DirectiveNode => p.type === NodeTypes.DIRECTIVE && p.name === 'bind' && argContent(p) === 'key')
+        if (!key && element.tag === 'template') {
+          for (const child of element.children) {
+            if (child.type !== NodeTypes.ELEMENT) continue
+            const childFor = findDir(child, 'for')
+            if (childFor && referencesAny(childFor.forParseResult?.source, names)) continue
+            checkKey(child)
+          }
+          return
+        }
+        if (!key && customComponent(element)) emit('Custom elements in iteration require a :key.', loc(element))
+        if (key && !referencesAny(key.exp, names)) emit('The key must use a variable defined by v-for.', loc(key))
+      }
+      checkKey(node)
+      if (dir.arg) emit('v-for cannot have an argument.', loc(dir.arg))
+      if (dir.modifiers[0]) emit('v-for cannot have modifiers.', loc(dir.modifiers[0]))
+      const content = expContent(dir.exp)
+      if (!content?.trim()) { emit('v-for requires a value.'); return }
+      if (!loop?.source) {
+        if (expressionAst(dir.exp)?.type === 'Identifier') emit('v-for requires the form "item in items".', relativeLoc(dir.exp!, -1))
+        return // Invalid JavaScript belongs to no-parsing-error.
+      }
+      const delimiter = /\s+(?:in|of)\s+/.exec(content)
+      if (!delimiter) return
+      let lhs = content.slice(0, delimiter.index).trim()
+      let start = content.indexOf(lhs)
+      if (lhs.startsWith('(') && lhs.endsWith(')')) { lhs = lhs.slice(1, -1); start++ }
+      const aliases = expressionAst({ ...dir.exp!, type: NodeTypes.SIMPLE_EXPRESSION, isStatic: false, constType: 0, content: `[${lhs}]` })
+      if (aliases?.type !== 'ArrayExpression') return
+      aliases.elements.forEach((alias, index) => {
+        if (!alias && options.allowEmptyAlias !== true) emit('Invalid empty v-for alias.', loc(dir.exp!))
+        else if (alias && index > 0 && alias.type !== 'Identifier') {
+          emit('The key and index aliases must be identifiers.', relativeLoc(dir.exp!, start + (alias.start ?? 2) - 2))
+        }
       })
     },
   },
   {
     name: 'vue/no-useless-v-bind',
     severity: 'warning',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
       for (const p of node.props) {
-        if (p.type !== NodeTypes.DIRECTIVE || p.name !== 'bind') continue
+        if (p.type !== NodeTypes.DIRECTIVE || p.name !== 'bind' || !p.arg || p.modifiers.length) continue
         const exp = p.exp
         if (!exp || exp.type !== NodeTypes.SIMPLE_EXPRESSION || exp.isStatic) continue
-        const text = String(exp.content).trim()
-        // `:foo="'bar'"` is just `foo="bar"`.
-        if (!/^(['"])(?:(?!\1)[^\\])*\1$/.test(text)) continue
+        if (!stringLiteral(exp, options)) continue
         report({
           ...loc(p),
           message: 'v-bind with a string literal is redundant.',
@@ -352,31 +480,34 @@ const RULES: Rule[] = [
   {
     name: 'vue/this-in-template',
     severity: 'error',
-    check(node, report) {
-      const exps: NonNullable<DirectiveNode['exp']>[] = []
-      if (node.type === NodeTypes.INTERPOLATION && node.content) exps.push(node.content)
-      if (node.type === NodeTypes.ELEMENT) {
-        for (const p of node.props) {
-          if (p.type !== NodeTypes.DIRECTIVE || !p.exp) continue
-          // `:onerror="\`this.src = ...\`"` binds a DOM handler as a string;
-          // the `this` there is the element at runtime, not the component.
-          const arg = argContent(p)
-          if (p.name === 'bind' && typeof arg === 'string' && /^on[a-z]/.test(arg)) {
-            continue
-          }
-          exps.push(p.exp)
-        }
+    check(node, report, options) {
+      const expressions: NonNullable<DirectiveNode['exp']>[] = []
+      if (node.type === NodeTypes.INTERPOLATION) expressions.push(node.content)
+      if (node.type === NodeTypes.ELEMENT) for (const prop of node.props) {
+        if (prop.type !== NodeTypes.DIRECTIVE) continue
+        if (prop.name === 'for') {
+          if (prop.forParseResult) expressions.push(prop.forParseResult.source)
+        } else if (prop.name !== 'slot' && prop.exp) expressions.push(prop.exp)
+        if (options.mode !== 'always' && prop.arg && prop.arg.type === NodeTypes.SIMPLE_EXPRESSION && !prop.arg.isStatic) expressions.push(prop.arg)
       }
-      for (const e of exps) {
-        if (e.type !== NodeTypes.SIMPLE_EXPRESSION || e.isStatic) continue
-        const text = String(e.content)
-        // `this` inside a string or template literal is not a template
-        // expression reference either.
-        if (!/(^|[^\w$.])this\s*\./.test(stripLiterals(text))) continue
-        report({
-          ...loc(e),
-          message: `Unexpected usage of 'this' in a template.`,
-          help: 'Template expressions resolve against the instance already.',
+      const locals = (node as AnyNode & Annotations).__locals
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        if (options.mode === 'always') {
+          walkIdentifiers(ast, id => {
+            if (locals?.has(id.name) || id.name === '$event') return
+            report({ ...astLoc(exp, id, ast), message: "Expected 'this'." })
+          })
+        } else visitExpression(ast, member => {
+          if (member.type !== 'MemberExpression' && member.type !== 'OptionalMemberExpression') return
+          if (member.object.type !== 'ThisExpression') return
+          const name = member.computed ? member.property.type === 'StringLiteral' ? member.property.value : null : staticName(member.property)
+          if (!name || locals?.has(name) || !/^[$A-Z_a-z][$\w]*$/.test(name)) return
+          // Removing this must leave a legal standalone identifier.
+          const parsed = expressionAst({ type: NodeTypes.SIMPLE_EXPRESSION, content: name, isStatic: false, constType: 0, loc: exp.loc })
+          if (parsed?.type !== 'Identifier' || ['eval', 'arguments', 'let', 'await', 'yield'].includes(name)) return
+          report({ ...astLoc(exp, member.object, ast), message: "Unexpected usage of 'this' in a template.", help: 'Template expressions resolve against the instance already.' })
         })
       }
     },
@@ -415,52 +546,77 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-static-inline-styles',
     severity: 'warning',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
-      const attr = findAttr(node, 'style')
-      if (!attr?.value?.content?.trim()) return
-      report({
-        ...loc(attr),
-        message: 'Static inline styles are hard to override and reuse.',
+      const emit = (position: ReturnType<typeof loc>): void => report({
+        ...position, message: 'Static inline styles are hard to override and reuse.',
         help: 'Move the declarations into a class.',
       })
+      for (const prop of node.props) {
+        if (prop.type === NodeTypes.ATTRIBUTE) {
+          if (prop.name === 'style') emit(loc(prop))
+          continue
+        }
+        if (options.allowBinding || prop.name !== 'bind' || argContent(prop) !== 'style' || !prop.exp) continue
+        const ast = expressionAst(prop.exp)
+        const elements = ast?.type === 'ObjectExpression' ? [ast] : ast?.type === 'ArrayExpression' ? ast.elements : null
+        if (!ast || !elements) continue
+        const properties: import('./ast.js').AstNode[] = []
+        let allStatic = true
+        outer: for (const element of elements) {
+          if (!element) continue
+          if (element.type !== 'ObjectExpression') { allStatic = false; break }
+          let objectStatic = true
+          for (const member of element.properties) {
+            if (member.type === 'SpreadElement' || member.computed) { allStatic = false; break outer }
+            if (member.type === 'ObjectProperty' && ['StringLiteral', 'NumericLiteral', 'BooleanLiteral', 'NullLiteral', 'RegExpLiteral', 'BigIntLiteral'].includes(member.value.type)) properties.push(member)
+            else objectStatic = false
+          }
+          if (!objectStatic) { allStatic = false; break }
+        }
+        if (allStatic) emit(loc(prop))
+        else for (const member of properties) emit(astLoc(prop.exp, member, ast))
+      }
     },
   },
   {
     name: 'vue/no-dupe-v-else-if',
     severity: 'error',
     check(node, report) {
-      if (node.type !== NodeTypes.ELEMENT) return
-      // compiler-sfc keeps the chain flat among siblings, so the branches are
-      // collected by walking forward from the `v-if` over `v-else-if` nodes.
-      if (!findDir(node, 'if')) return
-      const seen = new Set<string>()
-      const first = findDir(node, 'if')
-      const firstKey = expressionKey(first?.exp)
-      if (firstKey) seen.add(firstKey)
-
-      for (const sib of (node as AnnotatedElement).__siblings ?? []) {
-        const elif = findDir(sib, 'else-if')
-        if (!elif?.exp) continue
-        const key = expressionKey(elif.exp)
-        if (!key) continue
-        if (seen.has(key)) {
-          report({
-            ...loc(elif),
-            message: 'This branch can never execute: its condition is a '
-              + 'duplicate of an earlier one in the chain.',
-            help: 'Remove the duplicate branch or fix its condition.',
-          })
-          continue
+      if (node.type !== NodeTypes.ELEMENT || !findDir(node, 'if')) return
+      const previous: Ast[] = []
+      const first = expressionAst(findDir(node, 'if')?.exp)
+      if (first && first.type !== 'Program') previous.push(first)
+      for (const sibling of (node as AnnotatedElement).__siblings ?? []) {
+        const exp = findDir(sibling, 'else-if')?.exp
+        const ast = expressionAst(exp)
+        if (!exp || !ast || ast.type === 'Program') continue
+        // Keep OR terms as conjunctions, without distributing nested terms:
+        // this matches upstream's bounded comparison and avoids exponential DNF.
+        const candidates = (ast.type === 'LogicalExpression' && ast.operator === '&&'
+          ? [...splitConditions(ast, '&&'), ast] : [ast]).map(part => ({ part, terms: splitConditions(part, '||').map(term => splitConditions(term, '&&')) }))
+        let covered: Ast | undefined
+        for (const earlier of previous.toReversed()) {
+          const terms = splitConditions(earlier, '||').map(term => splitConditions(term, '&&'))
+          for (const candidate of candidates) {
+            candidate.terms = candidate.terms.filter(term => !terms.some(prior => prior.every(a => term.some(b => equalConditions(a, b)))))
+            if (!candidate.terms.length) { covered = candidate.part; break }
+          }
+          if (covered) break
         }
-        seen.add(key)
+        if (covered) report({
+          ...astLoc(exp, covered, ast),
+          message: 'This branch can never execute: its condition is covered by earlier branches.',
+          help: 'Remove the unreachable branch or fix its condition.',
+        })
+        previous.push(ast)
       }
     },
   },
   {
     name: 'vue/no-mutating-props',
     severity: 'error',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT && node.type !== NodeTypes.INTERPOLATION) return
       const context = node as AnnotatedElement
       const script = context.__script
@@ -472,7 +628,7 @@ const RULES: Rule[] = [
         const ast = expressionAst(prop.exp)
         if (!ast) continue
         const locals = prop.name === 'if' ? context.__outerLocals : context.__locals
-        const reported = new Set<string>()
+        const reported = new Set<import('./ast.js').AstNode>()
         walkIdentifiers(ast, (id, _parent, ancestors) => {
           if (locals?.has(id.name)) return
           const isObject = script.propObjects.has(id.name)
@@ -510,10 +666,12 @@ const RULES: Rule[] = [
               && target.type === 'MemberExpression'
               && (!target.computed || target.property.type === 'StringLiteral')
               && ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin'].includes(staticName(target.property) ?? ''))
-          if (!mutation || reported.has(id.name)) return
-          reported.add(id.name)
+          const mutationNode = parent ?? target
+          if (!mutation || reported.has(mutationNode)) return
+          if (options.shallowOnly && (members > (isObject ? 1 : 0) || parent?.type === 'CallExpression')) return
+          reported.add(mutationNode)
           report({
-            ...loc(prop),
+            ...astLoc(prop.exp!, mutationNode, ast),
             message: `Unexpected mutation of prop '${propName ?? id.name}'.`,
             help: 'Props are read-only; emit an event or use a local copy.',
           })
@@ -526,12 +684,11 @@ const RULES: Rule[] = [
     severity: 'error',
     check(node, report) {
       if (node.type !== NodeTypes.ELEMENT || node.tag !== 'textarea') return
-      const interp = node.children.find(
+      const interp = node.children.filter(
         (c): c is InterpolationNode => c.type === NodeTypes.INTERPOLATION,
       )
-      if (!interp) return
-      report({
-        ...loc(interp),
+      for (const child of interp) report({
+        ...loc(child),
         message: 'Interpolation inside <textarea> is not rendered.',
         help: 'Use v-model or :value instead.',
       })
@@ -540,19 +697,19 @@ const RULES: Rule[] = [
   {
     name: 'vue/no-child-content',
     severity: 'error',
-    check(node, report) {
+    check(node, report, options) {
       if (node.type !== NodeTypes.ELEMENT) return
-      for (const name of ['html', 'text']) {
+      for (const name of ['html', 'text', ...(Array.isArray(options.additionalDirectives) ? options.additionalDirectives.filter((x): x is string => typeof x === 'string') : [])]) {
         const dir = findDir(node, name)
         if (!dir) continue
         // Whitespace-only children are not real content.
         const hasContent = node.children.some(c =>
           (c.type === NodeTypes.TEXT && c.content.trim())
           || c.type === NodeTypes.ELEMENT
-          || c.type === NodeTypes.INTERPOLATION)
+          || c.type === NodeTypes.INTERPOLATION || c.type === NodeTypes.COMMENT)
         if (!hasContent) continue
         report({
-          ...loc(dir),
+          ...relativeLoc(node, node.loc.source.indexOf('>', (node.props.at(-1)?.loc.end.offset ?? node.loc.start.offset) - node.loc.start.offset) + 1),
           message: `'v-${name}' will overwrite the element's own content.`,
           help: 'Remove the child content, or drop the directive.',
         })
@@ -676,7 +833,7 @@ export function checkTemplate(
           rule: rule.name,
           ...d,
         } as Diagnostic)
-      })
+      }, ruleOptions(config?.[rule.name]))
     }
     for (const child of children) walk(child, locals)
     // Directive bodies of <template v-slot> live in children already.

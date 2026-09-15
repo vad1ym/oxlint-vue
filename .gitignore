@@ -9,3 +9,6 @@ tsconfig.tsbuildinfo
 
 # Written by `oxxxlint init` when testing the tool inside its own repo.
 /.oxfmtrc.json
+
+# Generated compatibility report; the reviewed baseline lives in test/compat.
+/compat-report.json

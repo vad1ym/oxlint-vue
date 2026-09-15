@@ -17,6 +17,7 @@ import os from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { preprocess } from '../dist/preprocess.js'
 import { resolveBin } from '../dist/resolve.js'
+import { parseOxlintJson } from '../dist/run.js'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
 const OXLINT = resolveBin('oxlint', ROOT, import.meta.url)
@@ -48,6 +49,8 @@ const files = roots.flatMap(r => (
   fs.statSync(r).isDirectory() ? findVue(r) : [r]
 ))
 
+if (!files.length) throw new Error('Stress corpus contains no Vue files')
+
 const outDir = fs.mkdtempSync(path.join(os.tmpdir(), 'oxxx-stress-'))
 const failures = { invariant: [], threw: [] }
 const virtualToSource = new Map()
@@ -76,11 +79,13 @@ for (const f of files) {
   ok++
   const virt = path.join(outDir, `${ok}_${path.basename(f)}.ts`)
   fs.writeFileSync(virt, code)
-  virtualToSource.set(path.basename(virt), f)
+  virtualToSource.set(fs.realpathSync(virt), f)
 }
 
 // All rules off: anything reported now is a parse/syntax failure.
 let raw = ''
+let engineFailure = null
+let exitStatus = 0
 try {
   raw = execFileSync(OXLINT, ['--format=json', '-A', 'all', outDir], {
     encoding: 'utf8',
@@ -88,18 +93,20 @@ try {
   })
 } catch (e) {
   raw = e.stdout ?? ''
+  exitStatus = e.status
+  if (e.status !== 1) engineFailure = `oxlint failed: ${e.message}`
 }
 
 let syntax = []
 try {
-  syntax = (JSON.parse(raw).diagnostics ?? []).map(d => ({
-    file: virtualToSource.get(path.basename(d.filename)) ?? d.filename,
-    message: d.message,
-    span: d.labels?.[0]?.span,
-  }))
-} catch {
-  console.error('could not parse oxlint output:', raw.slice(0, 400))
+  syntax = parseOxlintJson(raw, outDir, virtualToSource, ROOT).map(d => ({ file: d.filename, message: d.message }))
+  const payload = JSON.parse(raw)
+  if (payload.number_of_files !== virtualToSource.size) throw new Error(`oxlint checked ${payload.number_of_files} files; expected ${virtualToSource.size}`)
+  if (exitStatus === 1 && !syntax.length) throw new Error('oxlint failed without diagnostics')
+} catch (error) {
+  engineFailure = error.message
 }
+if (engineFailure) console.error(engineFailure)
 
 console.log(`corpus:            ${files.length} files`)
 console.log(`invariant holds:   ${ok}`)
@@ -115,5 +122,5 @@ for (const s of syntax.slice(0, 10)) {
 
 fs.rmSync(outDir, { recursive: true, force: true })
 
-const failed = failures.invariant.length + failures.threw.length + syntax.length
+const failed = failures.invariant.length + failures.threw.length + syntax.length + (engineFailure ? 1 : 0)
 process.exit(failed === 0 ? 0 : 1)

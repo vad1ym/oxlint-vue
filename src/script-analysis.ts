@@ -1,3 +1,4 @@
+import { isGloballyAllowed } from '@vue/shared'
 import { extractIdentifiers } from '@vue/compiler-core'
 import { babelParse } from '@vue/compiler-sfc'
 import { staticName, unwrap } from './ast.js'
@@ -89,6 +90,6 @@ export function analyzeScript(source: string | undefined): ScriptAnalysis {
       }
     }
   }
-  for (const name of names) if (!declared.has(name)) result.props.set(name, name)
+  for (const name of names) if (!declared.has(name) && !isGloballyAllowed(name)) result.props.set(name, name)
   return result
 }

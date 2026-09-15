@@ -1,0 +1,23 @@
+{
+  "repository": "https://github.com/nuxt/nuxt",
+  "revision": "412786a1d8283aaa2360a855d44ebd3ac21924f1",
+  "tag": "v4.1.2",
+  "files": {
+    "Counter.vue": {
+      "source": "test/fixtures/basic/app/components/Counter.vue",
+      "sha256": "6ac8333318243e83720373837e45e79095b7b455737e98a468848cd5a3cbfe4b"
+    },
+    "ComponentWithRef.vue": {
+      "source": "test/fixtures/basic/app/components/ComponentWithRef.vue",
+      "sha256": "59926060bf0072ae9c4a833cf78c90046fc4487ca0c4e409bedfacf3b0d85b99"
+    },
+    "DelayedModel.vue": {
+      "source": "test/fixtures/basic/app/components/DelayedModel.vue",
+      "sha256": "e89a1180760571a5a3b94477fc03ec21be91923b249f60cac85fa834ad015e6d"
+    },
+    "islands/PureComponent.vue": {
+      "source": "test/fixtures/basic/app/components/islands/PureComponent.vue",
+      "sha256": "73e2c38c0d55e5a964de05334084be8de16e575fbcf2c41186953d44e214ca96"
+    }
+  }
+}

@@ -1,0 +1,543 @@
+{
+  "no-dupe-v-else-if/valid/23": {
+    "category": "extra",
+    "expected": [],
+    "actual": [
+      {
+        "line": 1,
+        "column": 49,
+        "severity": 2
+      }
+    ]
+  },
+  "no-mutating-props/invalid/1": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 26,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 9,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 10,
+        "column": 26,
+        "severity": 2
+      },
+      {
+        "line": 12,
+        "column": 24,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/2": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 26,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 26,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/3": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 26,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 26,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 26,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/4": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 29,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 29,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 29,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 29,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/5": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 16,
+        "column": 17,
+        "severity": 2
+      },
+      {
+        "line": 17,
+        "column": 17,
+        "severity": 2
+      },
+      {
+        "line": 18,
+        "column": 17,
+        "severity": 2
+      },
+      {
+        "line": 19,
+        "column": 17,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/6": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 7,
+        "column": 17,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 18,
+        "severity": 2
+      },
+      {
+        "line": 9,
+        "column": 18,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/7": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 8,
+        "column": 31,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/8": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 31,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 28,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/9": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 38,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 38,
+        "severity": 2
+      },
+      {
+        "line": 10,
+        "column": 40,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/10": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 9,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 13,
+        "column": 24,
+        "severity": 2
+      },
+      {
+        "line": 22,
+        "column": 17,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/11": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/12": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 9,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 10,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 11,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 12,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/13": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/14": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/15": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/16": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/19": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 6,
+        "column": 9,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/20": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 6,
+        "column": 9,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/21": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 6,
+        "column": 9,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/22": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 5,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 8,
+        "column": 15,
+        "severity": 2
+      },
+      {
+        "line": 11,
+        "column": 17,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  },
+  "no-mutating-props/invalid/23": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 4,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 18,
+        "column": 9,
+        "severity": 2
+      }
+    ],
+    "actual": [
+      {
+        "line": 4,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 5,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 6,
+        "column": 27,
+        "severity": 2
+      }
+    ]
+  },
+  "no-mutating-props/invalid/24": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 3,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 4,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 15,
+        "column": 11,
+        "severity": 2
+      }
+    ],
+    "actual": [
+      {
+        "line": 3,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 4,
+        "column": 27,
+        "severity": 2
+      },
+      {
+        "line": 7,
+        "column": 27,
+        "severity": 2
+      }
+    ]
+  },
+  "no-mutating-props/invalid/25": {
+    "category": "missed",
+    "expected": [
+      {
+        "line": 7,
+        "column": 24,
+        "severity": 2
+      }
+    ],
+    "actual": []
+  }
+}

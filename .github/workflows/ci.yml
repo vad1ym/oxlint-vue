@@ -43,6 +43,15 @@ jobs:
 
       - run: pnpm typecheck
 
+      - run: pnpm compat --json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vue-compat-node-${{ matrix.node }}
+          path: compat-report.json
+          if-no-files-found: ignore
+
       # The suite drives the real oxlint and oxfmt binaries, including a full
       # stdio LSP session, so the peers must be installed -- which
       # --frozen-lockfile guarantees.

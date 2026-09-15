@@ -8,7 +8,7 @@ export type AstNode = Parameters<typeof walkIdentifiers>[0]
 export function expressionAst(exp: DirectiveNode['exp']): AstNode | null {
   if (!exp || exp.type !== NodeTypes.SIMPLE_EXPRESSION || !exp.content.trim()) return null
   try {
-    const statement = babelParse(`(${exp.content})`, { plugins: ['typescript'] }).program.body[0]
+    const statement = babelParse(`(${exp.content}\n)`, { plugins: ['typescript'] }).program.body[0]
     return statement?.type === 'ExpressionStatement' ? statement.expression : null
   } catch {
     // Inline event handlers may contain several statements.
@@ -29,6 +29,10 @@ export function bindingNames(exp: DirectiveNode['exp']): string[] {
 export function expressionKey(exp: DirectiveNode['exp']): string | null {
   const ast = expressionAst(exp)
   if (!ast || ast.type === 'Program') return null
+  return astKey(ast)
+}
+
+export function astKey(ast: AstNode): string {
   return JSON.stringify(ast, (key, value: unknown) =>
     ['start', 'end', 'loc', 'extra', 'comments', 'leadingComments', 'trailingComments', 'innerComments', 'errors'].includes(key)
       ? undefined

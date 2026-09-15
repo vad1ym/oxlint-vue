@@ -29,7 +29,7 @@ you, since these names and oxlint's native `vue/*` rules never overlap.
 | `vue/no-useless-mustaches` | warn |
 | `vue/no-useless-v-bind` | warn |
 | `vue/require-v-for-with-index-key` | warn |
-| `vue/no-static-inline-styles` | off |
+| `vue/no-static-inline-styles` | warn |
 
 oxlint validates its own `rules` map strictly and does not know these names,
 so they live under `settings`, which it ignores:
@@ -105,3 +105,25 @@ Keys on Vue 3 `<template v-for>` belong to the template fragment. Conditional
 about the third iteration alias, or the second alias when the source is a known
 array, range or string. A direct `const items = [...]` initializer is recognized;
 unknown sources and object property names are not presumed to be array indices.
+
+
+## Behavioral compatibility
+
+Rule-name coverage above does not establish equivalent behavior. The
+[differential compatibility suite](compatibility.md) measures start positions,
+severities and individual findings against pinned eslint-plugin-vue tests.
+
+Implemented options include `allowUsingIterationVar` (`no-use-v-if-with-v-for`),
+`allowEmptyAlias` (`valid-v-for`), `allowCoexistClass`/`allowCoexistStyle`
+(`no-duplicate-attributes`), `ignorePattern` (`no-v-html`),
+`ignoreIncludesComment`/`ignoreStringEscape` (the two literal rules),
+`allow`/`ignoreElementNamespaces` (`no-v-text-v-html-on-component`), `allowBinding`
+(`no-static-inline-styles`), `additionalDirectives` (`no-child-content`),
+`shallowOnly` (template `no-mutating-props`) and `always`/`never`
+(`this-in-template`). These options go after the severity in a rule array.
+
+`require-v-for-key` checks native elements and fragment children; `valid-v-for`
+checks custom-component keys and that keys reference iteration variables.
+`no-v-for-template-key-on-child` checks misplaced iteration keys, allowing
+independent keys and separately controlled child branches. Duplicate condition
+checks also recognize branches covered by earlier AND/OR combinations.
