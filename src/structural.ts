@@ -575,6 +575,160 @@ function conditionalDirectiveRule(name: 'if' | 'else-if' | 'else'): Rule {
   }
 }
 
+interface SlotSyntax {
+  name: string
+  modifiers: string[]
+  modifierStart?: number
+}
+
+/** compiler-core folds dots in v-slot arguments into the argument text. */
+function slotSyntax(dir: DirectiveNode): SlotSyntax {
+  const raw = dir.rawName ?? dir.loc.source.split(/[\s=]/u, 1)[0] ?? 'v-slot'
+  const body = raw.startsWith('#') ? raw.slice(1) : raw.startsWith('v-slot') ? raw.slice(6) : ''
+  let argument = body
+  if (argument.startsWith(':')) argument = argument.slice(1)
+  if (argument.startsWith('[')) {
+    const close = argument.indexOf(']')
+    const rest = close < 0 ? '' : argument.slice(close + 1)
+    const modifiers = rest.startsWith('.') ? rest.slice(1).split('.').filter(Boolean) : []
+    return { name: argument.slice(0, close < 0 ? undefined : close + 1), modifiers,
+      ...(modifiers.length ? { modifierStart: raw.indexOf('.', raw.indexOf(']')) + 1 } : {}) }
+  }
+  const parts = argument.split('.')
+  const name = parts.shift() ?? ''
+  const modifiers = parts.filter(Boolean)
+  return { name: name || 'default', modifiers,
+    ...(modifiers.length ? { modifierStart: raw.indexOf('.') + 1 } : {}) }
+}
+
+function slotDirectives(node: ElementNode): DirectiveNode[] {
+  return node.props.filter((prop): prop is DirectiveNode =>
+    prop.type === NodeTypes.DIRECTIVE && prop.name === 'slot')
+}
+
+function slotGroups(owner: ElementNode): ElementNode[][] {
+  const groups: ElementNode[][] = []
+  let previous: ElementNode | undefined
+  for (const child of owner.children) {
+    if (child.type !== NodeTypes.ELEMENT) continue
+    const joinsPrevious = Boolean(previous && (findDir(child, 'else') || findDir(child, 'else-if'))
+      && (findDir(previous, 'if') || findDir(previous, 'else-if')))
+    if (joinsPrevious) groups.at(-1)!.push(child)
+    else groups.push([child])
+    previous = child
+  }
+  return groups
+}
+
+interface SlotLoopInfo { source: string, positions: (string | null)[], variables: string[] }
+
+function slotLoopInfo(element: ElementNode, dir: DirectiveNode): SlotLoopInfo | null {
+  const loop = findDir(element, 'for')?.forParseResult
+  if (!loop || dir.arg?.type !== NodeTypes.SIMPLE_EXPRESSION || dir.arg.isStatic) return null
+  const patterns = [loop.value, loop.key, loop.index]
+  const names = patterns.flatMap(bindingNames)
+  const ast = expressionAst(dir.arg)
+  const used = ast ? freeIdentifiers(ast, new Set(names)).flatMap(identifier =>
+    identifier.type === 'Identifier' ? [identifier.name] : []) : []
+  if (!used.length) return null
+  return { source: expContent(loop.source) ?? '', variables: used,
+    positions: patterns.map(pattern => {
+      const referenced = bindingNames(pattern).filter(name => used.includes(name))
+      return referenced.length ? `${referenced.join(',')}:${expContent(pattern)}` : null
+    }) }
+}
+
+function sameSlotLoop(a: SlotLoopInfo | null, b: SlotLoopInfo | null): boolean {
+  if (!a || !b) return a === b
+  if (a.source !== b.source) return false
+  const checked = new Set<string>()
+  for (let index = 0; index < Math.min(a.positions.length, b.positions.length); index++) {
+    const left = a.positions[index]
+    const right = b.positions[index]
+    if (left !== right) return false
+    if (left) for (const name of a.variables) if (left.startsWith(`${name}:`)) checked.add(name)
+  }
+  return a.variables.every(name => checked.has(name) || b.variables.includes(name))
+}
+
+function validVSlotRule(): Rule {
+  return {
+    name: 'vue/valid-v-slot',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const directives = slotDirectives(node)
+      for (let index = 0; index < directives.length; index++) {
+        const dir = directives[index]!
+        const parent: ElementNode | undefined = (node as AnnotatedElement).__parentElement
+        const owner: ElementNode | undefined = node.tag === 'template' ? parent : node
+        // A top-level <template v-slot> has the document fragment as owner and
+        // eslint-plugin-vue deliberately leaves it to the parser.
+        if (!owner) {
+          report({ message: "'v-slot' directive must be owned by a custom element, but 'template' is not.", ...loc(dir) })
+          continue
+        }
+        const syntax = slotSyntax(dir)
+        const isDefault = syntax.name === 'default'
+        const childSlotGroups = slotGroups(owner).map(group => group.flatMap(element =>
+          element.tag === 'template' ? slotDirectives(element) : []))
+          .filter(group => group.length > 0)
+
+        if (!customComponent(owner)) report({
+          message: `'v-slot' directive must be owned by a custom element, but '${owner.tag}' is not.`,
+          ...loc(dir),
+        })
+        if (!isDefault && node.tag !== 'template') report({
+          message: "Named slots must use '<template>' on a custom element.", ...loc(dir),
+        })
+        if (owner === node && childSlotGroups.length > 0) report({
+          message: "Default slot must use '<template>' on a custom element when there are other named slots.",
+          ...loc(dir),
+        })
+        if (index > 0) report({
+          message: "An element cannot have multiple 'v-slot' directives.", ...loc(dir),
+        })
+
+        if (owner === parent) {
+          const currentGroup = childSlotGroups.findIndex(group => group.includes(dir))
+          const normalizedName = [syntax.name, ...syntax.modifiers].join('.')
+          const currentLoop = slotLoopInfo(node, dir)
+          const sameGroups = childSlotGroups.filter(group => group.some(candidate => {
+            if ([slotSyntax(candidate).name, ...slotSyntax(candidate).modifiers].join('.') !== normalizedName) return false
+            const element = owner.children.find(child => child.type === NodeTypes.ELEMENT
+              && slotDirectives(child).includes(candidate))
+            return element?.type === NodeTypes.ELEMENT
+              && sameSlotLoop(currentLoop, slotLoopInfo(element, candidate))
+          }))
+          const loop = findDir(node, 'for')
+          const duplicate = (): void => report({
+            message: "An element cannot have multiple '<template>' elements which are distributed to the same slot.",
+            ...loc(dir),
+          })
+          if (loop && currentLoop === null) duplicate()
+          if (sameGroups.length >= 2 && !sameGroups[0]?.includes(dir) && currentGroup >= 0) duplicate()
+        }
+
+        const slotParams = new Set(bindingNames(dir.exp))
+        const argumentAst = dir.arg?.type === NodeTypes.SIMPLE_EXPRESSION && !dir.arg.isStatic
+          ? expressionAst(dir.arg) : null
+        if (argumentAst && freeIdentifiers(argumentAst, slotParams).length) report({
+          message: "Dynamic argument of 'v-slot' directive cannot use that slot parameter.", ...loc(dir),
+        })
+        if (syntax.modifiers.length && (options.allowModifiers !== true || isDefault)) report({
+          message: "'v-slot' directive doesn't support any modifier.",
+          ...relativeLoc(dir, syntax.modifierStart ?? 0),
+        })
+        const emptyValue = !dir.exp?.loc.source.trim()
+          || /^\s*(?:\/\*[\s\S]*?\*\/\s*)+$/u.test(dir.exp.loc.source)
+        if (owner === node && isDefault && emptyValue) report({
+          message: "'v-slot' directive on a custom element requires that attribute value.", ...loc(dir),
+        })
+      }
+    },
+  }
+}
+
 function invalidMemoExpression(node: Ast): boolean {
   return ['ObjectExpression', 'ClassExpression', 'ArrowFunctionExpression',
     'FunctionExpression', 'StringLiteral', 'NumericLiteral', 'BooleanLiteral',
@@ -654,6 +808,7 @@ function eventModifiersConflict(base: EventDirective, event: EventDirective): bo
 const RULES: Rule[] = [
   deprecatedInstanceRule('$listeners'),
   deprecatedInstanceRule('$scopedSlots'),
+  validVSlotRule(),
   ...['html', 'text', 'show'].map(name => simpleDirectiveRule(name, true)),
   ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
   ...(['if', 'else-if', 'else'] as const).map(conditionalDirectiveRule),

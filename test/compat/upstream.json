@@ -86,7 +86,8 @@
     "tests/lib/rules/no-textarea-mustache.test.ts": "e98c745ecba38b37c5182829f712ebdb93c0294dd6d89ceea748874c7debd969",
     "tests/lib/rules/no-child-content.test.ts": "a52e823fe4e20be88572c47f5183205f70d4a079afe9e6dad6fbacdc771b9bcd",
     "tests/lib/rules/no-deprecated-dollar-listeners-api.test.ts": "b9866f94a84e294c0af6350d5e94a8796f4a40b7e948c6f7879a51878309e9f2",
-    "tests/lib/rules/no-deprecated-dollar-scopedslots-api.test.ts": "e7bb08608548df9eb99c455a6a4dcfdb46fceef6a95e5b5bf059682a26058b54"
+    "tests/lib/rules/no-deprecated-dollar-scopedslots-api.test.ts": "e7bb08608548df9eb99c455a6a4dcfdb46fceef6a95e5b5bf059682a26058b54",
+    "tests/lib/rules/valid-v-slot.test.ts": "049bfe8f31d87e96a9267418e8f3b69bf57ddced99fda04803919da09f97d679"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value"
@@ -22272,6 +22273,642 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "valid-v-slot/valid/1",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent v-slot=\"{data}\">{{data}}</MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/2",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent v-slot:default=\"{data}\">{{data}}</MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/3",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent #default=\"{data}\">{{data}}</MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/4",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-slot>default</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/5",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #default>default</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/6",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #named>named</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/7",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #default>default</template>\n        <template #named>named</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/8",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #one>one</template>\n        <template #two>two</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/9",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #one>one</template>\n        <template #two>two</template>\n        <template #[one]>one</template>\n        <template #[two]>two</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/10",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-if=\"condition\" #one>foo</template>\n        <template v-else #one>bar</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/11",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-if=\"c1\" #one>foo</template>\n        <template v-else-if=\"c2\" #one>bar</template>\n        <template v-else #one>baz</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/12",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-for=\"(key, value) in xxxx\" #[key]>{{value}}</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/13",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-for=\"(key, value) in xxxx\" #[key]>{{value}}</template>\n        <template v-for=\"(key, value) in yyyy\" #[key]>{{value}}</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/14",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template #[key]>{{value}}</template>\n        <template v-for=\"(key, value) in yyyy\" #[key]>{{value}}</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/15",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-for=\"(value, key) in xxxx\" #[key]>{{value}}</template>\n        <template v-for=\"(key, value) in xxxx\" #[key]>{{value}}</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/16",
+      "rule": "vue/valid-v-slot",
+      "code": "<template>\n      <MyComponent>\n        <template v-for=\"(key) in xxxx\" #[key+value]>{{value}}</template>\n        <template v-for=\"(key, value) in xxxx\" #[key+value]>{{value}}</template>\n      </MyComponent>\n    </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/17",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo.bar></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/18",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo></template>\n            <template v-slot:foo.bar></template>\n            <template v-slot:foo.baz></template>\n            <template v-slot:foo.bar.baz></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/19",
+      "rule": "vue/valid-v-slot",
+      "code": "\n      <template>\n        <svg>\n          <MyComponent v-slot=\"slotProps\">\n            <MyChildComponent :thing=\"slotProps.thing\" />\n          </MyComponent>\n        </svg>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/valid/20",
+      "rule": "vue/valid-v-slot",
+      "code": "<template><MyComponent v-slot=\".\" ><div /></MyComponent></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-slot/invalid/1",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <div v-slot=\"{data}\">{{data}}</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/2",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <template v-slot:named></template>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/3",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <div v-slot:named=\"{data}\">{{data}}</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "valid-v-slot/invalid/4",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <div><template v-slot></template></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/5",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent v-slot:named=\"{data}\">{{data}}</MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/6",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent v-slot=\"{data}\">\n            {{data}}\n            <template #named></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/7",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent v-slot=\"{data}\" v-slot:one>{{data}}</MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "valid-v-slot/invalid/8",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:one v-slot:two></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/9",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:one>1st</template>\n            <template v-slot:one>2nd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/10",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:[one]>1st</template>\n            <template v-slot:[one]>2nd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/11",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot>1st</template>\n            <template v-slot>2nd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/12",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot>1st</template>\n            <template v-slot:default>2nd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/13",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-if=\"c1\" v-slot:one>1st</template>\n            <template v-slot:one>2nd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/14",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-if=\"c1\" v-slot:one>1st</template>\n            <template v-else v-slot:one>2st</template>\n            <template v-slot:one>3rd</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/15",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-for=\"(key, value) in definition\" v-slot:one>{{value}}</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/16",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-for=\"(key, value) in definition\" v-slot:[one]>{{value}}</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/17",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-for=\"(key, value) in xxxx\" v-slot:key>{{value}}</template>\n            <template v-for=\"(key, value) in yyyy\" v-slot:key>{{value}}</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "valid-v-slot/invalid/18",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-for=\"(key, value) in xxxx\" v-slot:[key]>{{value}}</template>\n            <template v-for=\"(key, value) in xxxx\" v-slot:[key]>{{value}}</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/19",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-for=\"(key) in xxxx\" v-slot:[key]>{{value}}</template>\n            <template v-for=\"(key, value) in xxxx\" v-slot:[key]>{{value}}</template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/20",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo.bar></template>\n            <template v-slot:foo.bar></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/21",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:[data]=\"{data}\"></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/22",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent v-slot.foo=\"{data}\">{{data}}</MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/23",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot.foo></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/24",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo.bar></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/25",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot.foo></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/26",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo.bar></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/27",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent>\n            <template v-slot:foo></template>\n            <template v-slot:foo.bar></template>\n            <template v-slot:foo.baz></template>\n            <template v-slot:foo.bar.baz></template>\n          </MyComponent>\n        </template>\n      ",
+      "options": [
+        {
+          "allowModifiers": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "valid-v-slot/invalid/28",
+      "rule": "vue/valid-v-slot",
+      "code": "\n        <template>\n          <MyComponent v-slot>content</MyComponent>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/29",
+      "rule": "vue/valid-v-slot",
+      "code": "<template><MyComponent v-slot=\"/**/\" ><div /></MyComponent></template>",
+      "options": [],
+      "filename": "comment-value1.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/30",
+      "rule": "vue/valid-v-slot",
+      "code": "<template><MyComponent v-slot=/**/ ><div /></MyComponent></template>",
+      "options": [],
+      "filename": "comment-value2.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-slot/invalid/31",
+      "rule": "vue/valid-v-slot",
+      "code": "<template><MyComponent v-slot=\"\" ><div /></MyComponent></template>",
+      "options": [],
+      "filename": "empty-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }
