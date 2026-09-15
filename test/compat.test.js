@@ -23,7 +23,7 @@ test('every structural rule is mapped or explicitly identified as project-specif
   const locallyCovered = [
     'vue/block-lang', 'vue/block-order', 'vue/block-tag-newline',
     'vue/enforce-style-attribute', 'vue/html-closing-bracket-newline',
-    'vue/html-closing-bracket-spacing', 'vue/no-empty-component-block',
+    'vue/html-closing-bracket-spacing', 'vue/html-indent', 'vue/no-empty-component-block',
     'vue/no-literals-in-template', 'vue/no-negated-v-if-condition',
     'vue/padding-line-between-blocks',
   ]

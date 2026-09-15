@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 47,
-    "missing": 83
+    "partial": 48,
+    "missing": 82
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1596,7 +1596,7 @@
     },
     {
       "name": "html-indent",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
@@ -1609,7 +1609,10 @@
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-indent.html",
-      "notes": []
+      "notes": [
+        "Local generated/unit coverage; upstream suite not yet imported",
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-quotes",

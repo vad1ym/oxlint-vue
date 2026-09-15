@@ -21,7 +21,7 @@ includes upstream options, valid cases, invalid cases, script-only cases and
 known failures. Five environment-dependent cases are explicitly excluded below. Ninety-nine
 of the one hundred suites currently match on every imported case.
 
-Ten newer structural rules currently have local unit coverage, and four of
+Eleven newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
 the inventory until their complete reference suites are imported.
 

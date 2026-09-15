@@ -49,7 +49,7 @@ for (const fullRule of structuralRuleNames.filter(rule =>
   for (const node of ast.program.body.toReversed()) {
     if (node.type !== 'ImportDeclaration') continue
     if (!['../../eslint-compat', `../../../lib/rules/${name}`, 'vue-eslint-parser',
-      '@typescript-eslint/parser', '../../test-utils/typescript'].includes(node.source.value)) {
+      '@typescript-eslint/parser', '../../test-utils/typescript', 'node:fs', 'node:path'].includes(node.source.value)) {
       if (node.source.value === 'eslint' && node.importKind === 'type') {
         source = source.slice(0, node.start) + source.slice(node.end)
         continue
@@ -84,9 +84,22 @@ for (const fullRule of structuralRuleNames.filter(rule =>
       }
     }
   }
-  // No real require, filesystem, process or network exposed to test modules.
+  const reviewedRoot = path.resolve(root)
+  const checkedPath = (...segments) => {
+    const resolved = path.resolve(...segments)
+    if (resolved !== reviewedRoot && !resolved.startsWith(`${reviewedRoot}${path.sep}`)) {
+      throw new Error(`Upstream fixture read escaped checkout: ${resolved}`)
+    }
+    return resolved
+  }
+  const fixtureFs = {
+    readdirSync(directory) { return fs.readdirSync(checkedPath(directory)) },
+    readFileSync(file, encoding) { return fs.readFileSync(checkedPath(file), encoding) },
+  }
+  // No process or network is exposed; filesystem reads are confined to the reviewed checkout.
   new vm.Script(stripTypeScriptTypes(source), { filename: relative }).runInNewContext({
     RuleTester, rule: {}, vueEslintParser: vueParserStub, tsParser: tsParserStub,
+    fs: fixtureFs, path, __dirname: path.join(reviewedRoot, 'tests/lib/rules'),
     getTypeScriptFixtureTestOptions: () => ({ filename: 'typescript-fixture.vue',
       languageOptions: { parser: vueParserStub, ecmaVersion: 2020, sourceType: 'module',
         parserOptions: { parser: '@typescript-eslint/parser' } } }),

@@ -1114,6 +1114,51 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/html-indent',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ROOT) return
+      const source = (node as RootNode & Annotations).__source ?? ''
+      const opening = source.search(/<template\b/iu)
+      const contentStart = opening < 0 ? -1 : source.indexOf('>', opening) + 1
+      const contentEnd = source.lastIndexOf('</template')
+      if (contentStart <= opening || contentEnd < contentStart) return
+      const width = options.mode === 'tab' ? 1
+        : typeof options.mode === 'number' ? options.mode : 2
+      const unit = options.mode === 'tab' ? '\t' : ' '.repeat(width)
+      const baseIndent = typeof options.baseIndent === 'number' ? options.baseIndent : 1
+      const content = source.slice(contentStart, contentEnd)
+      let depth = baseIndent
+      let offset = contentStart
+      let pendingTag = false
+      for (const [lineIndex, line] of content.split('\n').entries()) {
+        const text = line.trimStart()
+        const leading = line.slice(0, line.length - text.length)
+        if (pendingTag && text.startsWith('/>')) { depth = Math.max(baseIndent, depth - 1); pendingTag = false }
+        else if (pendingTag && text.startsWith('>')) pendingTag = false
+        if (text && (text.startsWith('<') || text.startsWith('{{'))) {
+          const closing = text.startsWith('</')
+          const expectedDepth = Math.max(0, depth - (closing ? 1 : 0))
+          const expected = unit.repeat(expectedDepth)
+          const atLineStart = lineIndex > 0 || source[contentStart - 1] === '\n'
+          if (atLineStart && leading !== expected) {
+            report({ message: `Expected indentation of ${expected.length}.`, ...sourceLoc(source, offset) })
+          }
+          if (closing) depth = expectedDepth
+          const opens = [...text.matchAll(/<([A-Za-z][\w:.-]*)\b[^>]*>/gu)]
+            .filter(match => !match[0].endsWith('/>') && !isVoidTag(match[1] ?? '')).length
+          const closes = [...text.matchAll(/<\/[A-Za-z][\w:.-]*\s*>/gu)].length
+          depth = Math.max(baseIndent, depth + opens - closes + (closing ? 1 : 0))
+          if (!closing && /^<[A-Za-z][\w:.-]*\b/u.test(text) && !text.includes('>')) {
+            depth++
+            pendingTag = true
+          }
+        }
+        offset += line.length + 1
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {

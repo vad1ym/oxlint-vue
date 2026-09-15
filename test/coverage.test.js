@@ -7,7 +7,7 @@ import { spawnSync } from 'node:child_process'
 import { preprocess } from '../dist/preprocess.js'
 import { runOxlint, readVueSettings } from '../dist/run.js'
 
-const TEMPLATE = '<i :title="item.x" v-for="item in longItems" :key="item.id" />'
+const TEMPLATE = '  <i :title="item.x" v-for="item in longItems" :key="item.id" />'
 const SOURCE = `<template>\n${TEMPLATE}\n</template>\n<script setup>const longItems = [];</script>\n`
 const CLI = path.resolve('dist/cli.js')
 async function withProject(fn) {
