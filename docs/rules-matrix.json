@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 67,
+    "implemented": 68,
     "native": 59,
     "partial": 55,
-    "missing": 72
+    "missing": 71
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2334,11 +2334,11 @@
     },
     {
       "name": "custom-event-name-casing",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 26,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

@@ -165,6 +165,26 @@ function restrictedEventMessage(options: Record<string, unknown>, name: string):
   return undefined
 }
 
+function customEventCasingMessage(options: Record<string, unknown>, name: string): string | undefined {
+  const mode = options.mode === 'kebab-case' ? 'kebab-case' : 'camelCase'
+  const ignores = (options.secondary as { ignores?: unknown } | undefined)?.ignores
+  if (Array.isArray(ignores)) for (const ignored of ignores) {
+    const pattern = String(ignored)
+    if (pattern === name) return undefined
+    if (pattern.startsWith('/') && pattern.lastIndexOf('/') > 0) {
+      const end = pattern.lastIndexOf('/')
+      try {
+        if (new RegExp(pattern.slice(1, end), pattern.slice(end + 1).replaceAll('g', '')).test(name)) return undefined
+      } catch {}
+    }
+  }
+  const segments = name.split(':')
+  const valid = mode === 'kebab-case'
+    ? segments.every(segment => /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/u.test(segment))
+    : segments.every(segment => /^[a-z][A-Za-z0-9]*$/u.test(segment))
+  return valid ? undefined : "Custom event name '" + name + "' must be " + mode + '.'
+}
+
 /** Free names only: callback parameters do not refer to loop bindings. */
 function referencesAny(exp: DirectiveNode['exp'], names: Set<string>): boolean {
   const ast = expressionAst(exp)
@@ -919,7 +939,8 @@ const RULES: Rule[] = [
         if (!ast) continue
         const free = new Set(freeIdentifiers(ast, info.templateEmitters, context.__locals))
         visitExpression(ast, candidate => {
-          if (candidate.type !== 'CallExpression' || candidate.callee.type !== 'Identifier'
+          if ((candidate.type !== 'CallExpression' && candidate.type !== 'OptionalCallExpression')
+            || candidate.callee.type !== 'Identifier'
             || !free.has(candidate.callee) || candidate.arguments[0]?.type !== 'StringLiteral') return
           const name = candidate.arguments[0].value
           if (info.declared.has(name) || info.props.has(`on${name.charAt(0).toUpperCase()}${name.slice(1)}`)) return
@@ -950,6 +971,31 @@ const RULES: Rule[] = [
           const first = candidate.arguments[0]
           if (!first || first.type !== 'StringLiteral') return
           const message = restrictedEventMessage(options, first.value)
+          if (message) report({ ...astLoc(exp, first, ast), message })
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/custom-event-name-casing',
+    severity: 'error',
+    check(node, report, options) {
+      const context = node as AnyNode & Annotations
+      const emitters = context.__emitInfo?.templateEmitters
+      if (!emitters) return
+      const expressions = node.type === NodeTypes.INTERPOLATION ? [node.content]
+        : node.type === NodeTypes.ELEMENT ? node.props.flatMap(prop =>
+          prop.type === NodeTypes.DIRECTIVE && prop.exp ? [prop.exp] : []) : []
+      for (const exp of expressions) {
+        const ast = expressionAst(exp)
+        if (!ast) continue
+        const free = new Set(freeIdentifiers(ast, emitters, context.__locals))
+        visitExpression(ast, candidate => {
+          if ((candidate.type !== 'CallExpression' && candidate.type !== 'OptionalCallExpression')
+            || candidate.callee.type !== 'Identifier' || !free.has(candidate.callee)) return
+          const first = candidate.arguments[0]
+          if (!first || first.type !== 'StringLiteral') return
+          const message = customEventCasingMessage(options, first.value)
           if (message) report({ ...astLoc(exp, first, ast), message })
         })
       }
@@ -3122,9 +3168,10 @@ export function checkTemplate(
     ...script.instanceProps, ...componentPublicNames(descriptor)])
   const explicitEmitsRule = active.find(entry => entry.rule.name === 'vue/require-explicit-emits')
   const restrictedEventRule = active.find(entry => entry.rule.name === 'vue/no-restricted-custom-event')
+  const eventCasingRule = active.find(entry => entry.rule.name === 'vue/custom-event-name-casing')
   const allowProps = explicitEmitsRule
     ? ruleOptions(config?.[explicitEmitsRule.rule.name]).allowProps === true : false
-  const emitInfo = explicitEmitsRule || restrictedEventRule
+  const emitInfo = explicitEmitsRule || restrictedEventRule || eventCasingRule
     ? explicitEmitInfo(descriptor, allowProps)
     : undefined
   if (emitInfo && /<script\b[^>]*\bsetup(?:\s|>|=)/iu.test(source)) emitInfo.hasDefinition = true
@@ -3138,6 +3185,14 @@ export function checkTemplate(
       const message = restrictedEventMessage(options, finding.name)
       if (message) out.push({ filename, rule: restrictedEventRule.rule.name,
         severity: restrictedEventRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
+    }
+  }
+  if (eventCasingRule && emitInfo) {
+    const options = ruleOptions(config?.[eventCasingRule.rule.name])
+    for (const finding of emitInfo.emissions) {
+      const message = customEventCasingMessage(options, finding.name)
+      if (message) out.push({ filename, rule: eventCasingRule.rule.name,
+        severity: eventCasingRule.severity, ...sourceLoc(source, finding.offset), message } as Diagnostic)
     }
   }
   const componentFileRule = active.find(entry => entry.rule.name === 'vue/one-component-per-file')

@@ -111,7 +111,8 @@
     "tests/lib/rules/no-duplicate-attr-inheritance.test.ts": "5f95c3370afcdaced3ea5e106439315b4ab2ac35d47a16c74fed6583732886fc",
     "tests/lib/rules/no-potential-component-option-typo.test.ts": "05a7fb8302bb4e069f9431674138eee349e2fa397b4b46766eea42cdcc05fc21",
     "tests/lib/rules/no-restricted-component-options.test.ts": "98f227102e0c3f7d3bc05a723b48f063ce5138e363674342c8538ad6840ff029",
-    "tests/lib/rules/no-restricted-custom-event.test.ts": "bde524996db2911a254cc0f93d0b54d9729dcc4e08c0dd8fdca17fe1b8eb8488"
+    "tests/lib/rules/no-restricted-custom-event.test.ts": "bde524996db2911a254cc0f93d0b54d9729dcc4e08c0dd8fdca17fe1b8eb8488",
+    "tests/lib/rules/custom-event-name-casing.test.ts": "ad5ddf82b32f6bcd2f5cb614455974258e3d05a7ba74e62fc58d7709be065f66"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -36740,6 +36741,434 @@
       "code": "\n      <script>\n      export default {\n        setup(props, ctx) {\n          ctx.emit(`foo`)\n        }\n      }\n      </script>\n      ",
       "options": [
         "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "custom-event-name-casing/valid/1",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('foo-bar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('update:foo-bar', value)\n              context.emit('foo-bar')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('foo-bar')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/2",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('update:foo-bar', value)\">\n      </template>\n      <script>\n      export default {\n        setup(props, {emit}) {\n          return {\n            onInput(value) {\n              emit('update:foo-bar', value)\n              emit('foo-bar')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('update:foo-bar', value)\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/3",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"emit('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            $emit('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/4",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit(fooBar)\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit(barBaz)\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit(bazQux)\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/5",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script>\n      export default {\n        setup(prop, ...context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/6",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script>\n      export default {\n        setup(prop, [context]) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/7",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script>\n      export default {\n        setup(prop, {e}) {\n          return {\n            onInput(value) {\n              e('barBaz')\n            }\n          }\n        },\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/8",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case",
+        {
+          "ignores": [
+            "fooBar",
+            "barBaz",
+            "bazQux"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/9",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('input:update')\">\n        <input\n          @click=\"$emit('search:update')\">\n        <input\n          @click=\"$emit('click:row')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('input:update')\n              context.emit('search:update')\n              context.emit('click:row')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('input:update')\n            this.$emit('search:update')\n            this.$emit('click:row')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case",
+        {
+          "ignores": [
+            "/^[a-z]+(?:-[a-z]+)*:[a-z]+(?:-[a-z]+)*$/u"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/10",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/11",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/12",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('foo-bar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('bar-baz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('baz-qux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/13",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script setup>\n      const emit = defineEmits({})\n      emit('foo-bar')\n      </script>\n\n      <template>\n      <button @click=\"emit('foo-bar')\">Foo</button>\n      <button @click=\"$emit('foo-bar')\">Foo</button>\n      </template>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/valid/14",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <button @click=\"$emit('fooBar:barBaz')\" />\n      </template>\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "custom-event-name-casing/invalid/1",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/2",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit?.('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context?.emit?.('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this?.$emit?.('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/3",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit?.('fooBar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              (context?.emit)?.('barBaz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            (this?.$emit)?.('bazQux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/4",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('input/update')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('search/update')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('click/row')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case",
+        {
+          "ignores": [
+            "/^[a-z]+(?:-[a-z]+)*:[a-z]+(?:-[a-z]+)*$/u"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/5",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('input/update')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('search/update')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('click/row')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "kebab-case",
+        {
+          "ignores": [
+            "input:update",
+            "search:update",
+            "click:row"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/6",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('foo-bar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('bar-baz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('baz-qux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "camelCase"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/7",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('foo-bar')\">\n      </template>\n      <script>\n      export default {\n        setup(props, context) {\n          return {\n            onInput(value) {\n              context.emit('bar-baz')\n            }\n          }\n        },\n        methods: {\n          onClick() {\n            this.$emit('baz-qux')\n          }\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/8",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script setup>\n      const emit = defineEmits({})\n      emit('fooBar')\n      emit('foo-bar')\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "custom-event-name-casing/invalid/9",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script setup>\n      const emit = defineEmits({})\n      emit(`foo-bar`) // template literal\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "custom-event-name-casing/invalid/10",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <script setup>\n      const emit = defineEmits({})\n      emit('foo-bar')\n      </script>\n\n      <template>\n      <button @click=\"emit('foo-bar')\">Foo</button>\n      <button @click=\"$emit('foo-bar')\">Foo</button>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "custom-event-name-casing/invalid/11",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('update:fooBar')\">\n      </template>\n      ",
+      "options": [
+        "kebab-case"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "custom-event-name-casing/invalid/12",
+      "rule": "vue/custom-event-name-casing",
+      "code": "\n      <template>\n        <input\n          @click=\"$emit('update:my-prop')\">\n      </template>\n      ",
+      "options": [
+        "camelCase"
       ],
       "filename": "test.vue",
       "languageOptions": {
