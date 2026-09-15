@@ -56,6 +56,11 @@
     "tests/lib/rules/no-restricted-html-elements.test.ts": "dace06ef5ecb9653e23eb03e03ec7054039ccc42002235ede9355eb43094ec77",
     "tests/lib/rules/no-template-target-blank.test.ts": "21dfa880a2a036d9f011e78e5c0444fee0ba0e0d2d04a1de272eaf194b987692",
     "tests/lib/rules/static-class-names-order.test.ts": "f782bfb232940bf0c7b4823b04bcce1924c5d706a0ac04254e1fe356b717a7bc",
+    "tests/lib/rules/v-for-delimiter-style.test.ts": "469fe244586de03bb909361f7d5a2f15703255ced9b00a847c9cf37423ebd35a",
+    "tests/lib/rules/prefer-true-attribute-shorthand.test.ts": "be7bc5b90eb44e8d0f1346212666412f39766744e3d0176edaca0fca79029562",
+    "tests/lib/rules/no-multiple-template-root.test.ts": "8cb6fb7afa2c4d6967736cb0f6a330cf2bcecdb729550c9a0036730f40a671d6",
+    "tests/lib/rules/no-restricted-v-on.test.ts": "8c6f8c6c808c4ead80a37dbb48788fa5f0ab9c97c10259e3214e5b68a90f6943",
+    "tests/lib/rules/no-restricted-v-bind.test.ts": "12801c6bfb6750852531a57f3bf931cd8a514791b35be1e9c7ba16f5189cf987",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -11334,6 +11339,1618 @@
       "filename": "three-classes.vue",
       "languageOptions": {
         "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/valid/1",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/2",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x in xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/3",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x    in xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/4",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x in    xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/5",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x    in    xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/6",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"(x,) in xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/7",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"(value, key, index) in xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/8",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"{ x, y } in xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/9",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x in xs\"></div></template>",
+      "options": [
+        "in"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/valid/10",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x of xs\"></div></template>",
+      "options": [
+        "of"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/1",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x of xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/2",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"(x, index) of xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/3",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x    of xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/4",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x of    xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/5",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x    of    xs\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/6",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x of xs\"></div></template>",
+      "options": [
+        "in"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "v-for-delimiter-style/invalid/7",
+      "rule": "vue/v-for-delimiter-style",
+      "code": "<template><div v-for=\"x in xs\"></div></template>",
+      "options": [
+        "of"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/1",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-if=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/2",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/3",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-loading=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/4",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp show=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/5",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind:show=\"value\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/6",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :show=\"value\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/7",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind:show=\"false\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/8",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :show=\"false\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/9",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp show />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/10",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp show />\n      </template>\n      ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/11",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :show=\"true\" />\n      </template>\n      ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/12",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind:show=\"true\" />\n      </template>\n      ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/13",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input v-bind:checked=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/14",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input :checked=\"true\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/15",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input checked=\"checked\" />\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/16",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input checked />\n      </template>\n      ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/17",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input :value=\"true\" :foo-bar=\"true\" />\n      </template>\n      ",
+      "options": [
+        "always",
+        {
+          "except": [
+            "value",
+            "/^foo-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/valid/18",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <input value foo-bar />\n      </template>\n      ",
+      "options": [
+        "never",
+        {
+          "except": [
+            "value",
+            "/^foo-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/1",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind:show=\"true\" />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/2",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :show=\"true\" />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/3",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp v-bind:show=\"true\" />\n      </template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/4",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :show=\"true\" />\n      </template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/5",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp show />\n      </template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/6",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp value foo-bar />\n      </template>",
+      "options": [
+        "always",
+        {
+          "except": [
+            "value",
+            "/^foo-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "prefer-true-attribute-shorthand/invalid/7",
+      "rule": "vue/prefer-true-attribute-shorthand",
+      "code": "\n      <template>\n        <MyComp :value=\"true\" :foo-bar=\"true\" />\n      </template>",
+      "options": [
+        "never",
+        {
+          "except": [
+            "value",
+            "/^foo-/"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-multiple-template-root/valid/1",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div>abc</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/2",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <div>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/3",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/4",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div v-if=\"foo\">abc</div>\n    <div v-else>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/5",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <!-- comment -->\n    <div v-if=\"foo\">abc</div>\n    <div v-else-if=\"bar\">abc</div>\n    <div v-else>abc</div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/6",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <c1 v-if=\"1\" />\n    <c2 v-else-if=\"1\" />\n    <c3 v-else />\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/7",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div v-if=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/8",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div v-if=\"foo\"></div><div v-else-if=\"bar\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/9",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <Link :to=\"to\" class=\"flex items-center\">\n          <span v-if=\"prefixIcon || $slots.prefix\" class=\"mr-1\">\n            <slot name=\"prefix\">\n              <FontAwesomeIcon v-if=\"prefixIcon\" :icon=\"prefixIcon\" fixedWidth />\n            </slot>\n          </span>\n\n          <slot />\n        </Link>\n      </template>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/10",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- comments -->\n        <div>12333</div>\n        <!-- comments -->\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/11",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- comments -->\n        <div>\n          <!-- comments -->\n          12333\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/12",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <div>\n          <!-- comments -->\n          12333\n          <span>\n            <!-- comments -->\n            12333\n          </span>\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/13",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <div v-if=\"for\">\n          <!-- comments -->\n          12333\n          <span>\n            <!-- comments -->\n            12333\n          </span>\n        </div>\n        <div v-else>\n          <!-- comments -->\n          12333\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/valid/14",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n        <!-- comment -->\n        <template>\n          <div>abc</div>\n        </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-multiple-template-root/invalid/1",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div></div><div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/2",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>\n    <div></div>\n    <div></div>\n</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/3",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>{{a b c}}</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/4",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div></div>aaaaaa</template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/5",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template>aaaaaa<div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/6",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><div v-for=\"x in list\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/7",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><slot></slot></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/8",
+      "rule": "vue/no-multiple-template-root",
+      "code": "<template><template></template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/9",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- comments -->\n        <div>12333</div>\n        <!-- comments -->\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-multiple-template-root/invalid/10",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- comments -->\n        <div>\n          12333\n          <!-- comments -->\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/11",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- comments -->\n        <div v-if=\"for\">\n          <!-- comments -->\n          12333\n          <span>\n            <!-- comments -->\n            12333\n          </span>\n        </div>\n        <!-- comments -->\n        <div v-else>\n          <!-- comments -->\n          12333\n        </div>\n        <!-- comments -->\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-multiple-template-root/invalid/12",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <div>\n          12333\n          <!-- comments -->\n        </div>\n        <!-- comments -->\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-multiple-template-root/invalid/13",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <div />\n        <!-- comments -->\n        <div />\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-multiple-template-root/invalid/14",
+      "rule": "vue/no-multiple-template-root",
+      "code": "\n      <template>\n        <!-- When you have a comment in the root of your template in vue 3,\n        using $el will point to the first text comment instead of the actual DOM element.   -->\n        <div>\n          12333\n          <!-- comments -->\n        </div>\n      </template>\n      ",
+      "options": [
+        {
+          "disallowComments": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/valid/1",
+      "rule": "vue/no-restricted-v-on",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/2",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @click=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/3",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><button click=\"foo\"></button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/4",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><button :click=\"foo\"></button></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/5",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @v-model=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/6",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/7",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/8",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "modifiers": [
+            "prevent"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/valid/9",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "element": "input"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-on/invalid/1",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @test=\"foo\"></div></template>",
+      "options": [
+        "test"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/2",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"bar\" @bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/3",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"bar\" @bar=\"foo\"></div></template>",
+      "options": [
+        "foo",
+        "bar"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-on/invalid/4",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"bar\" @bar=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "/^(foo|bar)$/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-on/invalid/5",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo.once=\"foo\" /><div @foo=\"foo\" /></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "modifiers": [
+            "once"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/6",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @v-on=\"foo\" @foo.prevent=\"bar\" /><div @foo=\"foo\" v-on=\"listener\" /></template>",
+      "options": [
+        "/^v-/",
+        {
+          "argument": "foo",
+          "modifiers": [
+            "prevent"
+          ]
+        },
+        null
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-restricted-v-on/invalid/7",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div v-on=\"foo\" /></template>",
+      "options": [
+        null
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/8",
+      "rule": "vue/no-restricted-v-on",
+      "code": "\n      <template>\n        <div @v-on @foo.once=\"bar\" />\n        <MyButton @foo=\"foo\" @bar=\"bar\" />\n      </template>",
+      "options": [
+        "/^v-/",
+        {
+          "argument": "foo",
+          "element": "/^My/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-on/invalid/9",
+      "rule": "vue/no-restricted-v-on",
+      "code": "\n      <template>\n        <div @foo=\"x\" />\n      </template>",
+      "options": [
+        "/^f/",
+        {
+          "argument": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/10",
+      "rule": "vue/no-restricted-v-on",
+      "code": "\n      <template>\n        <div @foo=\"x\" />\n      </template>",
+      "options": [
+        {
+          "argument": "foo",
+          "message": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/11",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div @foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "element": "div"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-on/invalid/12",
+      "rule": "vue/no-restricted-v-on",
+      "code": "<template><div v-on:foo=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/valid/1",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/2",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div v-bind=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/3",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/4",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/5",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :v-model=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/6",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/7",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div foo=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/8",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "modifiers": [
+            "sync"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/valid/9",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "element": "input"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/1",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :v-model=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/2",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div v-bind:v-model=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/3",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"bar\" :bar=\"foo\"></div></template>",
+      "options": [
+        "foo"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/4",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"bar\" :bar=\"foo\"></div></template>",
+      "options": [
+        "foo",
+        "bar"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/5",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo=\"bar\" :bar.sync=\"foo\"></div></template>",
+      "options": [
+        {
+          "argument": "/^(foo|bar)$/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/6",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo.sync=\"foo\" /><div :foo=\"foo\" /></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "modifiers": [
+            "sync"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/7",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :v-on :foo.sync /><div :foo=\"foo\" v-bind=\"listener\" /></template>",
+      "options": [
+        "/^v-/",
+        {
+          "argument": "foo",
+          "modifiers": [
+            "sync"
+          ]
+        },
+        null
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/8",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "\n      <template>\n        <div :v-on :foo.sync />\n        <MyButton :foo=\"foo\" :bar=\"bar\" />\n      </template>",
+      "options": [
+        "/^v-/",
+        {
+          "argument": "foo",
+          "element": "/^My/"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/9",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "\n      <template>\n        <div :foo=\"x\" />\n      </template>",
+      "options": [
+        "/^f/",
+        {
+          "argument": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/10",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "\n      <template>\n        <div :foo=\"x\" />\n      </template>",
+      "options": [
+        {
+          "argument": "foo",
+          "message": "foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-v-bind/invalid/11",
+      "rule": "vue/no-restricted-v-bind",
+      "code": "<template><div :foo.attr=\"foo\" /><div :bar.attr=\"foo\" /></template>",
+      "options": [
+        {
+          "argument": "foo",
+          "modifiers": [
+            "attr"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
       },
       "settings": {},
       "expectedCount": 1

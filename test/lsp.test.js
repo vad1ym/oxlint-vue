@@ -163,11 +163,13 @@ test('filters padding artefacts out of editor diagnostics', { timeout: 30000 }, 
   // Every template expression is an unused expression statement by
   // construction. The CLI hides these with -A flags; the language server takes
   // none, so the proxy has to filter them or the editor is unusable.
-  const clean = `<template>
-  <li
-    v-for="i in list"
-    :key="i"
-  >{{ i }}</li>
+const clean = `<template>
+  <ul>
+    <li
+      v-for="i in list"
+      :key="i"
+    >{{ i }}</li>
+  </ul>
 </template>
 <script setup>
 const list = [1]
@@ -207,10 +209,12 @@ test('updates diagnostics on edit and cleans up on close', { timeout: 30000 }, a
     assert.ok(first, 'no diagnostics for the broken file')
 
     const fixed = `<template>
-  <li
-    v-for="i in list"
-    :key="i"
-  >{{ i }}</li>
+  <ul>
+    <li
+      v-for="i in list"
+      :key="i"
+    >{{ i }}</li>
+  </ul>
 </template>
 <script setup>
 const list = [1]

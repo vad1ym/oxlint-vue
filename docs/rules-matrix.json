@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 48,
+    "implemented": 51,
     "native": 55,
-    "partial": 25,
-    "missing": 125
+    "partial": 27,
+    "missing": 120
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2905,13 +2905,13 @@
     },
     {
       "name": "no-multiple-template-root",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 28,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3119,11 +3119,11 @@
     },
     {
       "name": "no-restricted-v-bind",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 20,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3133,11 +3133,11 @@
     },
     {
       "name": "no-restricted-v-on",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 21,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3643,17 +3643,19 @@
     },
     {
       "name": "prefer-true-attribute-shorthand",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 25,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/prefer-true-attribute-shorthand.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "prefer-use-template-ref",
@@ -3973,17 +3975,19 @@
     },
     {
       "name": "v-for-delimiter-style",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 17,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/v-for-delimiter-style.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "v-if-else-key",

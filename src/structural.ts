@@ -182,6 +182,19 @@ function kebabToCamel(value: string): string {
   return value.replace(/-([a-z])/gu, (_, char: string) => char.toUpperCase())
 }
 
+function directiveRestrictionMatches(
+  item: unknown, name: string | undefined, modifiers: string[], tag: string,
+): boolean {
+  if (item === null) return name === undefined
+  if (typeof item === 'string') return Boolean(name && configuredNameMatch(name, [item]))
+  if (!item || typeof item !== 'object') return false
+  const option = item as { argument?: unknown, modifiers?: unknown, element?: unknown }
+  if (!directiveRestrictionMatches(option.argument, name, modifiers, tag)) return false
+  if (Array.isArray(option.modifiers)
+    && !option.modifiers.every(modifier => modifiers.includes(String(modifier)))) return false
+  return typeof option.element !== 'string' || configuredNameMatch(tag, [option.element])
+}
+
 function customComponent(node: ElementNode, ignoreElementNamespaces = false): boolean {
   const native = node.tag === 'slot' || (ignoreElementNamespaces
     ? isHTMLTag(node.tag) || isSVGTag(node.tag) || isMathMLTag(node.tag)
@@ -1250,6 +1263,104 @@ const RULES: Rule[] = [
       const divider = withWhitespace.length > 1 ? withWhitespace[1]! : ''
       const sorted = withWhitespace.filter(name => name.trim()).toSorted((a, b) => a.localeCompare(b)).join(divider)
       if (value !== sorted) report({ message: 'Order static class names alphabetically.', ...loc(attr) })
+    },
+  },
+  {
+    name: 'vue/v-for-delimiter-style',
+    severity: 'warning',
+    check(node, report, options) {
+      const dir = findDir(node, 'for')
+      if (!dir?.exp) return
+      const match = dir.exp.loc.source.match(/\s+(in|of)\s+/u)
+      const preferred = options.mode === 'of' ? 'of' : 'in'
+      if (match?.[1] !== preferred) report({
+        message: `Use ${preferred} as the v-for delimiter.`, ...loc(dir.exp),
+      })
+    },
+  },
+  {
+    name: 'vue/prefer-true-attribute-shorthand',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node)) return
+      const secondary = options.secondary && typeof options.secondary === 'object'
+        ? options.secondary as Record<string, unknown> : {}
+      const always = options.mode !== 'never'
+      for (const prop of node.props) {
+        const name = prop.type === NodeTypes.ATTRIBUTE ? prop.name
+          : prop.name === 'bind' ? argContent(prop) : undefined
+        if (!name) continue
+        const excepted = configuredNameMatch(name, secondary.except)
+        if (prop.type === NodeTypes.ATTRIBUTE && !prop.value) {
+          if (always ? excepted : !excepted) report({ message: 'Write this true prop in long form.', ...loc(prop) })
+        } else if (prop.type === NodeTypes.DIRECTIVE) {
+          const expression = expressionAst(prop.exp)
+          if (expression?.type === 'BooleanLiteral' && expression.value === true
+            && (always ? !excepted : excepted)) report({
+            message: 'Write this true prop in shorthand form.', ...loc(prop),
+          })
+        }
+      }
+    },
+  },
+  {
+    name: 'vue/no-multiple-template-root',
+    severity: 'error',
+    check(node, report, options) {
+      if (options.configured !== true || node.type !== NodeTypes.ROOT) return
+      if (options.disallowComments === true) for (const child of node.children) {
+        if (child.type === NodeTypes.COMMENT) report({ message: 'Comments are not allowed at the template root.', ...loc(child) })
+      }
+      const roots: ElementNode[] = []
+      let extraElement: ElementNode | undefined
+      let extraText: TemplateChildNode | undefined
+      let conditional = false
+      for (const child of node.children) {
+        if (child.type === NodeTypes.ELEMENT) {
+          if (!roots.length) { roots.push(child); conditional = Boolean(findDir(child, 'if')) }
+          else if (conditional && findDir(child, 'else-if')) roots.push(child)
+          else if (conditional && findDir(child, 'else')) { roots.push(child); conditional = false }
+          else extraElement = child
+        } else if (child.type !== NodeTypes.COMMENT
+          && !(child.type === NodeTypes.TEXT && !child.content.trim())) extraText = child
+      }
+      if (extraText) report({ message: 'The template root must be an element.', ...loc(extraText) })
+      else if (extraElement) report({ message: 'The template requires exactly one root element.', ...loc(extraElement) })
+      else for (const root of roots) {
+        if (root.tag === 'template' || root.tag === 'slot') report({
+          message: `<${root.tag}> cannot be the Vue 2 template root.`, ...loc(root),
+        })
+        if (findDir(root, 'for')) report({ message: 'v-for cannot be used on the Vue 2 template root.', ...loc(root) })
+      }
+    },
+  },
+  {
+    name: 'vue/no-restricted-v-on',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const restrictions = Array.isArray(options.rawOptions) ? options.rawOptions : []
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') continue
+        if (restrictions.some(item => directiveRestrictionMatches(
+          item, argContent(dir), dir.modifiers.map(modifier => modifier.content), node.tag,
+        ))) report({ message: 'This v-on usage is restricted.', ...loc(dir) })
+      }
+    },
+  },
+  {
+    name: 'vue/no-restricted-v-bind',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const configured = Array.isArray(options.rawOptions) ? options.rawOptions : []
+      const restrictions = configured.length ? configured : [{ argument: '/^v-/' }]
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'bind') continue
+        if (restrictions.some(item => directiveRestrictionMatches(
+          item, argContent(dir), dir.modifiers.map(modifier => modifier.content), node.tag,
+        ))) report({ message: 'This v-bind usage is restricted.', ...loc(dir) })
+      }
     },
   },
   {

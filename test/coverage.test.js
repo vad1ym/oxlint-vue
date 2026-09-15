@@ -14,7 +14,10 @@ async function withProject(fn) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'oxlint-coverage-'))
   try {
     await fs.writeFile(path.join(dir, 'Case.vue'), SOURCE)
-    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({ plugins: [], categories: {}, rules: {} }))
+    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({
+      plugins: [], categories: {}, rules: {},
+      settings: { vue: { rules: { 'vue/max-attributes-per-line': 'off' } } },
+    }))
     await fn(dir)
   } finally { await fs.rm(dir, { recursive: true, force: true }) }
 }

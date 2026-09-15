@@ -78,6 +78,11 @@ const CASES = [
   ['vue/no-restricted-html-elements', '<marquee />', false],
   ['vue/no-template-target-blank', '<a href="https://example.com" target="_blank" />', true],
   ['vue/static-class-names-order', '<div class="b a" />', true],
+  ['vue/v-for-delimiter-style', '<div v-for="item of items" />', true],
+  ['vue/prefer-true-attribute-shorthand', '<MyComp :active="true" />', true],
+  ['vue/no-multiple-template-root', '<div /><span />', false],
+  ['vue/no-restricted-v-on', '<div @click="go" />', false],
+  ['vue/no-restricted-v-bind', '<div :v-test="value" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
