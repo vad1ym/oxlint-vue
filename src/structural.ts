@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, computedPropertyInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { componentNameFindings, componentPublicNames, computedPropertyInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
 
@@ -59,6 +59,7 @@ interface Annotations {
   __locals?: Set<string>
   __outerLocals?: Set<string>
   __computedNames?: Set<string>
+  __scriptNames?: Set<string>
 }
 
 type AnnotatedElement = ElementNode & Annotations
@@ -829,6 +830,34 @@ const RULES: Rule[] = [
             && free.has(candidate.callee)) report({ ...astLoc(exp, candidate, ast),
               message: `Use ${candidate.callee.name} instead of ${candidate.callee.name}().` })
         })
+      }
+    },
+  },
+  {
+    name: 'vue/no-template-shadow',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const context = node as AnnotatedElement
+      const allowed = new Set(Array.isArray(options.allow) ? options.allow.map(String) : [])
+      const seen = new Set(context.__outerLocals)
+      const expressions = node.props.flatMap(prop => {
+        if (prop.type !== NodeTypes.DIRECTIVE) return []
+        if (prop.name === 'for' && prop.forParseResult) return [prop.forParseResult.value,
+          prop.forParseResult.key, prop.forParseResult.index].filter(exp => exp !== undefined)
+        return prop.name === 'slot' && prop.exp ? [prop.exp] : []
+      })
+      for (const exp of expressions) {
+        let cursor = 0
+        for (const name of bindingNames(exp)) {
+          const match = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&')}\\b`, 'u').exec(exp.loc.source.slice(cursor))
+          const relative = cursor + (match?.index ?? 0)
+          if (!allowed.has(name) && (seen.has(name) || context.__scriptNames?.has(name))) report({
+            message: `Variable '${name}' is already declared in the upper scope.`, ...relativeLoc(exp, relative),
+          })
+          else seen.add(name)
+          cursor = relative + name.length
+        }
       }
     },
   },
@@ -2479,6 +2508,8 @@ export function checkTemplate(
     if (descriptor.template) context.__templateContentStart = descriptor.template.loc.start.offset
   }
   const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const templateScriptNames = new Set([...script.bindings, ...script.props.keys(),
+    ...script.instanceProps, ...componentPublicNames(descriptor)])
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')
   const computedInfo = computedRule ? computedPropertyInfo(descriptor) : { names: new Set<string>(), findings: [] }
   if (computedRule) for (const finding of computedInfo.findings) out.push({ filename,
@@ -2745,6 +2776,7 @@ export function checkTemplate(
     context.__insideVFor = insideVFor
     context.__depth = depth
     context.__computedNames = computedInfo.names
+    context.__scriptNames = templateScriptNames
     const children = childrenOf(node)
     if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
     for (const { rule, severity } of active) {

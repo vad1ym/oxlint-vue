@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 1995 upstream cases, 92 common structural rules | **1994 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1160/1160** |
-| Four pinned Nuxt components, each checked against all 92 rules | **368/368 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1646/1646 comparisons** |
+| 2021 upstream cases, 93 common structural rules | **2020 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1168/1168** |
+| Four pinned Nuxt components, each checked against all 93 rules | **372/372 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1658/1658 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. Three environment-dependent cases are explicitly excluded below. Ninety-one
-of the ninety-two suites currently match on every imported case.
+known failures. Three environment-dependent cases are explicitly excluded below. Ninety-two
+of the ninety-three suites currently match on every imported case.
 
 Twelve newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in
@@ -43,7 +43,7 @@ The standalone committed corpus cannot reproduce that external type graph;
 the remaining runtime, inline TypeScript and macro cases are measured normally.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 161 are not measured by this structural-rule harness,
+exports 253 rule names; 160 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.

@@ -93,7 +93,8 @@
     "tests/lib/rules/no-unused-components.test.ts": "f74014193754aabfef3cb4949504bd1ca469a4199e327a8974e6e6abe486a282",
     "tests/lib/rules/no-ref-as-operand.test.ts": "e82ddc8d02dba993baa3ddae904c17c30d7817f3e2dee02716777b1c31c95e10",
     "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8",
-    "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2"
+    "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2",
+    "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -26686,6 +26687,376 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/valid/1",
+      "rule": "vue/no-template-shadow",
+      "code": "",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/2",
+      "rule": "vue/no-template-shadow",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/3",
+      "rule": "vue/no-template-shadow",
+      "code": "<template><div v-for=\"i in 5\"></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/4",
+      "rule": "vue/no-template-shadow",
+      "code": "<template><div v-for=\"i in 5\"><div v-for=\"b in 5\"></div></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/5",
+      "rule": "vue/no-template-shadow",
+      "code": "<template><div v-for=\"i in 5\"></div><div v-for=\"i in 5\"></div></template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/6",
+      "rule": "vue/no-template-shadow",
+      "code": "<template> <ul v-for=\"i in 5\"> <li> <span v-for=\"j in 10\">{{i}},{{j}}</span> </li> </ul> </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/7",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\"></div>\n        <div v-for=\"i in f\"></div>\n        <div v-for=\"i in 5\"></div>\n      </template>\n      <script>\n        export default {\n          computed: {\n            f () { }\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/8",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in b\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in f\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data() {\n            return {\n              ...b,\n              c: [1, 2, 3]\n            }\n          },\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/9",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in b\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in f\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data: () => {\n            return {\n              ...b,\n              c: [1, 2, 3]\n            }\n          },\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/10",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in b\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in f\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data: () => ({\n            ...b,\n            c: [1, 2, 3]\n          }),\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/11",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script>\n        export default {\n          setup() {\n            return {\n              k: 42\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/12",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script setup>\n      let k = 42\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/13",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script setup>\n      defineProps({k:Number})\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/valid/14",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"i in 5\">\n          </div>\n        </div>\n      </template>\n      <script setup>\n      defineProps({i:Number})\n      </script>\n      ",
+      "options": [
+        {
+          "allow": [
+            "i"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-template-shadow/invalid/1",
+      "rule": "vue/no-template-shadow",
+      "code": "<template><div v-for=\"i in 5\"><div v-for=\"i in 5\"></div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-shadow/invalid/2",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\"></div>\n      </template>\n      <script>\n        export default {\n          data: {\n            i: 7\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-shadow/invalid/3",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\"></div>\n        <div v-for=\"i in 5\"></div>\n      </template>\n      <script>\n        export default {\n          data: {\n            i: 7\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/4",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"i in 5\"></div>\n        </div>\n      </template>\n      <script>\n        export default {\n          data: {\n            i: 7\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/5",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\"></div>\n      </template>\n      <script>\n        export default {\n          asyncData() {\n            return {\n              i: 27,\n            }\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-shadow/invalid/6",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in 5\"></div>\n        <div v-for=\"f in 5\"></div>\n      </template>\n      <script>\n        export default {\n          computed: {\n            i () { }\n          },\n          methods: {\n            f () { }\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/7",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in c\" />\n        <div v-for=\"a in c\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in c\" />\n        <div v-for=\"e in f\" />\n        <div v-for=\"f in c\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data() {\n            return {\n              ...b,\n              c: [1, 2, 3]\n            }\n          },\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/8",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in c\" />\n        <div v-for=\"a in c\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in c\" />\n        <div v-for=\"e in f\" />\n        <div v-for=\"f in c\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data: () => {\n            return {\n              ...b,\n              c: [1, 2, 3]\n            }\n          },\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/9",
+      "rule": "vue/no-template-shadow",
+      "code": "<template>\n        <div v-for=\"i in c\" />\n        <div v-for=\"a in c\" />\n        <div v-for=\"b in c\" />\n        <div v-for=\"d in c\" />\n        <div v-for=\"e in f\" />\n        <div v-for=\"f in c\" />\n      </template>\n      <script>\n        export default {\n          ...a,\n          data: () => ({\n              ...b,\n              c: [1, 2, 3]\n          }),\n          computed: {\n            ...d,\n            e,\n            ['f']: [1, 2],\n          }\n        }\n      </script>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-template-shadow/invalid/10",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script>\n        export default {\n          setup() {\n            return {\n              j: 42\n            }\n          }\n        }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-shadow/invalid/11",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script setup>\n      let j = 42\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-template-shadow/invalid/12",
+      "rule": "vue/no-template-shadow",
+      "code": "\n      <template>\n        <div v-for=\"i in 5\">\n          <div v-for=\"j in 5\">\n          </div>\n        </div>\n      </template>\n      <script setup>\n      defineProps({j:Number})\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }

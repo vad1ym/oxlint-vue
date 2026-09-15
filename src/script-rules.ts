@@ -60,6 +60,59 @@ export interface RefOperandFinding { method: string, offset: number }
 export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
 
+/** Names exposed by Options API groups to the component template. */
+export function componentPublicNames(descriptor: SFCDescriptor): Set<string> {
+  const names = new Set<string>()
+  for (const block of [descriptor.script]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    traverse(file, { enter(path) {
+      if (!path.isExportDefaultDeclaration()) return
+      const object = componentObject(path)
+      if (!object) return
+      for (const groupName of ['props', 'computed', 'methods']) {
+        const group = objectPropertyPath(object, groupName)
+        const value = group?.isObjectProperty() ? pathValue(group) : undefined
+        if (!value?.isObjectExpression()) continue
+        for (const property of value.get('properties') as NodePath[]) {
+          const name = componentPropertyName(property)
+          if (name !== null) names.add(name)
+        }
+      }
+      for (const groupName of ['data', 'asyncData', 'setup']) {
+        const group = objectPropertyPath(object, groupName)
+        const fn = group && (group.isObjectProperty() || group.isObjectMethod()) ? pathValue(group) : undefined
+        if (fn?.isObjectExpression()) {
+          for (const property of fn.get('properties') as NodePath[]) {
+            const name = componentPropertyName(property)
+            if (name !== null) names.add(name)
+          }
+          continue
+        }
+        if (!fn?.isFunction()) continue
+        fn.traverse({ ReturnStatement(returnPath) {
+          if (returnPath.getFunctionParent() !== fn) return
+          const value = returnPath.get('argument') as NodePath
+          if (!value?.isObjectExpression()) return
+          for (const property of value.get('properties') as NodePath[]) {
+            const name = componentPropertyName(property)
+            if (name !== null) names.add(name)
+          }
+        } })
+        if (fn.isArrowFunctionExpression() && fn.get('body').isObjectExpression()) {
+          for (const property of (fn.get('body') as NodePath).get('properties') as NodePath[]) {
+            const name = componentPropertyName(property)
+            if (name !== null) names.add(name)
+          }
+        }
+      }
+    } })
+  }
+  return names
+}
+
 const nativePropTypes = new Set(['String', 'Number', 'Boolean', 'Function', 'Object', 'Array', 'Symbol', 'BigInt'])
 
 function objectPropertyPath(object: NodePath, name: string): NodePath | undefined {
@@ -67,6 +120,15 @@ function objectPropertyPath(object: NodePath, name: string): NodePath | undefine
   return (object.get('properties') as NodePath[]).find(property =>
     (property.isObjectProperty() || property.isObjectMethod()) && !property.node.computed
     && staticName(property.node.key) === name)
+}
+
+function componentPropertyName(path: NodePath): string | null {
+  if (!path.isObjectProperty() && !path.isObjectMethod()) return null
+  const key = path.node.key
+  if (!path.node.computed) return staticName(key)
+  if (key.type === 'StringLiteral') return key.value
+  if (key.type === 'TemplateLiteral' && key.expressions.length === 0) return key.quasis[0]?.value.cooked ?? null
+  return null
 }
 
 function pathValue(path: NodePath): NodePath {
