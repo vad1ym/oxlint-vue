@@ -1011,6 +1011,28 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/mustache-interpolation-spacing',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.INTERPOLATION) return
+      const raw = node.loc.source
+      const inner = raw.slice(2, -2)
+      if (!inner.trim()) return
+      const always = options.mode !== 'never'
+      if (always) {
+        if (!/^\s/u.test(inner)) report({ message: "Add a space after '{{'.", ...loc(node) })
+        if (!/\s$/u.test(inner)) report({
+          message: "Add a space before '}}'.", ...relativeLoc(node, raw.length - 2),
+        })
+      } else {
+        if (/^\s/u.test(inner)) report({ message: "Remove the space after '{{'.", ...loc(node) })
+        if (/\s$/u.test(inner)) report({
+          message: "Remove the space before '}}'.", ...relativeLoc(node, 2 + inner.trimEnd().length),
+        })
+      }
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {

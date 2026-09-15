@@ -45,6 +45,7 @@
     "tests/lib/rules/html-end-tags.test.ts": "da70eaef239f8ad5049745382dabac794961d447c565aa380bfba46feed2ca7b",
     "tests/lib/rules/no-spaces-around-equal-signs-in-attribute.test.ts": "252f271e49f34c4acaea988fd17e8361a2a4bdb0b1a5280e9c45f0b33878cdf1",
     "tests/lib/rules/v-on-style.test.ts": "0633be655129015d8639e6fc30bcccc05b64f4936405101a1b5a743726501284",
+    "tests/lib/rules/mustache-interpolation-spacing.test.ts": "be04e1e70705c61ef24bb6f79572a8e8843ea94123e90a70e35b75c3a8bd2dd8",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -8001,6 +8002,274 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/1",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/2",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/3",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template>             <div id=\"               \"></div>         </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/4",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template> <div :style=\"  \" :class=\"       foo      \" v-if=foo   ></div>      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/5",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ text }}</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/6",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ }}</div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/7",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ }}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/8",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{}}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/9",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{text}}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/10",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ text }}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/11",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{         }}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/12",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{         }}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/valid/13",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{   text   }}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/1",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ text}}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/2",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{text }}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/3",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ text}}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/4",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{text }}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/5",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{text}}</div></template>",
+      "options": [
+        "always"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/6",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{ text }}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "mustache-interpolation-spacing/invalid/7",
+      "rule": "vue/mustache-interpolation-spacing",
+      "code": "<template><div>{{   text   }}</div></template>",
+      "options": [
+        "never"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
     },
     {
       "id": "require-v-for-key/valid/1",

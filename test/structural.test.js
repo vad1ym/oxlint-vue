@@ -67,6 +67,7 @@ const CASES = [
   ['vue/html-end-tags', '<div><span></div>', true],
   ['vue/no-spaces-around-equal-signs-in-attribute', '<div id = "value" />', true],
   ['vue/v-on-style', '<button v-on:click="go" />', true],
+  ['vue/mustache-interpolation-spacing', '<p>{{value}}</p>', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

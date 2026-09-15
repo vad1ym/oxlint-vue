@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 1203 upstream cases, 61 common structural rules | **1202 exact matches (99.9%)** |
-| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **880/880** |
-| Four pinned Nuxt components, each checked against all 61 rules | **244/244 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1242/1242 comparisons** |
+| 1223 upstream cases, 62 common structural rules | **1222 exact matches (99.9%)** |
+| Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **888/888** |
+| Four pinned Nuxt components, each checked against all 62 rules | **248/248 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1254/1254 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures. One parser-crashing case is explicitly excluded below. Sixty
-of the sixty-one suites currently match on every imported case.
+known failures. One parser-crashing case is explicitly excluded below. Sixty-one
+of the sixty-two suites currently match on every imported case.
 
 **An exact match here means rule identity, finding count, severity and start
 line/column.** It does not mean matching message wording, end ranges, suggestions
@@ -34,7 +34,7 @@ One `no-deprecated-v-bind-sync` reference case is explicitly unmeasured because
 the upstream case ID; regeneration cannot silently add or remove the exception.
 
 This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
-exports 253 rule names; 192 are not measured by this structural-rule harness,
+exports 253 rule names; 191 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
 added before making a broader claim.
