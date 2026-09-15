@@ -1334,6 +1334,71 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/html-comment-content-newline',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.COMMENT || !node.loc || !node.loc.source.endsWith('-->')) return
+      const content = node.content
+      if (!content.trim() || /^\s*eslint-(?:disable|enable)/u.test(content)
+        || /^\[if\b/iu.test(content) || /^<!\[endif\]/iu.test(content)) return
+      const settings = options.singleline !== undefined || options.multiline !== undefined
+        ? options as { singleline?: unknown, multiline?: unknown } : undefined
+      const isMultiline = content.trim().includes('\n')
+      const mode = settings
+        ? (isMultiline ? settings.multiline : settings.singleline)
+        : options.mode ?? (isMultiline ? 'always' : 'never')
+      if (mode === 'ignore') return
+      const exceptions = (options.secondary as { exceptions?: unknown } | undefined)?.exceptions
+      const configured = Array.isArray(exceptions) ? exceptions.filter((value): value is string =>
+        typeof value === 'string' && value.length > 0) : []
+      const exceptionLength = (side: 'start' | 'end'): number => {
+        let best = 0
+        for (const exception of configured) {
+          if (side === 'start') {
+            let length = 0
+            while (content.startsWith(exception, length)) length += exception.length
+            best = Math.max(best, length)
+          } else {
+            let index = content.length
+            while (index >= exception.length
+              && content.slice(index - exception.length, index) === exception) index -= exception.length
+            best = Math.max(best, content.length - index)
+          }
+        }
+        return best
+      }
+      const leftException = exceptionLength('start')
+      const rightException = exceptionLength('end')
+      if (leftException + rightException >= content.length && (leftException || rightException)) return
+      const leftWhitespace = content.slice(leftException).match(/^\s*/u)?.[0] ?? ''
+      const right = content.length - rightException
+      const rightWhitespace = content.slice(0, right).match(/\s*$/u)?.[0] ?? ''
+      if (mode === 'always') {
+        if (!leftWhitespace.includes('\n')) report({
+          ...relativeLoc(node, 4 + leftException),
+          message: leftException ? 'Expected line break after exception block.'
+            : "Expected line break after '<!--'.",
+        })
+        if (!rightWhitespace.includes('\n')) report({
+          ...relativeLoc(node, 4 + right - rightWhitespace.length),
+          message: rightException ? 'Expected line break before exception block.'
+            : "Expected line break before '-->'.",
+        })
+      } else {
+        if (leftWhitespace.includes('\n')) report({
+          ...relativeLoc(node, 4 + leftException),
+          message: leftException ? 'Unexpected line breaks after exception block.'
+            : "Unexpected line breaks after '<!--'.",
+        })
+        if (rightWhitespace.includes('\n')) report({
+          ...relativeLoc(node, 4 + right - rightWhitespace.length),
+          message: rightException ? 'Unexpected line breaks before exception block.'
+            : "Unexpected line breaks before '-->'.",
+        })
+      }
+    },
+  },
+  {
     name: 'vue/no-deprecated-filter',
     severity: 'error',
     check(node, report, options) {

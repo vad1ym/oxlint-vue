@@ -106,7 +106,8 @@
     "tests/lib/rules/order-in-components.test.ts": "8c7251a675db205bcdb0b9237e06274e206043da8cc0025d16464fbd53e38473",
     "tests/lib/rules/no-boolean-default.test.ts": "0d64a2d2d43e3bbf5c9e35c5060d1f133b44fb2d545fc03f45be38954eb5f078",
     "tests/lib/rules/component-options-name-casing.test.ts": "eaf00df53d0d6f174a9e903515b38299b98f08d2dd636e9f3becae6a79559bd6",
-    "tests/lib/rules/html-comment-content-spacing.test.ts": "160b25f61a63a044d175c905181a7417ee87a3100df4a6462da5ae00b0f98831"
+    "tests/lib/rules/html-comment-content-spacing.test.ts": "160b25f61a63a044d175c905181a7417ee87a3100df4a6462da5ae00b0f98831",
+    "tests/lib/rules/html-comment-content-newline.test.ts": "b60e6050b3f5bdadd474f9a801a49eb9adb8da6e7c5df4dac09262e1eddb58fe"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -35180,6 +35181,463 @@
     {
       "id": "html-comment-content-spacing/invalid/8",
       "rule": "vue/html-comment-content-spacing",
+      "code": "\n        <template>\n          <!--*****comment+++++-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "*",
+            "++"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/valid/1",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n      <template>\n        <!-- comment -->\n        <!--\n          multiline\n          comment\n        -->\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/2",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--\n            comment\n          -->\n          <!--\n            multiline\n            comment\n          -->\n          <!--\n\n            multiline\n            comment\n\n          -->\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/3",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!-- comment -->\n          <!-- multiline\n            comment -->\n        </template>\n        ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/4",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!---->\n          <!--\n          -->\n          <!--\n\n          -->\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/5",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!---->\n          <!--\n          -->\n          <!--\n\n          -->\n        </template>\n        ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/6",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--\n            comment\n          -->\n          <!-- multiline\n            comment -->\n        </template>\n        ",
+      "options": [
+        {
+          "singleline": "always",
+          "multiline": "never"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/7",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--comment-->\n          <!-- comment -->\n          <!--\tcomment\t-->\n          <!--    comment    -->\n        </template>\n        ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/8",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!-- comment -->\n          <!--\n            comment\n          -->\n          <!-- multiline\n            comment -->\n          <!--\n            multiline\n            comment\n          -->\n        </template>\n        ",
+      "options": [
+        {
+          "singleline": "ignore",
+          "multiline": "ignore"
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/9",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--++++++++++++++++\n            comment\n          ++++++++++++++++-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "+"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/10",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--+-++-++-++-++-++-+\n            comment\n          +-++-++-++-++-++-+-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "+-+"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/11",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--++++++++++++++++-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "+"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/12",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--++++\n            comment\n          ++++-->\n          <!--****\n            comment\n          ****-->\n          <!--++xx\n            comment\n          ++xx-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "+",
+            "*",
+            "++xx"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/13",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--++++++++++++++++ comment ++++++++++++++++-->\n        </template>\n        ",
+      "options": [
+        "never",
+        {
+          "exceptions": [
+            "+"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/14",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!-- eslint-disable -->\n          <!-- eslint-enable -->\n          <!-- eslint-disable-line-->\n          <!-- eslint-disable-next-line -->\n          <!-- eslint-disable xxx -->\n          <!-- eslint-enable  xxx -->\n          <!-- eslint-disable-line xxx-->\n          <!-- eslint-disable-next-line xxx -->\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/15",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--\n            eslint-disable\n          -->\n        </template>\n        ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/16",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!-- comment\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/17",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n      <template>\n        <!--[if IE 8]>\n        <div>IE8 only</div>\n        <![endif]-->\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/valid/18",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n      <template>\n        <!--[if !IE]><!-->\n        <div>not IE only</div>\n        <!--<![endif]-->\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "html-comment-content-newline/invalid/1",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--\n            comment\n          -->\n          <!-- multiline\n            comment -->\n        </template>\n        ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "html-comment-content-newline/invalid/2",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--comment-->\n          <!--  comment  -->\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 4
+    },
+    {
+      "id": "html-comment-content-newline/invalid/3",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--\ncomment\n-->\n        </template>\n        ",
+      "options": [
+        "never"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/4",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!-- \t \t  \t\tcomment \t \t  \t\t-->\n        </template>\n        ",
+      "options": [
+        "always"
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/5",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--++++++++++++++++comment++++++++++++++++-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "+"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/6",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--*****comment**-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "*"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/7",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--#+#-#+#-#+#-comment #+#-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "#+#-"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/8",
+      "rule": "vue/html-comment-content-newline",
+      "code": "\n        <template>\n          <!--*****comment++++-->\n        </template>\n        ",
+      "options": [
+        "always",
+        {
+          "exceptions": [
+            "*",
+            "++"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "html-comment-content-newline/invalid/9",
+      "rule": "vue/html-comment-content-newline",
       "code": "\n        <template>\n          <!--*****comment+++++-->\n        </template>\n        ",
       "options": [
         "always",

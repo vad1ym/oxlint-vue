@@ -11,15 +11,15 @@ See the [full rule inventory](rules-matrix.md) for all 253 rules and priorities.
 
 | Corpus | Result |
 |---|---|
-| 2546 upstream cases, 105 common structural rules | **2545 exact matches (99.9%)** |
+| 2573 upstream cases, 106 common structural rules | **2572 exact matches (99.9%)** |
 | Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **1224/1224** |
-| Four pinned Nuxt components, each checked against all 105 rules | **420/420 comparisons** |
-| Real oxlint pipeline including upstream props and scope regressions | **1762/1762 comparisons** |
+| Four pinned Nuxt components, each checked against all 106 rules | **424/424 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **1766/1766 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
 known failures. Five environment-dependent cases are explicitly excluded below. One hundred
-and four of the 105 suites currently match on every imported case.
+and five of the 106 suites currently match on every imported case.
 
 Eleven newer structural rules currently have local unit coverage, and four of
 them also run through the generated layout corpus. They remain `partial` in

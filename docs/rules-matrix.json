@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 65,
     "native": 59,
-    "partial": 52,
-    "missing": 77
+    "partial": 53,
+    "missing": 76
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -2498,17 +2498,19 @@
     },
     {
       "name": "html-comment-content-newline",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 27,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/html-comment-content-newline.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "html-comment-content-spacing",

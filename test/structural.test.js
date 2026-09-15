@@ -47,6 +47,7 @@ const CASES = [
   ['vue/component-options-name-casing', '<div />', true,
     'export default { components: { fooBar } }'],
   ['vue/html-comment-content-spacing', '<!--comment-->', true],
+  ['vue/html-comment-content-newline', '<!-- multiline\ncomment -->', true],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],
