@@ -36,6 +36,7 @@ const CASES = [
   ['vue/v-slot-style', '<MyComp><template v-slot:item="slotProps">{{ slotProps }}</template></MyComp>', true],
   ['vue/html-self-closing', '<div></div>', true],
   ['vue/no-multi-spaces', '<div   class="foo" />', true],
+  ['vue/singleline-html-element-content-newline', '<div class="panel">content</div>', true],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

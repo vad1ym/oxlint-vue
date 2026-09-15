@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 45,
-    "missing": 85
+    "partial": 46,
+    "missing": 84
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1853,20 +1853,22 @@
     },
     {
       "name": "singleline-html-element-content-newline",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 43,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/singleline-html-element-content-newline.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "v-bind-style",

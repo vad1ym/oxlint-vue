@@ -360,6 +360,10 @@ function sourceLoc(source: string, offset: number): ReturnType<typeof loc> {
   return { offset, line: lines.length, column: lines.at(-1)!.length + 1 }
 }
 
+function normalizedTagName(name: string): string {
+  return name.replaceAll('-', '').toLowerCase()
+}
+
 interface RawBlockTag {
   type: string
   start: number
@@ -999,6 +1003,48 @@ const RULES: Rule[] = [
         if (prop.type === NodeTypes.DIRECTIVE && prop.exp) {
           scan(prop.exp.loc.source, prop.exp.loc.start.offset, true)
         }
+      }
+    },
+  },
+  {
+    name: 'vue/singleline-html-element-content-newline',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || node.isSelfClosing) return
+      const inline = ['a', 'abbr', 'audio', 'b', 'bdi', 'bdo', 'canvas', 'cite', 'code', 'data', 'del',
+        'dfn', 'em', 'i', 'iframe', 'ins', 'kbd', 'label', 'map', 'mark', 'noscript', 'object', 'output',
+        'picture', 'q', 'ruby', 's', 'samp', 'small', 'span', 'strong', 'sub', 'sup', 'svg', 'time', 'u',
+        'var', 'video']
+      const ignores = new Set(['pre', 'textarea', ...inline,
+        ...(Array.isArray(options.ignores) ? options.ignores as string[] : []),
+        ...(Array.isArray(options.externalIgnores) ? options.externalIgnores as string[] : []),
+      ].map(normalizedTagName))
+      let current: ElementNode | undefined = node
+      while (current) {
+        if (ignores.has(normalizedTagName(current.tag))) return
+        current = (current as AnnotatedElement).__parentElement
+      }
+      if (options.ignoreWhenNoAttributes !== false && node.props.length === 0) return
+      const source = node.loc.source
+      let quote = ''
+      let openingEnd = -1
+      for (let index = 1; index < source.length; index++) {
+        const character = source[index]
+        if (quote) { if (character === quote) quote = '' }
+        else if (character === "'" || character === '"') quote = character
+        else if (character === '>') { openingEnd = index + 1; break }
+      }
+      const closingStart = source.lastIndexOf('</')
+      if (openingEnd < 0 || closingStart < openingEnd) return
+      if (source.slice(0, closingStart).includes('\n')) return
+      const inner = source.slice(openingEnd, closingStart)
+      if (inner.length === 0 && options.ignoreWhenEmpty !== false) return
+      report({ message: 'Expected a line break after the opening tag.',
+        ...relativeLoc(node, openingEnd) })
+      if (inner.trim().length > 0) {
+        const trailing = inner.length - inner.trimEnd().length
+        report({ message: 'Expected a line break before the closing tag.',
+          ...relativeLoc(node, closingStart - trailing) })
       }
     },
   },

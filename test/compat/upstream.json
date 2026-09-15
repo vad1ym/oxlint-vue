@@ -99,7 +99,8 @@
     "tests/lib/rules/one-component-per-file.test.ts": "75d0580a2b9fccef957215c53e0456bee0cc284f06bd8c2491b2586fd224a999",
     "tests/lib/rules/v-slot-style.test.ts": "3aa7a15cde9714f51615511aa61c14f1acaba2734d15f1f17fca8ac2c7d4ff4b",
     "tests/lib/rules/html-self-closing.test.ts": "42b118fec80bdcc503b9bf088ee0d771576d87d283d8c0da98ebafd7123eb2a8",
-    "tests/lib/rules/no-multi-spaces.test.ts": "0580e0cc2caae282687f0c40b6030ed0935c5d77ce1b7700b775be332147b3b6"
+    "tests/lib/rules/no-multi-spaces.test.ts": "0580e0cc2caae282687f0c40b6030ed0935c5d77ce1b7700b775be332147b3b6",
+    "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -30000,6 +30001,637 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/1",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <slot name=\"panel\"></slot>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/2",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div class=\"panel\">\n          content\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/3",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div class=\"panel\">\n          <div>\n          </div>\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/4",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div class=\"panel\">\n          <!-- comment -->\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/5",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          content\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/6",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <div>\n          </div>\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/7",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <!-- comment -->\n        </div>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/8",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <a href=\"/\">Home</a>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/9",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <form>\n          <label for=\"test\">Home</label>\n          <input id=\"test\" name=\"test\">\n        </form>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/10",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>singleline content</div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/11",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <tr><td>singleline</td><td>children</td></tr>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/12",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div><!-- singleline comment --></div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/13",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div     >singleline element</div     >\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/14",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div></div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/15",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>    </div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/16",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          content\n        </div>\n      </template>",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/17",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <div>\n          </div>\n        </div>\n      </template>",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/18",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          <!-- comment -->\n        </div>\n      </template>",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/19",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <self-closing />\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/20",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <pre>content</pre>\n        <pre attr>content</pre>\n        <pre><span attr>content</span></pre>\n        <textarea>content</textarea>\n        <textarea attr>content</textarea>\n        <textarea><span attr>content</span></textarea>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/21",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <ignore-tag>content</ignore-tag>\n          <ignore-tag attr>content</ignore-tag>\n          <ignore-tag><span attr>content</span></ignore-tag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "ignore-tag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/22",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <IgnoreTag>content</IgnoreTag>\n          <IgnoreTag attr>content</IgnoreTag>\n          <IgnoreTag><span attr>content</span></IgnoreTag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/23",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <ignore-tag>content</ignore-tag>\n          <ignore-tag attr>content</ignore-tag>\n          <ignore-tag><span attr>content</span></ignore-tag>\n        </template>",
+      "options": [
+        {
+          "ignores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/24",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>content\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/25",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div>\n          content</div>\n      </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/26",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n      <template>\n        <div\n          id=\n          \"\"\n    ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/27",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <pre>content</pre>\n          <IgnoreTag>content</IgnoreTag>\n          <IgnoreTag attr>content</IgnoreTag>\n          <IgnoreTag><span attr>content</span></IgnoreTag>\n        </template>",
+      "options": [
+        {
+          "externalIgnores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/valid/28",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n        <pre>content</pre>\n          <ignore-tag>content</ignore-tag>\n          <ignore-tag attr>content</ignore-tag>\n          <ignore-tag><span attr>content</span></ignore-tag>\n        </template>",
+      "options": [
+        {
+          "externalIgnores": [
+            "IgnoreTag"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/1",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div class=\"panel\">content</div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/2",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <tr attr><td>singleline</td><td>children</td></tr>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/3",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr><!-- singleline comment --></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/4",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr><!-- singleline --><!-- comments --></div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/5",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr     >content</div    >\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/6",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr     >content</div\n          >\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/7",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr></div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenEmpty": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/8",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div attr>    </div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/9",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>singleline content</div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/10",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <tr><td>singleline</td><td>children</td></tr>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 6
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/11",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div><!-- singleline comment --></div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/12",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div   >   singleline element   </div   >\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/13",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div></div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenEmpty": false,
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/14",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <div>    </div>\n        </template>\n      ",
+      "options": [
+        {
+          "ignoreWhenEmpty": false,
+          "ignoreWhenNoAttributes": false
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "singleline-html-element-content-newline/invalid/15",
+      "rule": "vue/singleline-html-element-content-newline",
+      "code": "\n        <template>\n          <Div class=\"panel\">content</Div>\n        </template>\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
     }
   ]
 }
