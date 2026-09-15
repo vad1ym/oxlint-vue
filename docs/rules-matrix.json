@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 35,
+    "implemented": 44,
     "native": 46,
     "partial": 13,
-    "missing": 159
+    "missing": 150
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1939,14 +1939,14 @@
     },
     {
       "name": "no-lone-template",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P2",
       "categories": [
         "vue3-recommended",
         "vue2-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 16,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -2591,11 +2591,11 @@
     },
     {
       "name": "max-template-depth",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 7,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -2705,13 +2705,13 @@
     },
     {
       "name": "no-custom-modifiers-on-v-model",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 10,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3117,11 +3117,11 @@
     },
     {
       "name": "no-root-v-if",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 23,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3315,11 +3315,11 @@
     },
     {
       "name": "no-use-v-else-with-v-for",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 6,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3375,13 +3375,13 @@
     },
     {
       "name": "no-v-for-template-key",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [
         "vue2-essential"
       ],
       "deprecated": true,
-      "upstreamCases": 0,
+      "upstreamCases": 14,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3391,13 +3391,13 @@
     },
     {
       "name": "no-v-model-argument",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [
         "vue2-essential"
       ],
       "deprecated": true,
-      "upstreamCases": 0,
+      "upstreamCases": 3,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3407,11 +3407,11 @@
     },
     {
       "name": "no-v-text",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 4,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -3833,11 +3833,11 @@
     },
     {
       "name": "slot-name-casing",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 10,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,

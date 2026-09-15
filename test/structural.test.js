@@ -53,6 +53,15 @@ const CASES = [
   ['vue/valid-v-bind', '<div :title.unknown="title" />', true],
   ['vue/valid-v-on', '<button @click.unknown="go" />', true],
   ['vue/valid-attribute-name', '<div 0invalid />', true],
+  ['vue/no-v-text', '<div v-text="text" />', true],
+  ['vue/no-use-v-else-with-v-for', '<div v-else v-for="item in items" />', true],
+  ['vue/no-v-for-template-key', '<template v-for="item in items" :key="item" />', true],
+  ['vue/no-v-model-argument', '<Component v-model:value="value" />', true],
+  ['vue/no-custom-modifiers-on-v-model', '<Component v-model.custom="value" />', true],
+  ['vue/slot-name-casing', '<slot name="Bad-Name" />', true],
+  ['vue/no-lone-template', '<div><template><span /></template></div>', true],
+  ['vue/max-template-depth', '<div><span /></div>', false],
+  ['vue/no-root-v-if', '<div v-if="ok" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],
@@ -101,6 +110,13 @@ for (const [rule, template, shouldFire] of CASES) {
     )
   })
 }
+
+test('max-template-depth honors maxDepth', () => {
+  const { rules } = check('<div><span /></div>', {
+    'vue/max-template-depth': ['warn', { maxDepth: 1 }],
+  })
+  assert.ok(rules.includes('vue/max-template-depth'), rules.join(', '))
+})
 
 test('this-in-template ignores DOM handler bindings', () => {
   // `:onerror="`this.src = ...`"` is a DOM handler string; its `this` is the

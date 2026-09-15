@@ -48,6 +48,7 @@ interface Annotations {
   __parentTag?: string
   __parentElement?: ElementNode
   __firstElementChild?: boolean
+  __depth?: number
   /** Full SFC source and template-content boundary for root-only checks. */
   __source?: string
   __templateContentStart?: number
@@ -803,6 +804,115 @@ const RULES: Rule[] = [
     },
   },
   {
+    name: 'vue/no-v-text',
+    severity: 'warning',
+    check(node, report) {
+      for (const dir of propsOf(node)) if (dir.type === NodeTypes.DIRECTIVE && dir.name === 'text') report({
+        message: 'Do not use v-text.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-use-v-else-with-v-for',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || !findDir(node, 'for')) return
+      if (findDir(node, 'else-if') || findDir(node, 'else')) report({
+        message: 'Move v-else-if or v-else to a wrapper instead of combining it with v-for.', ...loc(node),
+      })
+    },
+  },
+  {
+    name: 'vue/no-v-for-template-key',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template' || !findDir(node, 'for')) return
+      const key = findAttr(node, 'key') ?? node.props.find((prop): prop is DirectiveNode =>
+        prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && argContent(prop) === 'key')
+      if (key) report({ message: 'A Vue 2 <template v-for> cannot be keyed.', ...loc(key) })
+    },
+  },
+  {
+    name: 'vue/no-v-model-argument',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node)) return
+      for (const dir of node.props) if (dir.type === NodeTypes.DIRECTIVE
+        && dir.name === 'model' && dir.arg) report({
+        message: 'Vue 2 v-model does not accept an argument.', ...loc(dir),
+      })
+    },
+  },
+  {
+    name: 'vue/no-custom-modifiers-on-v-model',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || !customComponent(node)) return
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'model') continue
+        for (const modifier of dir.modifiers) if (!['lazy', 'number', 'trim'].includes(modifier.content)) report({
+          message: `v-model does not support the .${modifier.content} modifier.`, ...loc(dir),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/slot-name-casing',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'slot') return
+      const attr = findAttr(node, 'name')
+      const name = attr?.value?.content
+      if (!attr || !name) return
+      const mode = typeof options.mode === 'string' ? options.mode : 'camelCase'
+      const valid = mode === 'singleword' ? /^[a-z]+$/u.test(name)
+        : mode === 'kebab-case' ? /^[a-z][a-z\d]*(?:-[a-z\d]+)*$/u.test(name)
+          : /^[a-z][A-Za-z\d]*$/u.test(name)
+      if (!valid) report({ message: `Slot name ${name} is not ${mode}.`, ...loc(attr) })
+    },
+  },
+  {
+    name: 'vue/no-lone-template',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template') return
+      const keyName = (prop: ElementNode['props'][number]): string | undefined =>
+        prop.type === NodeTypes.ATTRIBUTE ? prop.name
+          : prop.name === 'bind' ? argContent(prop) : undefined
+      const structural = node.props.some((prop) => prop.type === NodeTypes.DIRECTIVE
+        && ['if', 'else', 'else-if', 'for', 'slot', 'slot-scope', 'scope'].includes(prop.name)
+        || ['slot', 'slot-scope', 'scope'].includes(keyName(prop) ?? ''))
+      const accessible = options.ignoreAccessible === true
+        && node.props.some(prop => ['id', 'ref'].includes(keyName(prop) ?? ''))
+      if (!structural && !accessible) report({ message: '<template> requires a structural directive.', ...loc(node) })
+    },
+  },
+  {
+    name: 'vue/max-template-depth',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || typeof options.maxDepth !== 'number') return
+      const depth = (node as AnnotatedElement).__depth ?? 0
+      if (depth > options.maxDepth) report({
+        message: `Element depth ${depth} exceeds ${options.maxDepth}.`, ...loc(node),
+      })
+    },
+  },
+  {
+    name: 'vue/no-root-v-if',
+    severity: 'warning',
+    check(node, report) {
+      if (node.type !== NodeTypes.ROOT) return
+      const elements = node.children.filter((child): child is ElementNode => child.type === NodeTypes.ELEMENT)
+      const root = elements[0]
+      if (elements.length !== 1 || !root || !findDir(root, 'if')) return
+      const context = node as RootNode & Annotations
+      if (!context.__source || context.__templateContentStart === undefined) return
+      const opening = context.__source.slice(0, context.__templateContentStart).lastIndexOf('<template')
+      report({ message: 'Do not use v-if on the only root element.', ...sourceLoc(context.__source, Math.max(0, opening)) })
+    },
+  },
+  {
     name: 'vue/require-v-for-key',
     severity: 'error',
     check(node, report) {
@@ -1404,6 +1514,7 @@ export function checkTemplate(
     node: AnyNode | undefined,
     inherited = new Set<string>(),
     insideVFor = false,
+    depth = 0,
   ): void => {
     if (!node) return
     const locals = new Set(inherited)
@@ -1421,6 +1532,7 @@ export function checkTemplate(
     context.__locals = locals
     context.__outerLocals = inherited
     context.__insideVFor = insideVFor
+    context.__depth = depth
     const children = childrenOf(node)
     if (children.length) annotate(children, node.type === NodeTypes.ELEMENT ? node : undefined)
     for (const { rule, severity } of active) {
@@ -1439,7 +1551,7 @@ export function checkTemplate(
     }
     const childInsideVFor = insideVFor
       || node.type === NodeTypes.ELEMENT && Boolean(findDir(node, 'for'))
-    for (const child of children) walk(child, locals, childInsideVFor)
+    for (const child of children) walk(child, locals, childInsideVFor, depth + 1)
     // Directive bodies of <template v-slot> live in children already.
   }
 
