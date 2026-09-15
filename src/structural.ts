@@ -332,6 +332,44 @@ function checkMemoExpression(root: Ast, report: Report, exp: NonNullable<Directi
   }
 }
 
+const SYSTEM_EVENT_MODIFIERS = new Set(['ctrl', 'shift', 'alt', 'meta'])
+const GLOBAL_EVENT_MODIFIERS = new Set([
+  'stop', 'prevent', 'capture', 'self', 'once', 'passive', 'native',
+])
+const KEYBOARD_EVENTS = new Set(['keydown', 'keypress', 'keyup'])
+
+interface EventDirective {
+  directive: DirectiveNode
+  name: string
+  modifiers: string[]
+  hasHandler: boolean
+}
+
+function eventModifierKey(event: EventDirective, system: boolean): string {
+  return event.modifiers.filter(modifier =>
+    system ? SYSTEM_EVENT_MODIFIERS.has(modifier)
+      : !SYSTEM_EVENT_MODIFIERS.has(modifier) && !GLOBAL_EVENT_MODIFIERS.has(modifier),
+  ).toSorted((a, b) => a.localeCompare(b)).join(',')
+}
+
+function keyboardStopWithoutHandler(event: EventDirective): boolean {
+  return KEYBOARD_EVENTS.has(event.name) && event.modifiers.includes('stop')
+    && !event.hasHandler
+    && event.modifiers.every(modifier => GLOBAL_EVENT_MODIFIERS.has(modifier))
+}
+
+function eventModifiersConflict(base: EventDirective, event: EventDirective): boolean {
+  if (event === base || event.modifiers.includes('exact')) return false
+  if (base.modifiers.includes('exact') && keyboardStopWithoutHandler(event)) return false
+  const eventKeys = eventModifierKey(event, false)
+  const baseKeys = eventModifierKey(base, false)
+  if (eventKeys && baseKeys && eventKeys !== baseKeys) return false
+  const eventSystem = eventModifierKey(event, true)
+  const baseSystem = eventModifierKey(base, true)
+  return base.modifiers.length > 0 && baseSystem !== eventSystem
+    && baseSystem.includes(eventSystem)
+}
+
 const RULES: Rule[] = [
   ...['html', 'text', 'show'].map(name => simpleDirectiveRule(name, true)),
   ...['once', 'cloak'].map(name => simpleDirectiveRule(name, false)),
@@ -354,6 +392,69 @@ const RULES: Rule[] = [
         }
         const expression = expressionAst(dir.exp)
         if (expression && expression.type !== 'Program') checkMemoExpression(expression, report, dir.exp)
+      }
+    },
+  },
+  {
+    name: 'vue/valid-v-is',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      for (const dir of node.props) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'is') continue
+        if (dir.arg) report({ message: 'v-is does not accept an argument.', ...loc(dir.arg) })
+        if (dir.modifiers[0]) report({ message: 'v-is does not accept modifiers.', ...loc(dir.modifiers[0]) })
+        if (!dir.exp?.loc.source) report({ message: 'v-is requires a value.', ...loc(dir) })
+        if (node.ns === 0 && !isHTMLTag(node.tag)) report({
+          message: `v-is must be used on a native HTML element; <${node.tag}> is not one.`,
+          ...loc(dir),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/no-deprecated-v-on-native-modifier',
+    severity: 'error',
+    check(node, report) {
+      for (const dir of propsOf(node)) {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') continue
+        for (const modifier of dir.modifiers) if (modifier.content === 'native') report({
+          message: '.native modifier on v-on is deprecated in Vue 3.', ...loc(modifier),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/use-v-on-exact',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      let events: EventDirective[] = node.props.flatMap((dir) => {
+        if (dir.type !== NodeTypes.DIRECTIVE || dir.name !== 'on') return []
+        return [{
+          directive: dir,
+          name: dir.arg?.loc.source ?? '',
+          modifiers: dir.modifiers.map(modifier => modifier.content),
+          hasHandler: Boolean(dir.exp),
+        }]
+      })
+      if (customComponent(node)) events = events.filter(event => event.modifiers.includes('native'))
+      const groups = new Map<string, EventDirective[]>()
+      for (const event of events) {
+        const group = groups.get(event.name) ?? []
+        group.push(event)
+        groups.set(event.name, group)
+      }
+      for (const sameName of groups.values()) {
+        if (!sameName.some(event => event.modifiers.some(modifier => SYSTEM_EVENT_MODIFIERS.has(modifier)))) continue
+        const conflicts: EventDirective[] = []
+        for (const base of sameName) for (const event of sameName) {
+          if (!conflicts.includes(event) && eventModifiersConflict(base, event)) conflicts.push(event)
+        }
+        for (const event of conflicts) report({
+          message: 'Add the .exact modifier to avoid handling extra modifier combinations.',
+          ...loc(event.directive),
+        })
       }
     },
   },

@@ -33,6 +33,9 @@ const CASES = [
   ['vue/valid-v-else-if', '<div v-else-if="value" />', true],
   ['vue/valid-v-else', '<div v-else />', true],
   ['vue/valid-v-memo', '<div v-memo="{}" />', true],
+  ['vue/valid-v-is', '<Component v-is="kind" />', true],
+  ['vue/no-deprecated-v-on-native-modifier', '<Component @click.native="go" />', true],
+  ['vue/use-v-on-exact', '<button @click="go" @click.ctrl="go" />', true],
 
   ['vue/valid-v-model', '<input v-model="a + b">', true],
   ['vue/valid-v-model', '<input v-model="value">', false],

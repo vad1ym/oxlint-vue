@@ -11,6 +11,9 @@
     "tests/lib/rules/valid-v-else-if.test.ts": "5f4058280dd33477a683f46ccafea7d076870a74cec688b1f0ae876df75c58c1",
     "tests/lib/rules/valid-v-else.test.ts": "ae66dc9ccc0bf01043228db1514d73de15fffbfc28ede021f372c0d6cbb4c20e",
     "tests/lib/rules/valid-v-memo.test.ts": "186376ae3b4bd1488962413327e27d857164e639bb8938e6562917bb363f9c6c",
+    "tests/lib/rules/valid-v-is.test.ts": "77a19e8f38272e0269261d048418298272fd104723191b24ce280b7fad5a2538",
+    "tests/lib/rules/no-deprecated-v-on-native-modifier.test.ts": "285c1133aa4d537440a2f2dcccacf973cfee622c8a105dbcc32d697d59adaf98",
+    "tests/lib/rules/use-v-on-exact.test.ts": "2bf4692502be711a1dacbc4a053b7c55605886b708d1edbd1a6af1f289c83f58",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -1263,6 +1266,858 @@
       "filename": "test.vue",
       "languageOptions": {
         "ecmaVersion": 2021
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-is/valid/1",
+      "rule": "vue/valid-v-is",
+      "code": "",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/valid/2",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/valid/3",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-bind:foo=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/valid/4",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is=\"'foo'\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/valid/5",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is=\".\" /></template>",
+      "options": [],
+      "filename": "parsing-error.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/valid/6",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is=\"/**/\" /></template>",
+      "options": [],
+      "filename": "comment-value.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "valid-v-is/invalid/1",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is:a=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-is/invalid/2",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is.a=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-is/invalid/3",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-is/invalid/4",
+      "rule": "vue/valid-v-is",
+      "code": "<template><div v-is=\"\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "valid-v-is/invalid/5",
+      "rule": "vue/valid-v-is",
+      "code": "<template><MyComponent v-is=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/valid/1",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input v-on:keyup.enter='fire'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/valid/2",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input @keyup.enter='fire'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/valid/3",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input v-native:foo.native.foo.bar='fire'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/valid/4",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input @native.enter='fire'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/valid/5",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input :keydown.native='fire'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/invalid/1",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input v-on:keyup.native='fore'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-deprecated-v-on-native-modifier/invalid/2",
+      "rule": "vue/no-deprecated-v-on-native-modifier",
+      "code": "<template><input v-on:keyup.foo.native.bar='fore'></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/valid/1",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/2",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\" :click=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/3",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.ctrl=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/4",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.exact=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/5",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button v-on:click=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/6",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button v-on:click.ctrl=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/7",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button v-on:click.exact=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/8",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\" @click.stop=\"bar\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/9",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\" @click.prevent=\"bar\" @click.stop=\"baz\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/10",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.prevent=\"foo\" @click.stop=\"bar\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/11",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.exact=\"foo\" @click.ctrl=\"bar\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/12",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.exact=\"foo\" @click.ctrl.exact=\"bar\" @click.ctrl.shift=\"baz\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/13",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.ctrl.exact=\"foo\" @click.ctrl.shift=\"bar\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/14",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click.exact=\"foo\" @click.ctrl=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/15",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\" @focus=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/16",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\" @click=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/17",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @click=\"foo\"/><button @click.ctrl=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/18",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button v-on:click.exact=\"foo\" v-on:click.ctrl=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/19",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><a @mouseenter=\"showTooltip\" @mouseenter.once=\"attachTooltip\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/20",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><input @keypress.exact=\"foo\" @keypress.esc.exact=\"bar\" @keypress.ctrl=\"baz\"></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/21",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><input @keypress.a=\"foo\" @keypress.b=\"bar\" @keypress.a.b=\"baz\"></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/22",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><input @keypress.shift=\"foo\" @keypress.ctrl=\"bar\"></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/23",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keypress.27=\"foo\"\n          @keypress.27.middle=\"bar\"\n        >\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/24",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.a.b.c=\"abc\"\n          @keydown.a=\"a\"\n          @keydown.b=\"b\"\n          @keydown.c=\"c\"\n        >\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/25",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.a.b=\"ab\"\n          @keydown.a=\"a\"\n          @keydown.b=\"b\"\n          @keydown.c=\"c\"\n          @keydown.a.c=\"ac\"\n        >\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/26",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.a.b=\"ab\"\n          @keydown.a=\"a\"\n          @keydown.b=\"b\"\n          @keydown.c=\"c\"\n        >\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/27",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click=\"foo\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/28",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click=\"foo\" @click.native=\"bar\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/29",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click=\"foo\" @click.native.ctrl=\"bar\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/30",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click=\"foo\" @click.native.exact=\"bar\" @click.native.ctrl=\"baz\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/31",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click.native.exact=\"bar\" @click.ctrl.native=\"baz\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/32",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click.native.ctrl.exact=\"foo\" @click.native.ctrl.shift=\"bar\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/33",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click.native=\"foo\" @click.native.stop=\"bar\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/34",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><UiButton @click.native.stop=\"foo\" @click.native.prevent=\"bar\" /></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/35",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @[click]=\"foo\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/36",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template><button @[foo]=\"foo\" @[bar].ctrl=\"bar\"/></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/37",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.enter=\"foo\"\n          @keydown.shift.tab=\"bar\"/>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/38",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.enter=\"foo\"\n          @keydown.shift.tab.prevent=\"bar\"/>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/39",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input\n          @keydown.ctrl.enter.exact=\"save\"\n          @keydown.stop\n        />\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/valid/40",
+      "rule": "vue/use-v-on-exact",
+      "code": "\n      <template>\n        <input-component\n          @keydown.enter.native=\"foo\"\n          @keydown.shift.tab.native=\"bar\"/>\n      </template>\n    ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "use-v-on-exact/invalid/1",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @click=\"foo\"\n          @click.ctrl=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/2",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @click=\"foo\"\n          @click.ctrl.stop=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/3",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @click.prevent=\"foo\"\n          @click.ctrl=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/4",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <input\n          @keydown.prevent=\"foo\"\n          @keydown.ctrl=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/5",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <input\n          @keydown.ctrl.enter.exact=\"save\"\n          @keydown.stop=\"foo\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/6",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @click.exact=\"foo\"\n          @click.ctrl=\"bar\"\n          @click.ctrl.shift=\"baz\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/7",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @click=\"foo\"\n          @click.ctrl=\"bar\"\n          @click.ctrl.shift=\"baz\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "use-v-on-exact/invalid/8",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <input\n          @keypress.27=\"foo\"\n          @keypress.27.shift=\"bar\"\n        >\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/9",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <input\n          @keypress.exact=\"foo\"\n          @keypress.esc=\"bar\"\n          @keypress.ctrl=\"baz\"\n        >\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/10",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <UiButton\n          @click=\"foo\"\n          @click.native=\"bar\"\n          @click.ctrl.native=\"baz\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/11",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <UiButton\n          @click.native.ctrl=\"foo\"\n          @click.native.ctrl.shift=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "use-v-on-exact/invalid/12",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <UiButton\n          @click.native=\"foo\"\n          @click.native.ctrl=\"bar\"\n          @click.native.ctrl.shift=\"baz\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "use-v-on-exact/invalid/13",
+      "rule": "vue/use-v-on-exact",
+      "code": "<template>\n        <button\n          @[foo]=\"foo\"\n          @[foo].ctrl=\"bar\"\n        />\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
       },
       "settings": {},
       "expectedCount": 1

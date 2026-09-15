@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.78.0",
   "counts": {
-    "implemented": 20,
+    "implemented": 23,
     "native": 46,
     "partial": 8,
-    "missing": 179
+    "missing": 176
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -407,13 +407,13 @@
     },
     {
       "name": "no-deprecated-v-on-native-modifier",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 7,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1068,14 +1068,14 @@
     },
     {
       "name": "use-v-on-exact",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential",
         "vue2-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 53,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
@@ -1313,13 +1313,13 @@
     },
     {
       "name": "valid-v-is",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P0",
       "categories": [
         "vue3-essential"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 11,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
