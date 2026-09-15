@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { booleanDefaultFindings, componentDefinitionOffsets, componentInheritAttrsDisabled, componentNameFindings, componentOptionNameFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { booleanDefaultFindings, componentDefinitionOffsets, componentInheritAttrsDisabled, componentNameFindings, componentOptionNameFindings, componentOptionTypoFindings, componentOrderFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -1415,6 +1415,11 @@ const RULES: Rule[] = [
       if (root && (context.__templateRootCount ?? 0) > 1 && options.checkMultiRootNodes !== true) return
       report({ ...loc(attrs.exp ?? attrs), message: 'Set "inheritAttrs" to false.' })
     },
+  },
+  {
+    name: 'vue/no-potential-component-option-typo',
+    severity: 'error',
+    check() {},
   },
   {
     name: 'vue/no-deprecated-filter',
@@ -3111,6 +3116,16 @@ export function checkTemplate(
         ...sourceLoc(source, finding.offset),
         message: 'Component name "' + finding.name + '" is not in '
           + String(mode ?? 'PascalCase') + '.' } as Diagnostic)
+    }
+  }
+  const optionTypoRule = active.find(entry => entry.rule.name === 'vue/no-potential-component-option-typo')
+  if (optionTypoRule) {
+    const options = ruleOptions(config?.[optionTypoRule.rule.name])
+    for (const finding of componentOptionTypoFindings(descriptor, options)) {
+      out.push({ filename, rule: optionTypoRule.rule.name, severity: optionTypoRule.severity,
+        ...sourceLoc(source, finding.offset),
+        message: "'" + finding.name + "' may be a typo, which is similar to option ["
+          + finding.candidates.join(',') + '].' } as Diagnostic)
     }
   }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')

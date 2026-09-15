@@ -49,6 +49,8 @@ const CASES = [
   ['vue/html-comment-content-spacing', '<!--comment-->', true],
   ['vue/html-comment-content-newline', '<!-- multiline\ncomment -->', true],
   ['vue/no-duplicate-attr-inheritance', '<div><span v-bind="$attrs" /></div>', true],
+  ['vue/no-potential-component-option-typo', '<div />', true,
+    'export default { dat() {} }'],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

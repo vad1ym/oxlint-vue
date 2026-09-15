@@ -62,6 +62,7 @@ export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: 
 export interface ComponentOrderFinding { name: string, offset: number }
 export interface BooleanDefaultFinding { offset: number }
 export interface ComponentOptionNameFinding { name: string, offset: number }
+export interface ComponentOptionTypoFinding { name: string, candidates: string[], offset: number }
 export interface ExplicitEmitInfo {
   declared: Set<string>
   props: Set<string>
@@ -380,6 +381,80 @@ function staticBooleanValue(value: NodePath): boolean | undefined {
   const binding = value.scope.getBinding(value.node.name)
   const init = binding?.path.isVariableDeclarator() ? binding.path.get('init') as NodePath : undefined
   return init?.isBooleanLiteral() ? init.node.value : undefined
+}
+
+const componentOptionPresets = {
+  nuxt: ['asyncData', 'fetch', 'head', 'key', 'layout', 'loading', 'middleware',
+    'scrollToTop', 'transition', 'validate', 'watchQuery'],
+  'vue-router': ['beforeRouteEnter', 'beforeRouteUpdate', 'beforeRouteLeave'],
+  vue: ['data', 'props', 'propsData', 'computed', 'methods', 'watch', 'el', 'template',
+    'render', 'renderError', 'staticRenderFns', 'beforeCreate', 'created', 'beforeDestroy',
+    'destroyed', 'beforeMount', 'mounted', 'beforeUpdate', 'updated', 'activated',
+    'deactivated', 'errorCaptured', 'serverPrefetch', 'directives', 'components',
+    'transitions', 'filters', 'provide', 'inject', 'model', 'parent', 'mixins', 'name',
+    'extends', 'delimiters', 'comments', 'inheritAttrs', 'setup', 'emits',
+    'beforeUnmount', 'unmounted', 'renderTracked', 'renderTriggered'],
+} as const
+
+function editDistance(left: string, right: string): number {
+  let previous = Array.from({ length: right.length + 1 }, (_, index) => index)
+  for (const [leftIndex, leftCharacter] of [...left].entries()) {
+    const current = [leftIndex + 1]
+    for (const [rightIndex, rightCharacter] of [...right].entries()) {
+      current.push(Math.min(
+        current[rightIndex]! + 1,
+        previous[rightIndex + 1]! + 1,
+        previous[rightIndex]! + (leftCharacter === rightCharacter ? 0 : 1),
+      ))
+    }
+    previous = current
+  }
+  return previous.at(-1) ?? 0
+}
+
+/** Component option keys close enough to known keys to be probable typos. */
+export function componentOptionTypoFindings(descriptor: SFCDescriptor,
+  options: Record<string, unknown>): ComponentOptionTypoFinding[] {
+  const candidates = new Set<string>()
+  if (Array.isArray(options.custom)) for (const value of options.custom) {
+    if (typeof value === 'string') candidates.add(value)
+  }
+  const presets = Array.isArray(options.presets) ? options.presets : ['vue']
+  for (const preset of presets) {
+    const presetName = String(preset)
+    if (presetName === 'all') {
+      for (const values of Object.values(componentOptionPresets)) for (const value of values) candidates.add(value)
+    } else if (presetName === 'vue' || presetName === 'vue-router' || presetName === 'nuxt') {
+      for (const value of componentOptionPresets[presetName]) candidates.add(value)
+    }
+  }
+  const threshold = typeof options.threshold === 'number' ? options.threshold : 1
+  const findings: ComponentOptionTypoFinding[] = []
+  if (!candidates.size) return findings
+  for (const block of [descriptor.script, descriptor.scriptSetup]) {
+    if (!block || !['js', 'jsx', 'ts', 'tsx'].includes(block.lang ?? 'js')) continue
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    traverse(file, { enter(path) {
+      if (!path.isExportDefaultDeclaration()) return
+      const object = componentObject(path)
+      if (!object) return
+      for (const property of object.get('properties') as NodePath[]) {
+        const name = componentPropertyName(property)
+        if (name === null || candidates.has(name)) continue
+        const similar = [...candidates].map(candidate => ({
+          candidate,
+          distance: editDistance(candidate, name),
+        })).filter(item => item.distance > 0 && item.distance <= threshold)
+          .toSorted((left, right) => left.distance - right.distance)
+          .map(item => item.candidate)
+        if (similar.length) findings.push({ name, candidates: similar,
+          offset: block.loc.start.offset + (property.node.start ?? 0) })
+      }
+    } })
+  }
+  return findings
 }
 
 function staticString(path: NodePath | undefined): string | null {
