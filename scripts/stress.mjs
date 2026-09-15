@@ -16,11 +16,11 @@ import path from 'node:path'
 import os from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { preprocess } from '../dist/preprocess.js'
-import { resolveBin } from '../dist/resolve.js'
+import { resolveBinCommand } from '../dist/resolve.js'
 import { parseOxlintJson } from '../dist/run.js'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
-const OXLINT = resolveBin('oxlint', ROOT, import.meta.url)
+const OXLINT = resolveBinCommand('oxlint', ROOT, import.meta.url)
 
 const roots = process.argv.slice(2)
 if (!roots.length) {
@@ -87,7 +87,7 @@ let raw = ''
 let engineFailure = null
 let exitStatus = 0
 try {
-  raw = execFileSync(OXLINT, ['--format=json', '-A', 'all', outDir], {
+  raw = execFileSync(OXLINT.command, [...OXLINT.args, '--format=json', '-A', 'all', outDir], {
     encoding: 'utf8',
     maxBuffer: 64 * 1024 * 1024,
   })
@@ -104,7 +104,7 @@ try {
   if (payload.number_of_files !== virtualToSource.size) throw new Error(`oxlint checked ${payload.number_of_files} files; expected ${virtualToSource.size}`)
   if (exitStatus === 1 && !syntax.length) throw new Error('oxlint failed without diagnostics')
 } catch (error) {
-  engineFailure = error.message
+  engineFailure ??= error.message
 }
 if (engineFailure) console.error(engineFailure)
 
