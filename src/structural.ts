@@ -159,6 +159,12 @@ function stringLiteral(exp: DirectiveNode['exp'], options: Record<string, unknow
   return true
 }
 
+function numericLimit(value: unknown): number {
+  return typeof value === 'number' ? value
+    : value && typeof value === 'object' && typeof (value as { max?: unknown }).max === 'number'
+      ? (value as { max: number }).max : 1
+}
+
 function customComponent(node: ElementNode, ignoreElementNamespaces = false): boolean {
   const native = node.tag === 'slot' || (ignoreElementNamespaces
     ? isHTMLTag(node.tag) || isSVGTag(node.tag) || isMathMLTag(node.tag)
@@ -1028,6 +1034,32 @@ const RULES: Rule[] = [
         if (/^\s/u.test(inner)) report({ message: "Remove the space after '{{'.", ...loc(node) })
         if (/\s$/u.test(inner)) report({
           message: "Remove the space before '}}'.", ...relativeLoc(node, 2 + inner.trimEnd().length),
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/max-attributes-per-line',
+    severity: 'warning',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || !node.props.length) return
+      const last = node.props.at(-1)!
+      const suffixStart = last.loc.end.offset - node.loc.start.offset
+      const suffix = node.loc.source.slice(suffixStart)
+      const close = suffix.indexOf('>')
+      const singleline = node.props.every(prop => prop.loc.start.line === node.loc.start.line
+        && prop.loc.end.line === node.loc.start.line)
+        && (close < 0 || !suffix.slice(0, close).includes('\n'))
+      const limit = numericLimit(singleline ? options.singleline : options.multiline)
+      const groups: ElementNode['props'][] = []
+      for (const prop of node.props) {
+        const group = groups.at(-1)
+        if (!group?.length || group.at(-1)!.loc.end.line !== prop.loc.start.line) groups.push([prop])
+        else group.push(prop)
+      }
+      for (const group of singleline ? [node.props] : groups) {
+        for (const prop of group.slice(limit)) report({
+          message: 'Move this attribute to a new line.', ...loc(prop),
         })
       }
     },

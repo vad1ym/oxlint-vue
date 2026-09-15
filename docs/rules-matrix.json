@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 46,
     "native": 46,
-    "partial": 17,
-    "missing": 144
+    "partial": 18,
+    "missing": 143
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1631,20 +1631,22 @@
     },
     {
       "name": "max-attributes-per-line",
-      "status": "missing",
+      "status": "partial",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 15,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/max-attributes-per-line.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "multiline-html-element-content-newline",

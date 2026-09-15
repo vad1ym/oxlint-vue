@@ -46,6 +46,7 @@
     "tests/lib/rules/no-spaces-around-equal-signs-in-attribute.test.ts": "252f271e49f34c4acaea988fd17e8361a2a4bdb0b1a5280e9c45f0b33878cdf1",
     "tests/lib/rules/v-on-style.test.ts": "0633be655129015d8639e6fc30bcccc05b64f4936405101a1b5a743726501284",
     "tests/lib/rules/mustache-interpolation-spacing.test.ts": "be04e1e70705c61ef24bb6f79572a8e8843ea94123e90a70e35b75c3a8bd2dd8",
+    "tests/lib/rules/max-attributes-per-line.test.ts": "514c0eb70e78eff8a814408daa3fdd47bcdaa3cb164bbb3185cbcaaee2d8825d",
     "tests/lib/rules/require-v-for-key.test.ts": "bb3d1c2a06b8d022ac366cc91dbc0a6ec074f57c232164f065ae4d4acc665782",
     "tests/lib/rules/no-v-for-template-key-on-child.test.ts": "b270ded8a78409705c70ebe980171236a1ad6961c1896724e634263f3e17c130",
     "tests/lib/rules/valid-v-model.test.ts": "e7a3e8fd17ad751667084034fc21f804fcdcb8693d2a9fcd83c7671d4ce5615b",
@@ -8270,6 +8271,207 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "max-attributes-per-line/valid/1",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-attributes-per-line/valid/2",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component\n        name=\"John Doe\"\n        age=\"30\"\n        job=\"Vet\"\n      ></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-attributes-per-line/valid/3",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component\n        name=\"John Doe\"\n        age=\"30\"\n      >\n      </component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-attributes-per-line/valid/4",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component\n        name=\"John Doe\"\n        age=\"30\">\n      </component>\n      </template>",
+      "options": [
+        {
+          "singleline": 1
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-attributes-per-line/valid/5",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component job=\"Vet\"\n        name=\"John Doe\"\n        age=\"30\">\n        </component>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "max-attributes-per-line/invalid/1",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component name=\"John Doe\" age=\"30\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/2",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component :name=\"user.name\" :age=\"user.age\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/3",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component :is=\"test\" v-bind=\"user\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/4",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component :name=\"user.name\" @buy=\"buyProduct\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/5",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component :name=\"user.name\" @click.stop></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/6",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component :name=\"user.name\" v-if=\"something\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/7",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component name=\"John Doe\"    v-bind:age=\"user.age\"></component></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/8",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component name=\"John Doe\" age=\"30\" job=\"Vet\"></component></template>",
+      "options": [
+        {
+          "singleline": {
+            "max": 2
+          }
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/9",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component\n        name=\"John Doe\" age=\"30\"\n        job=\"Vet\">\n        </component>\n      </template>",
+      "options": [
+        {
+          "singleline": 3,
+          "multiline": 1
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "max-attributes-per-line/invalid/10",
+      "rule": "vue/max-attributes-per-line",
+      "code": "<template><component\n        name=\"John Doe\" age=\"30\"\n        job=\"Vet\">\n        </component>\n      </template>",
+      "options": [
+        {
+          "multiline": {
+            "max": 1
+          }
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015
+      },
+      "settings": {},
+      "expectedCount": 1
     },
     {
       "id": "require-v-for-key/valid/1",
