@@ -23,7 +23,7 @@ import { parse } from '@vue/compiler-sfc'
 import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { componentNameFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
+import { componentDefinitionOffsets, componentNameFindings, componentPublicNames, computedPropertyInfo, explicitEmitInfo, freeIdentifiers, refOperandFindings, registeredComponents, scriptInstanceMembers, validDefaultPropFindings } from './script-rules.js'
 import type { ExplicitEmitInfo } from './script-rules.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
 import { NodeTypes, baseParse, walkIdentifiers } from '@vue/compiler-core'
@@ -887,6 +887,11 @@ const RULES: Rule[] = [
         })
       }
     },
+  },
+  {
+    name: 'vue/one-component-per-file',
+    severity: 'error',
+    check() {},
   },
   {
     name: 'vue/no-deprecated-filter',
@@ -2546,6 +2551,11 @@ export function checkTemplate(
     rule: explicitEmitsRule.rule.name, severity: explicitEmitsRule.severity,
     ...sourceLoc(source, finding.offset),
     message: `The "${finding.name}" event has been triggered but not declared.` } as Diagnostic)
+  const componentFileRule = active.find(entry => entry.rule.name === 'vue/one-component-per-file')
+  if (componentFileRule) for (const offset of componentDefinitionOffsets(descriptor, source, filename)) {
+    out.push({ filename, rule: componentFileRule.rule.name, severity: componentFileRule.severity,
+      ...sourceLoc(source, offset), message: 'There is more than one component in this file.' } as Diagnostic)
+  }
   const computedRule = active.find(entry => entry.rule.name === 'vue/no-use-computed-property-like-method')
   const computedInfo = computedRule ? computedPropertyInfo(descriptor) : { names: new Set<string>(), findings: [] }
   if (computedRule) for (const finding of computedInfo.findings) out.push({ filename,

@@ -68,6 +68,73 @@ export interface ExplicitEmitInfo {
   findings: { name: string, offset: number }[]
 }
 
+/** Component definition locations for one-component-per-file. */
+export function componentDefinitionOffsets(descriptor: SFCDescriptor, source: string, filename: string): number[] {
+  const blocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const inputs = blocks.length > 0 ? blocks.map(block => ({ content: block.content, offset: block.loc.start.offset }))
+    : [{ content: source, offset: 0 }]
+  const definitions: number[] = []
+  for (const input of inputs) {
+    let file
+    try { file = babelParse(input.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const factories = new Map<Binding, string>()
+    traverse(file, { enter(path) {
+      if (path.isImportDeclaration() && ['vue', '@vue/composition-api'].includes(path.node.source.value)) {
+        for (const specifier of path.get('specifiers') as NodePath[]) {
+          if (!specifier.isImportSpecifier() || specifier.node.imported.type !== 'Identifier'
+            || !['component', 'createApp', 'defineComponent'].includes(specifier.node.imported.name)) continue
+          const binding = specifier.scope.getBinding(specifier.node.local.name)
+          if (binding) factories.set(binding, specifier.node.imported.name)
+        }
+      }
+      if (!path.isVariableDeclarator() || path.node.id.type !== 'Identifier') return
+      const init = path.get('init') as NodePath
+      if (!init?.isMemberExpression() || init.node.object.type !== 'Identifier' || init.node.object.name !== 'Vue') return
+      const name = staticName(init.node.property)
+      if (!name || !['component', 'createApp', 'defineComponent'].includes(name)) return
+      const binding = path.scope.getBinding(path.node.id.name)
+      if (binding) factories.set(binding, name)
+    } })
+    traverse(file, { enter(path) {
+      const init = path.isVariableDeclarator() ? path.get('init') as NodePath : undefined
+      const fromVue = init?.isIdentifier() && init.node.name === 'Vue'
+        || init?.isCallExpression() && init.node.callee.type === 'Identifier' && init.node.callee.name === 'require'
+          && staticString((init.get('arguments') as NodePath[])[0]) === 'vue'
+      if (path.isVariableDeclarator() && path.node.id.type === 'ObjectPattern' && fromVue) {
+        for (const property of path.get('id').get('properties') as NodePath[]) {
+          if (!property.isObjectProperty() || property.node.value.type !== 'Identifier') continue
+          const name = staticName(property.node.key)
+          if (!name || !['component', 'createApp', 'defineComponent'].includes(name)) continue
+          const binding = property.scope.getBinding(property.node.value.name)
+          if (binding) factories.set(binding, name)
+        }
+      }
+      if (path.isExportDefaultDeclaration() && filename.endsWith('.vue')) {
+        const object = componentObject(path)
+        if (object?.node.start !== null && object?.node.start !== undefined) definitions.push(input.offset + object.node.start)
+      }
+      if (!path.isCallExpression()) return
+      let factory: string | undefined
+      const callee = path.get('callee') as NodePath
+      if (callee.isMemberExpression() && callee.node.object.type === 'Identifier'
+        && callee.node.object.name === 'Vue' && staticName(callee.node.property) === 'component') factory = 'component'
+      else if (callee.isIdentifier()) {
+        const binding = callee.scope.getBinding(callee.node.name)
+        factory = binding ? factories.get(binding)
+          : filename.endsWith('.vue') && callee.node.name === 'defineComponent' ? 'defineComponent' : undefined
+      }
+      if (!factory) return
+      const callArguments = path.get('arguments') as NodePath[]
+      const definition = callArguments.find(argument => argument.isObjectExpression())
+      if (definition?.node.start !== null && definition?.node.start !== undefined) {
+        definitions.push(input.offset + definition.node.start)
+      }
+    } })
+  }
+  return definitions.length > 1 ? definitions : []
+}
+
 function staticString(path: NodePath | undefined): string | null {
   if (!path) return null
   return path.isStringLiteral() ? path.node.value

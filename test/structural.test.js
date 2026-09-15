@@ -31,6 +31,8 @@ const CASES = [
   ['vue/no-use-computed-property-like-method', '<div />', false],
   ['vue/no-template-shadow', '<div v-for="item in items"><i v-for="item in item" /></div>', true],
   ['vue/require-explicit-emits', '<button @click="$emit(\'save\')" />', true],
+  ['vue/one-component-per-file', '<div />', true,
+    'Vue.component(\'FirstComp\', {}); Vue.component(\'SecondComp\', {})'],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],
@@ -148,9 +150,9 @@ const CASES = [
   ['vue/no-mutating-props', '<button @click="x = 1" />', false],
 ]
 
-for (const [rule, template, shouldFire] of CASES) {
+for (const [rule, template, shouldFire, script] of CASES) {
   test(`${rule} ${shouldFire ? 'fires' : 'stays quiet'}: ${template}`, () => {
-    const { rules } = check(template)
+    const { rules } = check(template, undefined, script)
     assert.equal(
       rules.includes(rule),
       shouldFire,

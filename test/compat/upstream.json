@@ -95,7 +95,8 @@
     "tests/lib/rules/require-valid-default-prop.test.ts": "d09624fbf97a3a68047b1dd8782112a2c3df078751c43415058b71701db626a8",
     "tests/lib/rules/no-use-computed-property-like-method.test.ts": "724fe97ec80b1f36f6c69a92399599c3a5faeb79a2f918ccff331b480eba01c2",
     "tests/lib/rules/no-template-shadow.test.ts": "959ac724ce91ff80c23a402e4c3185550f495eb70a1c8942c69011f168cad74e",
-    "tests/lib/rules/require-explicit-emits.test.ts": "6ca1f2a00fe4aa46ff9ddde69997a9ade4d83fb97821a03964f0499bf5d8e6d6"
+    "tests/lib/rules/require-explicit-emits.test.ts": "6ca1f2a00fe4aa46ff9ddde69997a9ade4d83fb97821a03964f0499bf5d8e6d6",
+    "tests/lib/rules/one-component-per-file.test.ts": "75d0580a2b9fccef957215c53e0456bee0cc284f06bd8c2491b2586fd224a999"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -28184,6 +28185,370 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "one-component-per-file/valid/1",
+      "rule": "vue/one-component-per-file",
+      "code": "Vue.component('name', {})",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/2",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        Vue.component('name', {})\n        new Vue({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/3",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const foo = {}\n        new Vue({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/4",
+      "rule": "vue/one-component-per-file",
+      "code": "export default {}",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/5",
+      "rule": "vue/one-component-per-file",
+      "code": "export default {\n        components: {\n          test: {\n            name: 'foo'\n          }\n        }\n      }",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/6",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        Vue.mixin({})\n        Vue.component('name', {})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/7",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { createApp } from 'vue'\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/8",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { component } from 'other.js'\n        component({})\n        component({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/9",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { createApp } from 'other.js'\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/10",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { defineComponent } from 'other.js'\n        defineComponent({})\n        defineComponent({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/11",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        function createApp() {}\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/valid/12",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const { createApp } = require('other.js')\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "one-component-per-file/invalid/1",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        Vue.component('name', {})\n        Vue.component('name', {})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/2",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        Vue.component('TodoList', {\n          // ...\n        })\n\n        Vue.component('TodoItem', {\n          // ...\n        })\n        export default {}\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/3",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        Vue.component('name', {})\n        export default {}\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/4",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { component } from 'vue'\n        component('', {})\n        component('', {})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/5",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const { component } = Vue\n        component('', {})\n        component('', {})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/6",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { component } from '@vue/composition-api'\n        component('', {})\n        component('', {})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/7",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { createApp } from 'vue'\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/8",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { createApp } from '@vue/composition-api'\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/9",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const { createApp } = Vue\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/10",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const createApp = Vue.createApp\n        createApp({})\n        createApp({})\n      ",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/11",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { defineComponent } from 'vue'\n        defineComponent({})\n        defineComponent({})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/12",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        import { defineComponent } from '@vue/composition-api'\n        defineComponent('', {})\n        defineComponent('', {})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/13",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        defineComponent({})\n        defineComponent({})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "one-component-per-file/invalid/14",
+      "rule": "vue/one-component-per-file",
+      "code": "\n        const { defineComponent } = require('vue')\n        defineComponent({})\n        defineComponent({})\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "parserKind": "espree"
+      },
+      "settings": {},
+      "expectedCount": 2
     }
   ]
 }

@@ -2,10 +2,10 @@
   "referenceVersion": "10.11.0",
   "oxlintVersion": "1.83.0",
   "counts": {
-    "implemented": 63,
+    "implemented": 64,
     "native": 59,
     "partial": 42,
-    "missing": 89
+    "missing": 88
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1757,14 +1757,14 @@
     },
     {
       "name": "one-component-per-file",
-      "status": "missing",
+      "status": "implemented",
       "priority": "P1",
       "categories": [
         "vue3-strongly-recommended",
         "vue2-strongly-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 26,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": false,
