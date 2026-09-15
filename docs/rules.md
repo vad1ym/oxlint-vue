@@ -86,8 +86,10 @@ oxlint rules plus plugins apply. Run `pnpm compare <project>` to reproduce.
 
 `vue/no-mutating-props` resolves top-level `defineProps` declarations, including
 runtime props, inline/local types, `withDefaults` and destructured aliases. In
-template expressions it checks assignments, updates, deletion, `v-model` and
-common array mutations. Loop, slot and callback locals do not inherit prop
+script and template expressions it checks assignments, updates, deletion and
+common array mutations, plus template `v-model` and `.sync` writes. Options API
+props, setup parameters, destructuring, optional calls, `Object.assign` and
+component-instance aliases are also checked. Loop, slot and callback locals do not inherit prop
 identity. Imported type members and arbitrary aliases are not type-resolved.
 
 `vue/no-dupe-v-else-if` compares expression ASTs. Whitespace and comments outside
@@ -119,7 +121,7 @@ Implemented options include `allowUsingIterationVar` (`no-use-v-if-with-v-for`),
 `ignoreIncludesComment`/`ignoreStringEscape` (the two literal rules),
 `allow`/`ignoreElementNamespaces` (`no-v-text-v-html-on-component`), `allowBinding`
 (`no-static-inline-styles`), `additionalDirectives` (`no-child-content`),
-`shallowOnly` (template `no-mutating-props`) and `always`/`never`
+`shallowOnly` (`no-mutating-props`) and `always`/`never`
 (`this-in-template`). These options go after the severity in a rule array.
 
 `require-v-for-key` checks native elements and fragment children; `valid-v-for`

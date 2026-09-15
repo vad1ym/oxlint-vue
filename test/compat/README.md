@@ -8,6 +8,7 @@ scope, known gaps, regeneration and baseline review process.
 - `LICENSE.upstream`: upstream MIT license for the imported cases.
 - `baseline.json`: exact unresolved differences; changes require review.
 - `generated.js`: original layout/scope/Unicode variations with no allowances.
+- `props.js`: additional scope regressions and documented upstream false positives.
 - `real.js`: integrity-checked, unmodified Nuxt fixtures, measured per rule.
 - `runner.js`: pinned reference engine plus the actual structural checker.
 

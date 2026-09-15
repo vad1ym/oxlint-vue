@@ -65,6 +65,7 @@
     "compat": "node scripts/compat.mjs"
   },
   "dependencies": {
+    "@babel/traverse": "^7.29.8",
     "@vue/compiler-core": "^3.5.41",
     "@vue/compiler-sfc": "^3.5.0",
     "@vue/shared": "^3.5.41"
@@ -75,6 +76,7 @@
     "oxlint": ">=1.0.0"
   },
   "devDependencies": {
+    "@types/babel__traverse": "^7.28.0",
     "@types/node": "^26.2.0",
     "@typescript-eslint/parser": "8.70.0",
     "@typescript/native": "npm:typescript@7.0.2",

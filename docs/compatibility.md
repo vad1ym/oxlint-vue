@@ -9,14 +9,14 @@ the TypeScript 6 API alias is used only by the reference TypeScript parser.
 
 | Corpus | Result |
 |---|---|
-| 568 upstream cases, 18 common structural rules | **544 exact matches (95.8%)** |
+| 568 upstream cases, 18 common structural rules | **567 exact matches (99.8%)** |
 | Original generated cases: layout, CRLF, Unicode, entities, loop/slot scopes | **264/264** |
 | Four pinned Nuxt components, each checked against all 18 rules | **72/72 comparisons** |
-| Real oxlint pipeline on generated and Nuxt cases | **336/336 comparisons** |
+| Real oxlint pipeline including upstream props and scope regressions | **454/454 comparisons** |
 
 The upstream result started at 295/568 before these fixes. The denominator
 includes upstream options, valid cases, invalid cases, script-only cases and
-known failures; none are silently excluded. Sixteen of the eighteen suites
+known failures; none are silently excluded. Seventeen of the eighteen suites
 currently match on every imported case.
 
 **An exact match here means rule identity, finding count, severity and start
@@ -26,7 +26,7 @@ or autofixes. Equal finding counts with different locations are classified as
 in the count. The reference case's original expected count is checked before
 comparison, so a broken parser/configuration cannot pass as an empty result.
 
-This is **not 95.8% compatibility with the entire plugin**. The pinned plugin
+This is **not 99.8% compatibility with the entire plugin**. The pinned plugin
 exports 253 rule names; 235 are not measured by this structural-rule harness,
 including native oxlint rule implementations. Existing rule-count coverage
 against a preset is a separate metric. More cases and rule families must be
@@ -34,13 +34,9 @@ added before making a broader claim.
 
 ## Remaining upstream differences
 
-All 24 cases are recorded with both diagnostic lists in
+The single remaining upstream case is recorded with both diagnostic lists in
 [`test/compat/baseline.json`](../test/compat/baseline.json):
 
-- **23 `no-mutating-props` cases:** Options API, script-body mutations, setup
-  parameter destructuring, the `shallowOnly` script path and global-name
-  resolution of more complex aliases. The template implementation now honors `shallowOnly` and reports
-  mutation locations, but it does not replace a complete script-scope analyzer.
 - **One `no-dupe-v-else-if` case:** our semantic comparison recognizes
   `a === 1` and `a === (1)` as equivalent; the reference's token comparison does
   not report this case. This stronger check is intentionally retained and
@@ -55,6 +51,29 @@ rule whose current corpus happens to be green.
 names. They are listed separately instead of being silently equated to an
 upstream rule. `no-target-blank` is not a measured alias for the upstream
 `no-template-target-blank` rule.
+
+## Prop mutation scope regressions
+
+All **48 upstream `no-mutating-props` cases match**. Script and template checks
+share the same mutation logic. Script roots are resolved by lexical binding,
+including setup parameters, destructuring, optional calls, `Object.assign`,
+component `this` and constant aliases of `this`. Script-only SFCs are checked
+in the CLI and LSP, including clearing stale diagnostics after an edit.
+
+An additional **70 original scope cases** run with LF and CRLF. Of these,
+64 match the reference exactly. Six deliberately avoid three upstream false
+positives (each represented with both line endings):
+
+- `Object.assign` when `Object` is a local parameter.
+- `this.prop` in an ordinary nested function with its own `this`.
+- A template reference to a script-setup binding shadowing an Options API prop.
+
+These differences have explicit reasons and expected diagnostics in
+`test/compat/props.js`, are checked in both directions, and appear in the CI
+report. They are not counted as exact matches or hidden in the upstream rate.
+All 70 cases and all 48 upstream prop cases also run through the real pipeline.
+Arbitrary aliases of props/individual prop values and imported type members
+remain outside this syntax-based analyzer; this is not a type-checking engine.
 
 ## Running and reviewing
 
@@ -96,8 +115,8 @@ samples from Nuxt's own fixture project, not an audit of every Nuxt feature.
 
 ## Next compatibility work
 
-1. Close the recorded prop-mutation gaps.
-2. Add reference suites for native Vue rules and their effective configuration.
+1. Expand native-rule and configuration compatibility coverage.
+2. Extend the corpus with additional application patterns and rule options.
 3. Measure autofixes, suppressions, options/preset interactions and LSP parity.
 4. Expand the corpus before adding new rule families, starting with essential
    `valid-*` rules.

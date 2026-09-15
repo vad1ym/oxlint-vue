@@ -249,9 +249,9 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
 
     preprocessedByUri.set(uri, result)
     const diagnostics = preprocessingDiagnostics(result, filename, text, strictTemplates)
-    if (result.descriptor.template?.ast) {
+    if (result.descriptor.template?.ast || result.descriptor.script || result.descriptor.scriptSetup) {
       diagnostics.push(...checkTemplate(
-        result.descriptor.template.ast, filename, text, structuralConfig,
+        result.descriptor.template?.ast, filename, text, structuralConfig,
         (result.descriptor.scriptSetup ?? result.descriptor.script)?.content,
       ))
     }

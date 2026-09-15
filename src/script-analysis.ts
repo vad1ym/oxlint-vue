@@ -8,11 +8,13 @@ export interface ScriptAnalysis {
   props: Map<string, string>
   propObjects: Set<string>
   arrays: Set<string>
+  instanceProps: Set<string>
+  bindings: Set<string>
 }
 
 /** Resolve local syntax only; imported type members require a type checker. */
 export function analyzeScript(source: string | undefined): ScriptAnalysis {
-  const result: ScriptAnalysis = { props: new Map(), propObjects: new Set(), arrays: new Set() }
+  const result: ScriptAnalysis = { props: new Map(), propObjects: new Set(), arrays: new Set(), instanceProps: new Set(), bindings: new Set() }
   if (!source) return result
   let program
   try { program = babelParse(source, { sourceType: 'module', plugins: ['typescript', 'decorators-legacy'] }).program } catch { return result }
@@ -90,6 +92,8 @@ export function analyzeScript(source: string | undefined): ScriptAnalysis {
       }
     }
   }
+  result.bindings = declared
+  result.instanceProps = names
   for (const name of names) if (!declared.has(name) && !isGloballyAllowed(name)) result.props.set(name, name)
   return result
 }

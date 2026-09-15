@@ -19,6 +19,8 @@ import type { Diagnostic, RuleConfig, RulesMap } from './types.js'
  * Node type constants from @vue/compiler-core NodeTypes.
  */
 import { isHTMLTag, isSVGTag, isMathMLTag } from '@vue/shared'
+import { parse } from '@vue/compiler-sfc'
+import { scriptPropMutations, templatePropMutations } from './prop-mutations.js'
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
 import { bindingNames, expressionAst, astKey, staticName, unwrap } from './ast.js'
@@ -620,7 +622,7 @@ const RULES: Rule[] = [
       if (node.type !== NodeTypes.ELEMENT && node.type !== NodeTypes.INTERPOLATION) return
       const context = node as AnnotatedElement
       const script = context.__script
-      if (!script || (!script.props.size && !script.propObjects.size)) return
+      if (!script || (!script.props.size && !script.propObjects.size && !script.instanceProps.size)) return
       const expressions = node.type === NodeTypes.INTERPOLATION
         ? [{ exp: node.content, name: '', loc: node.loc }]
         : node.props.filter((prop): prop is DirectiveNode => prop.type === NodeTypes.DIRECTIVE)
@@ -628,54 +630,14 @@ const RULES: Rule[] = [
         const ast = expressionAst(prop.exp)
         if (!ast) continue
         const locals = prop.name === 'if' ? context.__outerLocals : context.__locals
-        const reported = new Set<import('./ast.js').AstNode>()
-        walkIdentifiers(ast, (id, _parent, ancestors) => {
-          if (locals?.has(id.name)) return
-          const isObject = script.propObjects.has(id.name)
-          const propName = script.props.get(id.name)
-          if (!isObject && !propName) return
-          let target: import('./ast.js').AstNode = id
-          let depth = ancestors.length - 1
-          let members = 0
-          while (depth >= 0) {
-            const parent = ancestors[depth]!
-            if ((parent.type === 'MemberExpression' || parent.type === 'OptionalMemberExpression') && parent.object === target) {
-              members++
-              target = parent
-              depth--
-            } else if ((parent.type === 'TSAsExpression' || parent.type === 'TSTypeAssertion'
-              || parent.type === 'TSNonNullExpression' || parent.type === 'TSSatisfiesExpression'
-              || parent.type === 'ParenthesizedExpression') && parent.expression === target) {
-              target = parent
-              depth--
-            } else if (parent.type === 'ObjectProperty' && parent.value === target
-              || parent.type === 'ObjectPattern' || parent.type === 'ArrayPattern'
-              || parent.type === 'RestElement' && parent.argument === target) {
-              target = parent
-              depth--
-            } else break
-          }
-          if (isObject && !members) return
-          const parent = ancestors[depth]
-          const mutation = (parent?.type === 'AssignmentExpression' && parent.left === target)
-            || (parent?.type === 'UpdateExpression' && parent.argument === target)
-            || (parent?.type === 'UnaryExpression' && parent.operator === 'delete' && parent.argument === target)
-            || (prop.name === 'model' && target === ast)
-            || (parent?.type === 'CallExpression' && parent.callee === target
-              && (!isObject || members > 1)
-              && target.type === 'MemberExpression'
-              && (!target.computed || target.property.type === 'StringLiteral')
-              && ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse', 'fill', 'copyWithin'].includes(staticName(target.property) ?? ''))
-          const mutationNode = parent ?? target
-          if (!mutation || reported.has(mutationNode)) return
-          if (options.shallowOnly && (members > (isObject ? 1 : 0) || parent?.type === 'CallExpression')) return
-          reported.add(mutationNode)
+        const model = prop.name === 'model' || prop.name === 'bind' && 'modifiers' in prop && prop.modifiers.some(mod => mod.content === 'sync')
+        for (const mutation of templatePropMutations(ast, script, locals, options.shallowOnly === true, model)) {
           report({
-            ...astLoc(prop.exp!, mutationNode, ast),
-            message: `Unexpected mutation of prop '${propName ?? id.name}'.`,
+            ...astLoc(prop.exp!, mutation.node, ast),
+            message: `Unexpected mutation of prop '${mutation.name}'.`,
             help: 'Props are read-only; emit an event or use a local copy.',
           })
-        })
+        }
       }
     },
   },
@@ -783,7 +745,24 @@ export function checkTemplate(
   // Some rules need context the node itself does not carry: the v-else-if
   // chain a node starts, and which identifiers are props. Attached once here
   // rather than recomputed per rule per node.
-  const script = analyzeScript(scriptContent)
+  const descriptor = parse(source, { filename }).descriptor
+  const script = analyzeScript(descriptor.scriptSetup?.content ?? (descriptor.script ? undefined : scriptContent))
+  const propRule = active.find(entry => entry.rule.name === 'vue/no-mutating-props')
+  if (propRule) {
+    const result = scriptPropMutations(descriptor, ruleOptions(config?.[propRule.rule.name]).shallowOnly === true)
+    for (const name of result.instanceProps) {
+      script.instanceProps.add(name)
+      if (!script.props.has(name) && !script.bindings.has(name)) script.props.set(name, name)
+    }
+    for (const finding of result.findings) {
+      const prefix = source.slice(0, finding.offset).split('\n')
+      out.push({ filename, rule: propRule.rule.name, severity: propRule.severity,
+        line: prefix.length, column: prefix.at(-1)!.length + 1, offset: finding.offset,
+        message: `Unexpected mutation of prop '${finding.name}'.`,
+        help: 'Props are read-only; emit an event or use a local copy.',
+      })
+    }
+  }
 
   const annotate = (children: TemplateChildNode[]): void => {
     for (let i = 0; i < children.length; i++) {

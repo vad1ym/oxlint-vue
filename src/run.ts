@@ -151,10 +151,10 @@ export async function runOxlint(
       }
 
       // Structural checks run on the template AST, which padding discards.
-      if (result.descriptor.template?.ast) {
+      if (result.descriptor.template?.ast || result.descriptor.script || result.descriptor.scriptSetup) {
         structural.push(
           ...checkTemplate(
-            result.descriptor.template.ast,
+            result.descriptor.template?.ast,
             abs,
             source,
             structuralConfig,

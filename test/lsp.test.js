@@ -364,3 +364,26 @@ test('editor reports inherited strict coverage gaps and SFC parse errors', { tim
     }
   })
 })
+
+test('editor reports script-only prop mutations and clears them after repair', { timeout: 30000 }, async () => {
+  const source = '<script setup>\nconst props = defineProps({value:Number})\nprops.value++\n</script>'
+  await withServer({ 'Props.vue': source }, async (client, dir) => {
+    const uri = fileUri(path.join(dir, 'Props.vue'))
+    client.send({ jsonrpc: '2.0', method: 'textDocument/didOpen', params: {
+      textDocument: { uri, languageId: 'vue', version: 1, text: source },
+    } })
+    const found = await waitFor(() => client.latestFor(uri)?.params.diagnostics.find(d => d.code === 'vue/no-mutating-props'))
+    assert.ok(found)
+    assert.deepEqual(found.range.start, { line: 2, character: 0 })
+    const before = client.publishes().length
+    client.send({ jsonrpc: '2.0', method: 'textDocument/didChange', params: {
+      textDocument: { uri, version: 2 },
+      contentChanges: [{ text: source.replace('props.value++', 'console.log(props.value)') }],
+    } })
+    const cleared = await waitFor(() => {
+      if (client.publishes().length <= before) return false
+      return !client.latestFor(uri)?.params.diagnostics.some(d => d.code === 'vue/no-mutating-props')
+    })
+    assert.ok(cleared, 'stale prop mutation remains after the edit')
+  })
+})
