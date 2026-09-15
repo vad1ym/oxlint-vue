@@ -175,7 +175,9 @@ export async function runOxlint(
       backMap.set(await realish(virt), abs)
     }))
 
-    const [virtual, native] = await Promise.all([
+    // Both children must exit before cleanup or returning an error: the native
+    // pass may still hold the caller's source directory open on Windows.
+    const [virtualResult, nativeResult] = await Promise.allSettled([
       backMap.size
         ? invokeOxlint(oxlintPath, tmpRoot, virtualArgs, backMap, cwd)
         : [],
@@ -185,6 +187,11 @@ export async function runOxlint(
       // fire here. Positions are already correct, so no rebinding is needed.
       runNativePass(oxlintPath, files.filter(file => !invalidSfcFiles.has(path.resolve(cwd, file))), cwd, virtualArgs),
     ])
+
+    if (virtualResult.status === 'rejected') throw virtualResult.reason
+    if (nativeResult.status === 'rejected') throw nativeResult.reason
+    const virtual = virtualResult.value
+    const native = nativeResult.value
 
     return dedupe([...virtual, ...native, ...structural]).filter(d => {
       const pre = preprocessed.get(d.filename)
@@ -544,7 +551,10 @@ export function parseOxlintJson(
 
 /** Canonicalize the existing parent too, for callers mapping synthetic filenames. */
 function canonicalPath(file: string): string {
-  try { return realpathSync(file) } catch {
+  // Match fs.promises.realpath, which also uses the native implementation.
+  // The JS realpathSync preserves Windows 8.3 aliases such as RUNNER~1,
+  // leaving diagnostic paths different from the expanded backMap keys.
+  try { return realpathSync.native(file) } catch {
     const parent = path.dirname(file)
     return parent === file ? file : path.join(canonicalPath(parent), path.basename(file))
   }

@@ -85,6 +85,46 @@ test('same basenames retain their full identity through a symlinked root', async
   })
 })
 
+test('existing diagnostic paths match async realpath keys in the system temp directory', async () => {
+  await fixture(async dir => {
+    const map = new Map()
+    for (const name of ['alpha', 'beta']) {
+      const file = path.join(dir, name, 'index.vue.ts')
+      await fs.mkdir(path.dirname(file))
+      await fs.writeFile(file, 'const unused = 1')
+      map.set(await fs.realpath(file), `/project/${name}/index.vue`)
+    }
+    // On Windows CI, tmpdir uses RUNNER~1 while async realpath expands it.
+    for (const filename of ['beta/index.vue.ts', path.join(dir, 'beta/index.vue.ts')]) {
+      const result = parseOxlintJson(JSON.stringify({ diagnostics: [{ filename }] }), dir, map, dir)
+      assert.equal(result[0].filename, '/project/beta/index.vue')
+    }
+  })
+})
+
+test('a failed pass waits for the other engine process before returning', async () => {
+  await fixture(async dir => {
+    const fake = path.join(dir, 'fake.mjs')
+    const marker = path.join(dir, 'native-finished')
+    await fs.writeFile(fake, `
+      import fs from 'node:fs'
+      if (process.argv.at(-1) === '.') {
+        console.log('broken')
+      } else {
+        setTimeout(() => {
+          fs.writeFileSync('native-finished', '')
+          console.log(JSON.stringify({ diagnostics: [] }))
+        }, 500)
+      }
+    `)
+    await assert.rejects(runOxlint([path.join(dir, 'src/A.vue')], {
+      cwd: dir,
+      oxlintPath: fake,
+    }), /invalid JSON/)
+    await fs.access(marker)
+  })
+})
+
 test('explicit relative config is also honored by the fix pass', async () => {
   await fixture(async (dir, run) => {
     await fs.writeFile(path.join(dir, 'src/A.vue'), '<template>{{ count }}</template>\n<script setup>\nlet count = 1\n</script>\n')
