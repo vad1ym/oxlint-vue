@@ -24,6 +24,10 @@ function checkWithProps(template, script) {
 }
 
 const CASES = [
+  ['vue/valid-v-model', '<input v-model="a + b">', true],
+  ['vue/valid-v-model', '<input v-model="value">', false],
+  ['vue/no-v-for-template-key-on-child', '<template v-for="item in items"><div :key="item.id"/></template>', true],
+  ['vue/no-v-for-template-key-on-child', '<template v-for="item in items" :key="item.id"><div/></template>', false],
   ['vue/require-v-for-key', '<li v-for="i in list">{{ i }}</li>', true],
   ['vue/require-v-for-key', '<li v-for="i in list" :key="i.id">x</li>', false],
   ['vue/no-v-html', '<div v-html="raw" />', true],
@@ -45,7 +49,7 @@ const CASES = [
   ['vue/this-in-template', '<p>{{ foo }}</p>', false],
   ['vue/no-target-blank', '<a href="/x" target="_blank">x</a>', true],
   ['vue/no-target-blank', '<a href="/x" target="_blank" rel="noopener">x</a>', false],
-  ['vue/require-v-for-with-index-key', '<li v-for="(x, i) in l" :key="i">x</li>', true],
+  ['vue/require-v-for-with-index-key', '<li v-for="(x, i) in [1, 2]" :key="i">x</li>', true],
   ['vue/require-v-for-with-index-key', '<li v-for="(x, i) in l" :key="x.id">x</li>', false],
   ['vue/no-static-inline-styles', '<div style="color:red" />', true],
   ['vue/no-dupe-v-else-if', '<i v-if="a">1</i><i v-else-if="a">2</i>', true],
@@ -253,6 +257,7 @@ test('local settings override the extended preset', async () => {
 })
 
 for (const [template, script, expected] of [
+  ['<p>{{count++}}</p>', 'defineProps({count:Number})', true],
   ['<button @click="props.title = \'x\'"/>', 'const props = defineProps({title:String})', true],
   ['<button @click="props[\'title\']++"/>', 'const props = defineProps<{title:number}>()', true],
   ['<button @click="user.name = \'x\'"/>', 'defineProps({user:Object})', true],
@@ -288,5 +293,52 @@ for (const [first, second, expected] of [
   test(`condition AST: ${first} / ${second}`, () => {
     const template = `<i v-if="${first.replaceAll('"', '&quot;')}"/><!-- comment --><i v-else-if="${second.replaceAll('"', '&quot;')}"/>`
     assert.equal(check(template).rules.includes('vue/no-dupe-v-else-if'), expected)
+  })
+}
+
+for (const [template, script, expected] of [
+  ['<div v-for="(value, name) in record" :key="name"/>', 'const record = {a:1}', false],
+  ['<div v-for="(value, name) in unknown" :key="name"/>', '', false],
+  ['<div v-for="(value, name, index) in record" :key="name"/>', '', false],
+  ['<div v-for="(value, name, index) in record" :key="index"/>', '', true],
+  ['<div v-for="(value, index) in list" :key="index"/>', 'const list = [1,2]', true],
+  ['<div v-for="list in records" :key="list.id"><i v-for="(value, name) in list" :key="name"/></div>', 'const list = [1,2]', false],
+]) {
+  test(`index key: ${template}`, () => {
+    assert.equal(check(template, undefined, script).rules.includes('vue/require-v-for-with-index-key'), expected)
+  })
+}
+
+test('Vue 3 template keys identify the fragment or conditional branch', () => {
+  for (const directive of ['v-if="ok"', 'v-else-if="ok"', 'v-else', 'v-for="item in items"']) {
+    assert.ok(!check(`<template ${directive} :key="id"><div/></template>`).rules.includes('vue/no-template-key'))
+  }
+  const rules = check('<template v-for="item in items"><div :key="item.id"/></template>').rules
+  assert.ok(rules.includes('vue/require-v-for-key'))
+  assert.ok(rules.includes('vue/no-v-for-template-key-on-child'))
+  assert.ok(!check('<template v-for="row in rows" :key="row.id"><i v-for="cell in row.cells" :key="cell.id"/></template>').rules.includes('vue/no-v-for-template-key-on-child'))
+})
+
+for (const template of [
+  '<input v-model>', '<input v-model="42">', '<input v-model="a + b">',
+  '<input v-model="a?.b">', '<input v-model="(a?.b).c">',
+  '<div v-model="value"/>', '<input type="file" v-model="file">',
+  '<input v-model:arg="value">', '<input v-model.custom="value">',
+  '<div v-for="item in items" :key="item.id"><input v-model="item"/></div>',
+  '<Comp #default="{value}"><input v-model="value"/></Comp>',
+]) {
+  test(`invalid v-model: ${template}`, () => {
+    assert.ok(check(template).rules.includes('vue/valid-v-model'))
+  })
+}
+for (const template of [
+  '<input v-model="value">', '<textarea v-model.trim="value"/>',
+  '<select v-model.number="value"/>', '<Comp v-model:arg.custom="value"/>',
+  '<input v-model="record[key?.name]">', '<input v-model="getRecord().name">',
+  '<input v-model="(record as RecordType).name">',
+  '<div v-for="item in items" :key="item.id"><input v-model="item.name"/></div>',
+]) {
+  test(`valid v-model: ${template}`, () => {
+    assert.ok(!check(template).rules.includes('vue/valid-v-model'))
   })
 }

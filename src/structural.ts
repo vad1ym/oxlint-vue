@@ -20,7 +20,7 @@ import type { Diagnostic, RuleConfig, RulesMap } from './types.js'
  */
 import { analyzeScript } from './script-analysis.js'
 import type { ScriptAnalysis } from './script-analysis.js'
-import { bindingNames, expressionAst, expressionKey, staticName } from './ast.js'
+import { bindingNames, expressionAst, expressionKey, staticName, unwrap } from './ast.js'
 import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
 
 /** Any node the walker may hand a rule. */
@@ -129,6 +129,13 @@ function hasKeyBinding(node: AnyNode): boolean {
     && argContent(p) === 'key')
 }
 
+/** Optional computed keys are fine; an optional receiver is not writable. */
+function hasOptionalReceiver(node: import('./ast.js').AstNode): boolean {
+  node = unwrap(node)
+  if (node.type === 'OptionalMemberExpression' || node.type === 'OptionalCallExpression') return true
+  return node.type === 'MemberExpression' && hasOptionalReceiver(node.object)
+}
+
 const RULES: Rule[] = [
   {
     name: 'vue/require-v-for-key',
@@ -137,20 +144,55 @@ const RULES: Rule[] = [
       if (node.type !== NodeTypes.ELEMENT) return
       const vFor = findDir(node, 'for')
       if (!vFor) return
-      // <template v-for> carries the key on its child in Vue 2 style, so allow
-      // the key to sit on either the template or any direct element child.
       if (hasKeyBinding(node)) return
-      if (node.tag === 'template') {
-        const kids = node.children.filter(
-          (c): c is ElementNode => c.type === NodeTypes.ELEMENT,
-        )
-        if (kids.length && kids.every(hasKeyBinding)) return
-      }
       report({
         ...loc(vFor),
         message: `<${node.tag}> with 'v-for' must have a ':key'.`,
         help: 'Add a unique :key binding to help Vue track each item.',
       })
+    },
+  },
+  {
+    name: 'vue/no-v-for-template-key-on-child',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template' || !findDir(node, 'for')) return
+      for (const child of node.children) {
+        if (child.type !== NodeTypes.ELEMENT || findDir(child, 'for') || !hasKeyBinding(child)) continue
+        report({
+          ...loc(child),
+          message: "Place the v-for key on <template>, not its child.",
+          help: 'The key identifies the whole iteration fragment in Vue 3.',
+        })
+      }
+    },
+  },
+  {
+    name: 'vue/valid-v-model',
+    severity: 'error',
+    check(node, report) {
+      if (node.type !== NodeTypes.ELEMENT) return
+      const context = node as AnnotatedElement
+      for (const prop of node.props) {
+        if (prop.type !== NodeTypes.DIRECTIVE || prop.name !== 'model') continue
+        const raw = expressionAst(prop.exp)
+        const target = raw && unwrap(raw)
+        const native = node.tagType === ElementTypes.ELEMENT
+        let problem: string | null = null
+        if (!target) problem = 'requires a writable expression'
+        else if (target.type !== 'Identifier' && target.type !== 'MemberExpression') problem = 'requires an assignable variable or member expression'
+        else if (hasOptionalReceiver(target)) problem = 'cannot assign through optional chaining'
+        else if (target.type === 'Identifier' && context.__locals?.has(target.name)) problem = 'cannot assign directly to a loop or slot variable'
+        else if (native && !['input', 'textarea', 'select'].includes(node.tag)) problem = `is not supported on <${node.tag}>`
+        else if (native && prop.arg) problem = 'cannot have an argument on a native element'
+        else if (native && prop.modifiers.some(modifier => !['lazy', 'trim', 'number'].includes(modifier.content))) problem = 'has an unsupported modifier on a native element'
+        else if (native && node.tag === 'input' && findAttr(node, 'type')?.value?.content.toLowerCase() === 'file') problem = 'cannot write to a file input'
+        if (problem) report({
+          ...loc(prop),
+          message: `v-model ${problem}.`,
+          help: 'Bind a writable state variable or property on an input, textarea, select, or component.',
+        })
+      }
     },
   },
   {
@@ -187,8 +229,8 @@ const RULES: Rule[] = [
     severity: 'error',
     check(node, report) {
       if (node.type !== NodeTypes.ELEMENT || node.tag !== 'template') return
-      // A key on <template v-for> is legitimate in Vue 3.
-      if (findDir(node, 'for')) return
+      // Vue 3 structural templates carry fragment/branch identity.
+      if (['for', 'if', 'else-if', 'else'].some(name => findDir(node, name))) return
       if (!hasKeyBinding(node)) return
       report({
         ...loc(node),
@@ -346,11 +388,16 @@ const RULES: Rule[] = [
       if (node.type !== NodeTypes.ELEMENT) return
       const vFor = findDir(node, 'for')
       if (!vFor?.forParseResult) return
-      // compiler-sfc names the three v-for slots value/key/index after object
-      // iteration (`(val, name, idx) in obj`). For an array, `(item, i)`, the
-      // numeric index therefore lands in `key`, not `index`.
       const r = vFor.forParseResult
-      const indexName = expContent(r.index) ?? expContent(r.key)
+      const source = expressionAst(r.source)
+      const context = node as AnnotatedElement
+      const knownArray = source?.type === 'ArrayExpression'
+        || source?.type === 'NumericLiteral' || source?.type === 'StringLiteral'
+        || (source?.type === 'Identifier' && context.__script?.arrays.has(source.name)
+          && !context.__outerLocals?.has(source.name))
+      // The third alias is an object iteration index. The second alias can
+      // be an object property name; warn only for a known array/range/string.
+      const indexName = expContent(r.index) ?? (knownArray ? expContent(r.key) : undefined)
       if (!indexName) return
 
       const keyDir = node.props.find((p): p is DirectiveNode =>
@@ -414,12 +461,14 @@ const RULES: Rule[] = [
     name: 'vue/no-mutating-props',
     severity: 'error',
     check(node, report) {
-      if (node.type !== NodeTypes.ELEMENT) return
+      if (node.type !== NodeTypes.ELEMENT && node.type !== NodeTypes.INTERPOLATION) return
       const context = node as AnnotatedElement
       const script = context.__script
       if (!script || (!script.props.size && !script.propObjects.size)) return
-      for (const prop of node.props) {
-        if (prop.type !== NodeTypes.DIRECTIVE) continue
+      const expressions = node.type === NodeTypes.INTERPOLATION
+        ? [{ exp: node.content, name: '', loc: node.loc }]
+        : node.props.filter((prop): prop is DirectiveNode => prop.type === NodeTypes.DIRECTIVE)
+      for (const prop of expressions) {
         const ast = expressionAst(prop.exp)
         if (!ast) continue
         const locals = prop.name === 'if' ? context.__outerLocals : context.__locals
@@ -602,11 +651,11 @@ export function checkTemplate(
           : prop.name === 'slot' ? [prop.exp] : []
         for (const exp of expressions) for (const name of bindingNames(exp)) locals.add(name)
       }
-      const context = node as AnnotatedElement
-      context.__script = script
-      context.__locals = locals
-      context.__outerLocals = inherited
     }
+    const context = node as AnyNode & Annotations
+    context.__script = script
+    context.__locals = locals
+    context.__outerLocals = inherited
     const children = childrenOf(node)
     if (children.length) annotate(children)
     for (const { rule, severity } of active) {

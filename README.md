@@ -52,7 +52,7 @@ Here every rule you already run on `.ts` reaches template expressions too:
 <p>{{ a == b }}</p>               <!-- eqeqeq -->
 ```
 
-Plus 18 template rules oxlint has no equivalent for — `require-v-for-key`,
+Plus 20 template rules oxlint has no equivalent for — `require-v-for-key`,
 `no-mutating-props`, `no-dupe-v-else-if` and the rest. They are configured
 under `settings.vue.rules`, a key oxlint ignores:
 

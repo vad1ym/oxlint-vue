@@ -1,6 +1,6 @@
 # Template rules
 
-The 18 rules `oxlint-vue` adds on top of oxlint. They walk the
+The 20 rules `oxlint-vue` adds on top of oxlint. They walk the
 `compiler-sfc` template AST, which the padding transform discards, and are
 configured under `settings.vue.rules` -- a key oxlint ignores.
 
@@ -12,6 +12,8 @@ you, since these names and oxlint's native `vue/*` rules never overlap.
 |---|---|
 | `vue/require-v-for-key` | error |
 | `vue/valid-v-for` | error |
+| `vue/valid-v-model` | error |
+| `vue/no-v-for-template-key-on-child` | error |
 | `vue/no-use-v-if-with-v-for` | error |
 | `vue/no-template-key` | error |
 | `vue/no-duplicate-attributes` | error |
@@ -57,11 +59,11 @@ Measured against `@antfu/eslint-config@9.3.0` with `{ vue: true, typescript: tru
 | `ts`, `unicorn`, `import` | 47 | **47** |
 | `regexp` | 60 | **54** via oxlint `jsPlugins` |
 | `style`, `perfectionist` | 69 | applied by `--format-code`, not checked |
-| `vue/*` | 150 | **46** native + **18** own structural |
+| `vue/*` | 150 | **46** native + **20** own structural |
 | `jsonc`, `yaml`, `toml`, `markdown` | 90 | out of scope |
 
 **Not ported.** `eslint-plugin-vue` itself — the name `vue` is reserved for
-oxlint's native plugin, so `jsPlugins` rejects it; hence 18 hand-written
+oxlint's native plugin, so `jsPlugins` rejects it; hence 20 hand-written
 structural rules instead of 252 loaded ones. Also 6 core rules
 (`dot-notation`, `no-dupe-args`, `no-octal`, `no-octal-escape`,
 `no-restricted-syntax`, `no-undef-init`), ~12 Vue 2 deprecations, most of
@@ -91,3 +93,15 @@ identity. Imported type members and arbitrary aliases are not type-resolved.
 `vue/no-dupe-v-else-if` compares expression ASTs. Whitespace and comments outside
 literals do not matter; string, template-literal and regexp contents do. Template
 comments may separate branches without breaking the conditional chain.
+
+
+`vue/valid-v-model` validates assignment targets, optional receivers, supported
+native elements, native arguments/modifiers, file inputs, and writes directly to
+loop/slot aliases. Component arguments and custom modifiers remain valid, as do
+writes to properties of loop items.
+
+Keys on Vue 3 `<template v-for>` belong to the template fragment. Conditional
+`<template>` branches may also have keys. `vue/require-v-for-with-index-key` warns
+about the third iteration alias, or the second alias when the source is a known
+array, range or string. A direct `const items = [...]` initializer is recognized;
+unknown sources and object property names are not presumed to be array indices.

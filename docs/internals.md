@@ -18,7 +18,7 @@ creates the binding, and oxlint's own analyser resolves it:
 
 Three sources feed one report: the virtual file through oxlint (template
 expressions and `<script>`), the real `.vue` through `oxlint --vue-plugin`
-(SFC-aware rules), and a template AST walk (18 structural rules).
+(SFC-aware rules), and a template AST walk (20 structural rules).
 
 Because padding erases markup, references are re-emitted explicitly —
 `<Icon />` as a component, `v-maska` as a directive, `ref="el"` as a binding.
@@ -69,7 +69,7 @@ on unformatted files without touching them.
 
 ## Limitations
 
-- No parity with `eslint-plugin-vue` — 18 structural rules, not hundreds. New
+- No parity with `eslint-plugin-vue` — 20 structural rules, not hundreds. New
   ones go in `src/structural.ts`: an AST walk, ~20 lines each.
 - `--fix` only touches `<script>`; markup is handled by `--format-code`.
 - `no-undef` is not in the preset — a component tag may come from a Nuxt or
