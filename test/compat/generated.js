@@ -13,6 +13,7 @@ const seeds = [
   ['no-multi-spaces', '<div   class="foo" />'],
   ['singleline-html-element-content-newline', '<div class="panel">content</div>'],
   ['multiline-html-element-content-newline', '<div>content\n</div>'],
+  ['attributes-order', '<div @click="go" v-if="ready" />'],
   ['no-deprecated-filter', '<p>{{ value | format }}</p>'],
   ['no-deprecated-dollar-listeners-api', '<div v-on="$listeners"/>'],
   ['no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default"/>'],

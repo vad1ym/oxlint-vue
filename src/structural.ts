@@ -364,6 +364,22 @@ function normalizedTagName(name: string): string {
   return name.replaceAll('-', '').toLowerCase()
 }
 
+function attributeIsBind(prop: AttributeNode | DirectiveNode): boolean {
+  return prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind'
+}
+
+function attributeIsModel(prop: AttributeNode | DirectiveNode): boolean {
+  return prop.type === NodeTypes.DIRECTIVE && prop.name === 'model'
+}
+
+function attributeIsBindObject(prop: AttributeNode | DirectiveNode): boolean {
+  return prop.type === NodeTypes.DIRECTIVE && prop.name === 'bind' && !prop.arg
+}
+
+function attributeIsValueLike(prop: AttributeNode | DirectiveNode | undefined): boolean {
+  return Boolean(prop && (prop.type === NodeTypes.ATTRIBUTE || attributeIsBind(prop) || attributeIsModel(prop)))
+}
+
 interface RawBlockTag {
   type: string
   start: number
@@ -1155,6 +1171,94 @@ const RULES: Rule[] = [
           }
         }
         offset += line.length + 1
+      }
+    },
+  },
+  {
+    name: 'vue/attributes-order',
+    severity: 'error',
+    check(node, report, options) {
+      if (node.type !== NodeTypes.ELEMENT || node.props.length < 2) return
+      const other = ['ATTR_DYNAMIC', 'ATTR_STATIC', 'ATTR_SHORTHAND_BOOL']
+      const defaults: (string | string[])[] = ['DEFINITION', 'LIST_RENDERING', 'CONDITIONALS',
+        'RENDER_MODIFIERS', 'GLOBAL', ['UNIQUE', 'SLOT'], 'TWO_WAY_BINDING', 'OTHER_DIRECTIVES',
+        other, 'EVENTS', 'CONTENT']
+      const requested = Array.isArray(options.order) ? options.order as (string | string[])[] : defaults
+      const order = requested.map(group => {
+        if (group === 'OTHER_ATTR') return other
+        if (Array.isArray(group) && group.includes('OTHER_ATTR')) {
+          return [...group.filter(item => item !== 'OTHER_ATTR'), ...other]
+        }
+        return group
+      })
+      const positions = new Map<string, number>()
+      for (const [index, group] of order.entries()) {
+        for (const name of Array.isArray(group) ? group : [group]) positions.set(name, index)
+      }
+      const type = (prop: AttributeNode | DirectiveNode): string => {
+        if (prop.type === NodeTypes.DIRECTIVE && !attributeIsBind(prop)) {
+          if (prop.name === 'for') return 'LIST_RENDERING'
+          if (['if', 'else-if', 'else', 'show', 'cloak'].includes(prop.name)) return 'CONDITIONALS'
+          if (['pre', 'once'].includes(prop.name)) return 'RENDER_MODIFIERS'
+          if (prop.name === 'model') return 'TWO_WAY_BINDING'
+          if (prop.name === 'on') return 'EVENTS'
+          if (['html', 'text'].includes(prop.name)) return 'CONTENT'
+          if (prop.name === 'slot') return 'SLOT'
+          if (prop.name === 'is') return 'DEFINITION'
+          return 'OTHER_DIRECTIVES'
+        }
+        const name = prop.type === NodeTypes.ATTRIBUTE ? prop.name
+          : prop.arg?.type === NodeTypes.SIMPLE_EXPRESSION && prop.arg.isStatic ? prop.arg.content : ''
+        if (name === 'is') return 'DEFINITION'
+        if (name === 'id') return 'GLOBAL'
+        if (name === 'ref' || name === 'key') return 'UNIQUE'
+        if (name === 'slot' || name === 'slot-scope') return 'SLOT'
+        if (attributeIsBind(prop)) return 'ATTR_DYNAMIC'
+        return prop.type === NodeTypes.ATTRIBUTE && !prop.value ? 'ATTR_SHORTHAND_BOOL' : 'ATTR_STATIC'
+      }
+      const name = (prop: AttributeNode | DirectiveNode): string => {
+        if (prop.type === NodeTypes.ATTRIBUTE) return prop.name
+        if (attributeIsBind(prop)) return prop.type === NodeTypes.DIRECTIVE ? prop.arg?.loc.source ?? '' : ''
+        let key = `v-${prop.name}`
+        if (prop.arg) key += `:${prop.arg.loc.source}`
+        for (const modifier of prop.modifiers) key += `.${modifier.content}`
+        return key
+      }
+      const props = node.props.filter((prop, index, all) => {
+        if (!attributeIsBindObject(prop)) return true
+        if (options.ignoreVBindObject === true) return false
+        return !attributeIsValueLike(all[index - 1]) && !attributeIsValueLike(all[index + 1])
+      })
+      const entries = props.flatMap((prop, index) => {
+        let position: number | undefined
+        if (attributeIsBindObject(prop)) {
+          for (const next of props.slice(index + 1)) {
+            if (attributeIsValueLike(next) && !attributeIsBindObject(next)) { position = positions.get(type(next)); break }
+          }
+        }
+        position ??= positions.get(type(prop))
+        return position === undefined ? [] : [{ prop, position }]
+      })
+      if (entries.length < 2) return
+      let previous = entries[0]!
+      for (const current of entries.slice(1)) {
+        let valid = previous.position <= current.position
+        if (valid && previous.position === current.position) {
+          let sortedByLength = false
+          if (options.sortLineLength === true
+            && previous.prop.loc.source.length !== current.prop.loc.source.length) {
+            valid = previous.prop.loc.source.length < current.prop.loc.source.length
+            sortedByLength = true
+          }
+          if (options.alphabetical === true && !sortedByLength) {
+            const before = name(previous.prop)
+            const after = name(current.prop)
+            valid = before === after
+              ? Number(attributeIsBind(previous.prop)) <= Number(attributeIsBind(current.prop)) : before < after
+          }
+        }
+        if (valid) previous = current
+        else report({ message: 'Attribute is out of order.', ...loc(current.prop) })
       }
     },
   },

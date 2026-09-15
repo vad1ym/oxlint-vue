@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 64,
     "native": 59,
-    "partial": 48,
-    "missing": 82
+    "partial": 49,
+    "missing": 81
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -1952,20 +1952,22 @@
     },
     {
       "name": "attributes-order",
-      "status": "missing",
+      "status": "partial",
       "priority": "P2",
       "categories": [
         "vue3-recommended",
         "vue2-recommended"
       ],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 114,
       "knownDifferences": 0,
       "upstreamFixable": true,
       "upstreamSuggestions": false,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/attributes-order.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "block-order",

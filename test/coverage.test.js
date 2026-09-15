@@ -16,7 +16,10 @@ async function withProject(fn) {
     await fs.writeFile(path.join(dir, 'CoverageCase.vue'), SOURCE)
     await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({
       plugins: [], categories: {}, rules: {},
-      settings: { vue: { rules: { 'vue/max-attributes-per-line': 'off' } } },
+      settings: { vue: { rules: {
+        'vue/attributes-order': 'off',
+        'vue/max-attributes-per-line': 'off',
+      } } },
     }))
     await fn(dir)
   } finally { await fs.rm(dir, { recursive: true, force: true }) }

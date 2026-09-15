@@ -39,6 +39,7 @@ const CASES = [
   ['vue/singleline-html-element-content-newline', '<div class="panel">content</div>', true],
   ['vue/multiline-html-element-content-newline', '<div>content\n</div>', true],
   ['vue/html-indent', '<div>\n<span />\n</div>', true],
+  ['vue/attributes-order', '<div @click="go" v-if="ready" />', true],
   ['vue/no-deprecated-filter', '<p>{{ value | format }}</p>', true],
   ['vue/no-deprecated-dollar-listeners-api', '<div v-on="$listeners" />', true],
   ['vue/no-deprecated-dollar-scopedslots-api', '<div v-if="$scopedSlots.default" />', true],

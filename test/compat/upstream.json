@@ -101,7 +101,8 @@
     "tests/lib/rules/html-self-closing.test.ts": "42b118fec80bdcc503b9bf088ee0d771576d87d283d8c0da98ebafd7123eb2a8",
     "tests/lib/rules/no-multi-spaces.test.ts": "0580e0cc2caae282687f0c40b6030ed0935c5d77ce1b7700b775be332147b3b6",
     "tests/lib/rules/singleline-html-element-content-newline.test.ts": "a9de5ccc01354ba06acd3c06c7c95ade0d7d8f0125fb5fbcf6f4922d15323976",
-    "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70"
+    "tests/lib/rules/multiline-html-element-content-newline.test.ts": "f9e6999d514eda18fe3a9f50777a238b62f8b245a610ba41816763d46de18f70",
+    "tests/lib/rules/attributes-order.test.ts": "74e9b47f05cc0ab505a1c13a76dbefe0bae7551ca141ec02e3bb62d768644e8f"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -31262,6 +31263,1973 @@
       },
       "settings": {},
       "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/valid/1",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          ref=\"ref\"\n          v-model=\"model\"\n          v-bind=\"object\"\n          @click=\"handleClick\"/>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/2",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind=\"object\"\n          ref=\"ref\"\n          v-model=\"model\"\n          @click=\"handleClick\"/>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/3",
+      "rule": "vue/attributes-order",
+      "code": "<template><div></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/4",
+      "rule": "vue/attributes-order",
+      "code": "<template><div is=\"header\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/5",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-for=\"item in items\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/6",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-if=\"!visible\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/7",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-else-if=\"!visible\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/8",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-else=\"!visible\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/9",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-show=\"!visible\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/10",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-cloak></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/11",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-pre></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/12",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-once></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/13",
+      "rule": "vue/attributes-order",
+      "code": "<template><div id=\"header\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/14",
+      "rule": "vue/attributes-order",
+      "code": "<template><div key=\"id\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/15",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-html=\"htmlContent\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/16",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-text=\"textContent\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/17",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-model=\"toggle\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/18",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-custom-directive></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/19",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n        <div\n          v-model=\"toggle\"\n          :bindingProp=\"foo\"\n          propOne=\"bar\"\n          model=\"baz\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/20",
+      "rule": "vue/attributes-order",
+      "code": "<template><div click=\"functionCall\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/21",
+      "rule": "vue/attributes-order",
+      "code": "<template><div myProp=\"prop\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/22",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            is=\"header\"\n            v-for=\"item in items\"\n            v-if=\"!visible\"\n            v-once\n            id=\"uniqueID\"\n            ref=\"header\"\n            v-model=\"headerData\"\n            myProp=\"prop\"\n            @click=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/23",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            is=\"header\"\n            v-for=\"item in items\"\n            v-if=\"!visible\"\n            v-once\n            id=\"uniqueID\"\n            ref=\"header\"\n            v-model=\"headerData\"\n            :myProp=\"prop\"\n            v-on=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/24",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            is=\"header\"\n            v-for=\"item in items\"\n            v-if=\"!visible\"\n            v-once\n            id=\"uniqueID\"\n            ref=\"header\"\n            :prop=\"headerData\"\n            myProp=\"prop\"\n            v-on:click=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/25",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-for=\"item in items\"\n            v-if=\"!visible\"\n            propone=\"prop\"\n            :proptwo=\"prop\"\n            propthree=\"prop\"\n            @click=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/26",
+      "rule": "vue/attributes-order",
+      "code": "<template><div propone=\"prop\" proptwo=\"prop\" propthree=\"prop\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/27",
+      "rule": "vue/attributes-order",
+      "code": "<template><div propone=\"prop\" proptwo=\"prop\" is=\"header\"></div></template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "UNIQUE",
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "OTHER_ATTR",
+            "EVENTS",
+            "CONTENT",
+            "DEFINITION"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/28",
+      "rule": "vue/attributes-order",
+      "code": "<template><div ref=\"header\" is=\"header\" propone=\"prop\" proptwo=\"prop\"></div></template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "UNIQUE",
+            "TWO_WAY_BINDING",
+            "DEFINITION",
+            "OTHER_DIRECTIVES",
+            "OTHER_ATTR",
+            "EVENTS",
+            "CONTENT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/29",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-if=\"!visible\"\n            v-for=\"item in items\"\n            v-once\n            is=\"header\"\n            v-on:click=\"functionCall\"\n            ref=\"header\"\n            v-text=\"textContent\"\n            id=\"uniqueID\"\n            :prop=\"headerData\"\n            myProp=\"prop\"\n            >\n          </div>\n        </template>",
+      "options": [
+        {
+          "order": [
+            "CONDITIONALS",
+            "LIST_RENDERING",
+            "RENDER_MODIFIERS",
+            "DEFINITION",
+            "EVENTS",
+            "UNIQUE",
+            "TWO_WAY_BINDING",
+            "CONTENT",
+            "GLOBAL",
+            "OTHER_ATTR",
+            "OTHER_DIRECTIVES"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/30",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-if=\"!visible\"\n            class=\"content\"\n            v-model=\"foo\"\n            v-text=\"textContent\"\n            >\n          </div>\n        </template>",
+      "options": [
+        {
+          "order": [
+            "CONDITIONALS",
+            "LIST_RENDERING",
+            "RENDER_MODIFIERS",
+            "DEFINITION",
+            "EVENTS",
+            "UNIQUE",
+            [
+              "TWO_WAY_BINDING",
+              "OTHER_ATTR"
+            ],
+            "CONTENT",
+            "GLOBAL"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/31",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            id=\"uniqueID\"\n            ref=\"header\"\n            :prop=\"headerData\"\n            :[a+b]=\"headerData\"\n            :[prop]=\"headerData\"\n            myProp=\"prop\"\n            v-on:click=\"functionCall\"\n            v-on:[c]=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/32",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            a-custom-prop=\"value\"\n            :another-custom-prop=\"value\"\n            :blue-color=\"false\"\n            boolean-prop\n            z-prop=\"Z\"\n            v-on:[c]=\"functionCall\"\n            @change=\"functionCall\"\n            v-on:click=\"functionCall\"\n            @input=\"functionCall\"\n            v-text=\"textContent\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/33",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            class=\"foo\"\n            :class=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/34",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            class=\"foo\"\n            class=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "duplicate.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/35",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            :class=\"foo\"\n            :class=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "duplicate.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/36",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-if=\"foo\"\n            v-show=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/37",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-bar=\"bar\"\n            v-foo=\"foo\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/38",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-foo.a=\"a\"\n            v-foo.b=\"b\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/39",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:id=\"a\"\n          v-bind=\"b\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/40",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind=\"b\"\n          v-bind:id=\"a\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/41",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-bind:id=\"a\"\n          v-bind=\"b\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/42",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-bind=\"b\"\n          v-bind:id=\"a\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/43",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-bind=\"b\"\n          v-model=\"c\"\n          v-bind:value=\"a\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/44",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-model=\"c\"\n          v-bind=\"b\"\n          v-bind:value=\"a\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/45",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-bind=\"b\"\n          v-bind:id=\"a\"\n          v-model=\"c\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/46",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-for=\"a in items\"\n          v-if=\"a\"\n          attr=\"a\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/47",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          :prop-bind=\"prop\"\n          prop-one=\"prop\"\n          prop-two=\"prop\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "ATTR_DYNAMIC",
+            "ATTR_STATIC"
+          ],
+          "alphabetical": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/48",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-model=\"a\n          :class=\"b\"\n          :is=\"c\"\n          prop-one=\"d\"\n          class=\"e\"\n          prop-two=\"f\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "TWO_WAY_BINDING",
+            "ATTR_DYNAMIC",
+            "ATTR_STATIC"
+          ],
+          "alphabetical": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/49",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          prop-one=\"a\"\n          prop-three=\"b\"\n          :prop-two=\"c\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "DEFINITION",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            [
+              "UNIQUE",
+              "SLOT"
+            ],
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "ATTR_STATIC",
+            "ATTR_DYNAMIC",
+            "EVENTS",
+            "CONTENT"
+          ],
+          "alphabetical": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/50",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          prop-one=\"a\"\n          :prop-two=\"b\"\n          prop-three=\"c\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "DEFINITION",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            [
+              "UNIQUE",
+              "SLOT"
+            ],
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            [
+              "ATTR_STATIC",
+              "ATTR_DYNAMIC"
+            ],
+            "EVENTS",
+            "CONTENT"
+          ],
+          "alphabetical": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/51",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          boolean-prop\n          prop-one=\"a\"\n          prop-two=\"b\"\n          :prop-three=\"c\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "DEFINITION",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            [
+              "UNIQUE",
+              "SLOT"
+            ],
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "ATTR_SHORTHAND_BOOL",
+            "ATTR_STATIC",
+            "ATTR_DYNAMIC",
+            "EVENTS",
+            "CONTENT"
+          ],
+          "alphabetical": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/52",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          short=\"val\"\n          medium-attr=\"value\"\n          very-long-attribute-name=\"value\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/53",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"condition\"\n          v-show=\"show\"\n          short=\"val\"\n          medium-attr=\"value\"\n          very-long-attribute-name=\"value\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": false
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/54",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          @click=\"fn\"\n          @input=\"handleInput\"\n          @mouseover=\"handleMouseover\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/55",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          :a=\"value\"\n          :ab=\"value\"\n          :abc=\"value\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/56",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          bb=\"v\"\n          zz=\"v\"\n          aaa=\"v\"\n          @click=\"fn\"\n          @keyup=\"fn\"\n          @submit=\"fn\"\n        ></div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true,
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/57",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          @click=\"handleClick\"\n          v-bind=\"attrs\"\n        ></div>\n      </template>",
+      "options": [
+        {
+          "ignoreVBindObject": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/valid/58",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          ref=\"ref\"\n          @click=\"handleClick\"\n          v-bind=\"attrs\"\n          @input=\"handleInput\"/>\n      </template>",
+      "options": [
+        {
+          "ignoreVBindObject": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "attributes-order/invalid/1",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-cloak is=\"header\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/2",
+      "rule": "vue/attributes-order",
+      "code": "<template><div id=\"uniqueID\" v-cloak></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/3",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div\n              model=\"baz\"\n              v-model=\"toggle\"\n              propOne=\"bar\"\n              :id=\"foo\">\n            </div>\n          </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/4",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div\n              :bindingProp=\"foo\"\n              model=\"baz\"\n              v-on=\"functionCall\"\n              v-model=\"toggle\"\n              propOne=\"bar\">\n            </div>\n          </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/5",
+      "rule": "vue/attributes-order",
+      "code": "<template><div data-id=\"foo\" aria-test=\"bar\" is=\"custom\" myProp=\"prop\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/6",
+      "rule": "vue/attributes-order",
+      "code": "<template><div ref=\"header\" propone=\"prop\" is=\"header\" ></div></template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "UNIQUE",
+            "TWO_WAY_BINDING",
+            "DEFINITION",
+            "OTHER_DIRECTIVES",
+            "OTHER_ATTR",
+            "EVENTS",
+            "CONTENT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/7",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div v-cloak\n              is=\"header\">\n            </div>\n          </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/8",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div\n              v-if=\"!visible\"\n              v-for=\"item in items\"\n              v-once\n              is=\"header\"\n              v-on:click=\"functionCall\"\n              ref=\"header\"\n              :prop=\"headerData\"\n              v-text=\"textContent\"\n              id=\"uniqueID\"\n              myProp=\"prop\"\n              >\n            </div>\n          </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 6
+    },
+    {
+      "id": "attributes-order/invalid/9",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div\n              v-if=\"!visible\"\n              v-for=\"item in items\"\n              v-once\n              is=\"header\"\n              v-on:click=\"functionCall\"\n              ref=\"header\"\n              :prop=\"headerData\"\n              v-text=\"textContent\"\n              id=\"uniqueID\"\n              myProp=\"prop\"\n              >\n            </div>\n          </template>",
+      "options": [
+        {
+          "order": [
+            "EVENTS",
+            "TWO_WAY_BINDING",
+            "UNIQUE",
+            "DEFINITION",
+            "CONDITIONALS",
+            "LIST_RENDERING",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "OTHER_ATTR",
+            "OTHER_DIRECTIVES",
+            "CONTENT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 5
+    },
+    {
+      "id": "attributes-order/invalid/10",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <div\n              class=\"content\"\n              v-if=\"!visible\"\n              v-model=\"foo\"\n              v-text=\"textContent\"\n              >\n            </div>\n          </template>",
+      "options": [
+        {
+          "order": [
+            "CONDITIONALS",
+            "LIST_RENDERING",
+            "RENDER_MODIFIERS",
+            "DEFINITION",
+            "EVENTS",
+            "UNIQUE",
+            [
+              "TWO_WAY_BINDING",
+              "OTHER_ATTR"
+            ],
+            "CONTENT",
+            "GLOBAL"
+          ]
+        }
+      ],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/11",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n            <my-component\n              v-if=\"!visible\"\n              v-model=\"content\"\n              v-slot=\"textContent\"\n              >\n            </my-component>\n          </template>",
+      "options": [],
+      "filename": "test.js",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/12",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            z-prop=\"Z\"\n            a-prop=\"A\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/13",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            :z-prop=\"Z\"\n            :a-prop=\"A\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/14",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            @input=\"bar\"\n            @change=\"foo\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/15",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            z-prop=\"value\"\n            boolean-prop>\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/16",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-on:click=\"functionCall\"\n            v-on:[c]=\"functionCall\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/17",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-text=\"textContent\"\n            v-on:click=\"functionCall\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/18",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            :class=\"foo\"\n            class=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/19",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-show=\"foo\"\n            v-if=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/20",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-foo=\"foo\"\n            v-bar=\"bar\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/21",
+      "rule": "vue/attributes-order",
+      "code": "<template>\n          <div\n            v-foo.b=\"b\"\n            v-foo.a=\"a\">\n          </div>\n        </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/22",
+      "rule": "vue/attributes-order",
+      "code": "<template><div v-cloak v-is=\"foo\"></div></template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/23",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:id=\"a\"\n          v-bind=\"b\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/24",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:id=\"a\"\n          v-if=\"x\"\n          v-bind=\"b\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/25",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind=\"b\"\n          v-bind:id=\"a\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/26",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-on:click=\"x\"\n          v-bind:id=\"a\"\n          v-bind=\"b\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/27",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:id=\"a\"\n          v-on:click=\"x\"\n          v-bind=\"b\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/28",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-on:click=\"x\"\n          v-bind=\"b\"\n          v-bind:id=\"a\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/29",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-on:click=\"x\"\n          v-bind:a=\"x\"\n          v-bind=\"x\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/30",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:a=\"x\"\n          v-on:click=\"x\"\n          v-bind=\"x\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/31",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          a=\"x\"\n          v-bind=\"x\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/32",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-on:click=\"x\"\n          v-bind=\"x\"\n          v-if=\"x\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/33",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-custom-directive=\"x\"\n          v-bind=\"b\"\n          v-model=\"c\"\n          v-bind:value=\"a\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/34",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"x\"\n          v-model=\"c\"\n          v-bind=\"b\"\n          v-bind:id=\"a\">\n        </div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/35",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-if=\"a\"\n          attr=\"a\"\n          v-for=\"a in items\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/36",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          attr=\"a\"\n          v-if=\"a\"\n          v-for=\"a in items\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/37",
+      "rule": "vue/attributes-order",
+      "code": "<template><div ref=\"foo\" v-slot=\"{ qux }\" bar=\"baz\"></div></template>",
+      "options": [
+        {
+          "order": [
+            "UNIQUE",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "OTHER_ATTR",
+            "EVENTS",
+            "CONTENT",
+            "DEFINITION",
+            "SLOT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/38",
+      "rule": "vue/attributes-order",
+      "code": "<template><div bar=\"baz\" ref=\"foo\" v-slot=\"{ qux }\"></div></template>",
+      "options": [
+        {
+          "order": [
+            "UNIQUE",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "OTHER_ATTR",
+            "EVENTS",
+            "CONTENT",
+            "DEFINITION",
+            "SLOT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/39",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind=\"object\"\n          v-if=\"show\"\n          v-model=\"model\"\n          ref=\"ref\"\n          @click=\"handleClick\"/>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/40",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          @click=\"handleClick\"\n          v-bind=\"object\"/>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/41",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          ref=\"ref\"\n          @click=\"handleClick\"\n          v-bind=\"object\"\n          @input=\"handleInput\"/>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/42",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          ref=\"ref\"\n          @click=\"handleClick\"\n          v-bind=\"object\"\n          @input=\"handleInput\"/>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "UNIQUE",
+            "EVENTS",
+            "OTHER_ATTR"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/43",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind=\"object\"\n          @click=\"handleClick\"\n          attr=\"foo\"/>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "UNIQUE",
+            "EVENTS",
+            "OTHER_ATTR"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/44",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          v-bind:prop-one=\"a\"\n          prop-two=\"b\"\n          :prop-three=\"c\"/>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "ATTR_STATIC",
+            "ATTR_DYNAMIC"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/45",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          :prop-one=\"a\"\n          v-model=\"value\"\n          prop-two=\"b\"\n          :prop-three=\"c\"\n          class=\"class\"\n          boolean-prop/>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            "ATTR_DYNAMIC",
+            "ATTR_STATIC",
+            "ATTR_SHORTHAND_BOOL",
+            "EVENTS"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/46",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          :prop-one=\"a\"\n          v-model=\"value\"\n          boolean-prop\n          prop-two=\"b\"\n          :prop-three=\"c\"/>\n      </template>",
+      "options": [
+        {
+          "order": [
+            "UNIQUE",
+            "LIST_RENDERING",
+            "CONDITIONALS",
+            "RENDER_MODIFIERS",
+            "GLOBAL",
+            "TWO_WAY_BINDING",
+            "OTHER_DIRECTIVES",
+            [
+              "ATTR_STATIC",
+              "ATTR_DYNAMIC",
+              "ATTR_SHORTHAND_BOOL"
+            ],
+            "EVENTS",
+            "CONTENT",
+            "DEFINITION",
+            "SLOT"
+          ]
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/47",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          @click=\"handleClick\"\n          v-bind=\"attrs\"\n        ></div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/48",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          ref=\"ref\"\n          @click=\"handleClick\"\n          v-bind=\"attrs\"\n        ></div>\n      </template>",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/49",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          medium-attr=\"value\"\n          short=\"val\"\n          very-long-attribute-name=\"value\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/50",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          very-long-attribute-name=\"value\"\n          short=\"val\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/51",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          id=\"id\"\n          v-model=\"foo\"\n          very-long-attribute-name=\"value\"\n          short=\"val\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/52",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          @mouseover=\"handleMouseover\"\n          @click=\"fn\"\n          @input=\"handleInput\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/53",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          :abc=\"value\"\n          :a=\"value\"\n          :ab=\"value\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "attributes-order/invalid/54",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          very-long-binding=\"longerValue\"\n          short=\"obj\"\n          @click=\"fn\">\n        </div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/55",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          aa=\"v\"\n          z=\"v\"\n        ></div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true,
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "attributes-order/invalid/56",
+      "rule": "vue/attributes-order",
+      "code": "\n      <template>\n        <div\n          zz=\"v\"\n          bb=\"v\"\n          @keyup=\"fn\"\n          @click=\"fn\"\n        ></div>\n      </template>",
+      "options": [
+        {
+          "sortLineLength": true,
+          "alphabetical": true
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2015,
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
     }
   ]
 }
