@@ -113,7 +113,8 @@
     "tests/lib/rules/no-restricted-component-options.test.ts": "98f227102e0c3f7d3bc05a723b48f063ce5138e363674342c8538ad6840ff029",
     "tests/lib/rules/no-restricted-custom-event.test.ts": "bde524996db2911a254cc0f93d0b54d9729dcc4e08c0dd8fdca17fe1b8eb8488",
     "tests/lib/rules/custom-event-name-casing.test.ts": "ad5ddf82b32f6bcd2f5cb614455974258e3d05a7ba74e62fc58d7709be065f66",
-    "tests/lib/rules/no-shadow-native-events.test.ts": "d0d47c9a84a47f6a0d51d709d5e83a3cff71742baaf38f61d2f7f483c6f3abbc"
+    "tests/lib/rules/no-shadow-native-events.test.ts": "d0d47c9a84a47f6a0d51d709d5e83a3cff71742baaf38f61d2f7f483c6f3abbc",
+    "tests/lib/rules/no-restricted-props.test.ts": "11e6d5c2e9e77ecc0042fe1061041f2519e472aeebaa9f9865d88806f9a275d6"
   },
   "skippedCases": {
     "no-deprecated-v-bind-sync/invalid/5": "@vue/compiler-sfc 3.5.41 crashes while parsing argumentless v-bind.sync with a value",
@@ -121,7 +122,8 @@
     "require-valid-default-prop/invalid/45": "requires the upstream TypeScript project fixture and imported Props2 type information",
     "require-explicit-emits/valid/44": "requires the upstream TypeScript project fixture and imported Emits1 type information",
     "require-explicit-emits/invalid/33": "requires the upstream TypeScript project fixture and imported Emits1 type information",
-    "no-shadow-native-events/invalid/19": "requires the upstream TypeScript project fixture and imported Emits2 type information"
+    "no-shadow-native-events/invalid/19": "requires the upstream TypeScript project fixture and imported Emits2 type information",
+    "no-restricted-props/invalid/14": "requires the upstream TypeScript project fixture and imported Props1 type information"
   },
   "cases": [
     {
@@ -38101,6 +38103,380 @@
       },
       "settings": {},
       "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-props/valid/1",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: {\n          /* ✗ BAD */\n          bad: {},\n          /* ✓ GOOD */\n          good: {}\n        }\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-props/valid/2",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: [\n          /* ✗ BAD */\n          'bad',\n          /* ✓ GOOD */\n          'good'\n        ]\n      }\n      </script>\n      ",
+      "options": [],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-props/valid/3",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        emits: {\n          foo: null,\n          bar: null,\n          baz: null\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "foo",
+        "bar",
+        "baz"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-props/valid/4",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: [foo, ...bar, baz],\n        emits: ['foo', 'bar', 'baz']\n      }\n      </script>\n      ",
+      "options": [
+        "foo",
+        "bar",
+        "baz"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 0
+    },
+    {
+      "id": "no-restricted-props/invalid/1",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: {\n          /* ✗ BAD */\n          bad: {},\n          /* ✓ GOOD */\n          good: {}\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "bad"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/2",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: [\n          /* ✗ BAD */\n          'bad',\n          /* ✓ GOOD */\n          'good'\n        ]\n      }\n      </script>\n      ",
+      "options": [
+        "bad"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/3",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: {\n          bad: String,\n          good: bb\n        }\n      }\n      </script>\n      ",
+      "options": [
+        "/a/"
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/4",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: [\n          'foo',\n          'bar',\n          'baz'\n        ]\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "name": "bar"
+        },
+        {
+          "name": "baz",
+          "message": "Using Baz"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 2
+    },
+    {
+      "id": "no-restricted-props/invalid/5",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: [\n          'foo',\n          `bar`,\n          0\n        ]\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        },
+        {
+          "name": "bar",
+          "suggest": "Bar"
+        },
+        {
+          "name": "0",
+          "suggest": "Zero"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-restricted-props/invalid/6",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      export default {\n        props: {\n          foo: {},\n          bar: {},\n          [`baz`]: {},\n        }\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        },
+        {
+          "name": "bar",
+          "suggest": "b-a-r"
+        },
+        {
+          "name": "baz",
+          "suggest": "Baz"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 3
+    },
+    {
+      "id": "no-restricted-props/invalid/7",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup>\n      defineProps({\n        foo: {},\n      })\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/8",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup>\n      defineProps(['foo'])\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/9",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup lang=\"ts\">\n      defineProps<{\n        foo:boolean\n      }>()\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/10",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo:boolean\n      }\n      defineProps<Props>()\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/11",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup lang=\"ts\">\n      interface Props {\n        foo:boolean\n      }\n      withDefaults(defineProps<Props>(),\n        {\n          foo: false\n        }\n      )\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/12",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script>\n      const foo = false\n      </script>\n      <script setup lang=\"ts\">\n      interface Props {\n        foo:boolean\n      }\n      withDefaults(defineProps<Props>(),\n        {\n          foo\n        }\n      )\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/13",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup lang=\"ts\">\n      withDefaults(defineProps<Props>(),\n        {\n          foo: false\n        }\n      )\n      interface Props {\n        foo:boolean\n      }\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserOptions": {
+          "parser": "@typescript-eslint/parser"
+        },
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/15",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup>\n      const {foo=false} = defineProps({foo:Boolean})\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
+    },
+    {
+      "id": "no-restricted-props/invalid/16",
+      "rule": "vue/no-restricted-props",
+      "code": "\n      <script setup>\n      const {foo:bar=false} = defineProps({foo:Boolean})\n      </script>\n      ",
+      "options": [
+        {
+          "name": "foo",
+          "suggest": "Foo"
+        }
+      ],
+      "filename": "test.vue",
+      "languageOptions": {
+        "ecmaVersion": 2020,
+        "sourceType": "module",
+        "parserKind": "vue"
+      },
+      "settings": {},
+      "expectedCount": 1
     }
   ]
 }

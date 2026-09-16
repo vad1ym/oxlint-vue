@@ -28,6 +28,7 @@ const CASES = [
   ['vue/no-unused-components', '<div />', false],
   ['vue/no-ref-as-operand', '<div />', false],
   ['vue/require-valid-default-prop', '<div />', false],
+  ['vue/no-restricted-props', '<div />', false],
   ['vue/no-use-computed-property-like-method', '<div />', false],
   ['vue/no-template-shadow', '<div v-for="item in items"><i v-for="item in item" /></div>', true],
   ['vue/require-explicit-emits', '<button @click="$emit(\'save\')" />', true],
@@ -189,6 +190,14 @@ test('max-template-depth honors maxDepth', () => {
     'vue/max-template-depth': ['warn', { maxDepth: 1 }],
   })
   assert.ok(rules.includes('vue/max-template-depth'), rules.join(', '))
+})
+
+test('no-restricted-props reads runtime and typed declarations', () => {
+  const config = { 'vue/no-restricted-props': ['error', 'bad'] }
+  const restricted = script => check('<div />', config, script).diagnostics
+    .filter(diagnostic => diagnostic.rule === 'vue/no-restricted-props')
+  assert.equal(restricted('defineProps({ bad: String })').length, 1)
+  assert.equal(restricted('interface Props { bad: string }; defineProps<Props>()').length, 1)
 })
 
 test('configured SFC block policies inspect top-level blocks', () => {

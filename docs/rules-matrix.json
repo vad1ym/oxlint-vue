@@ -4,8 +4,8 @@
   "counts": {
     "implemented": 69,
     "native": 59,
-    "partial": 55,
-    "missing": 70
+    "partial": 56,
+    "missing": 69
   },
   "projectSpecificRules": [
     "vue/require-v-for-with-index-key",
@@ -3144,17 +3144,19 @@
     },
     {
       "name": "no-restricted-props",
-      "status": "missing",
+      "status": "partial",
       "priority": "P3",
       "categories": [],
       "deprecated": false,
-      "upstreamCases": 0,
+      "upstreamCases": 19,
       "knownDifferences": 0,
       "upstreamFixable": false,
       "upstreamSuggestions": true,
       "nativeFix": null,
       "url": "https://eslint.vuejs.org/rules/no-restricted-props.html",
-      "notes": []
+      "notes": [
+        "Template autofixes/suggestions not implemented"
+      ]
     },
     {
       "name": "no-restricted-static-attribute",

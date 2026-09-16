@@ -61,6 +61,7 @@ export interface DefaultPropFinding { offset: number }
 export interface ComputedPropertyInfo { names: Set<string>, findings: { offset: number }[] }
 export interface ComponentOrderFinding { name: string, offset: number }
 export interface BooleanDefaultFinding { offset: number }
+export interface RestrictedPropFinding { name: string, message: string, offset: number }
 export interface ComponentOptionNameFinding { name: string, offset: number }
 export interface ComponentOptionTypoFinding { name: string, candidates: string[], offset: number }
 export interface RestrictedComponentOptionFinding { message: string, offset: number }
@@ -832,6 +833,119 @@ function componentPropertyName(path: NodePath): string | null {
 function pathValue(path: NodePath): NodePath {
   if (path.isObjectProperty()) return path.get('value') as NodePath
   return path
+}
+
+function propDeclarationName(path: NodePath): string | null {
+  const node = path.node
+  if (node.type === 'Identifier') return node.name
+  if (node.type === 'StringLiteral') return node.value
+  if (node.type === 'NumericLiteral') return String(node.value)
+  if (node.type === 'TemplateLiteral' && node.expressions.length === 0) {
+    return node.quasis[0]?.value.cooked ?? null
+  }
+  return null
+}
+
+/** Prop declarations rejected by no-restricted-props. */
+export function restrictedPropFindings(descriptor: SFCDescriptor, source: string,
+  rawOptions: unknown): RestrictedPropFinding[] {
+  const configured = (Array.isArray(rawOptions) ? rawOptions : []).flatMap(option => {
+    const record = option && typeof option === 'object' && !Array.isArray(option)
+      ? option as { name?: unknown, message?: unknown } : undefined
+    const pattern = typeof record?.name === 'string' ? record.name
+      : typeof option === 'string' ? option : undefined
+    if (pattern === undefined) return []
+    let test: (name: string) => boolean
+    const regex = pattern.match(/^\/(.+)\/([^/]*)$/u)
+    try {
+      const matcher = regex
+        ? new RegExp(regex[1]!, regex[2]!.replaceAll('g', ''))
+        : new RegExp('^' + pattern.replace(/[\\^$.*+?()[\]{}|]/gu, '\\$&') + '$')
+      test = name => matcher.test(name)
+    } catch { test = () => false }
+    return [{ test, message: typeof record?.message === 'string' ? record.message : undefined }]
+  })
+  if (!configured.length) return []
+
+  const findings: RestrictedPropFinding[] = []
+  const realBlocks = [descriptor.script, descriptor.scriptSetup].filter(block => block !== null)
+  const blocks = realBlocks.length ? realBlocks.map(block => ({ content: block.content,
+    offset: block.loc.start.offset, setup: block === descriptor.scriptSetup }))
+    : [{ content: source, offset: 0, setup: false }]
+  for (const block of blocks) {
+    let file
+    try { file = babelParse(block.content, { sourceType: 'module', plugins: ['typescript', 'jsx', 'decorators-legacy'] }) }
+    catch { continue }
+    const types = new Map<string, NodePath>()
+    traverse(file, { enter(path) {
+      if (path.isTSTypeAliasDeclaration()) types.set(path.node.id.name, path.get('typeAnnotation') as NodePath)
+      if (path.isTSInterfaceDeclaration()) types.set(path.node.id.name, path.get('body') as NodePath)
+    } })
+    const report = (name: string, key: NodePath): void => {
+      const option = configured.find(candidate => candidate.test(name))
+      if (!option) return
+      findings.push({ name, offset: block.offset + (key.node.start ?? 0),
+        message: option.message ?? 'Using `' + name + '` props is not allowed.' })
+    }
+    const processRuntime = (props: NodePath): void => {
+      while (['TSAsExpression', 'TSTypeAssertion', 'TSSatisfiesExpression'].includes(props.node.type)) props = props.get('expression') as NodePath
+      if (props.isObjectExpression()) {
+        for (const property of props.get('properties') as NodePath[]) {
+          if (!property.isObjectProperty() && !property.isObjectMethod()) continue
+          const key = property.get('key') as NodePath
+          const name = propDeclarationName(key)
+          if (name !== null && (!property.node.computed
+            || key.isStringLiteral() || key.isTemplateLiteral() && key.node.expressions.length === 0)) report(name, key)
+        }
+      } else if (props.isArrayExpression()) {
+        for (const element of props.get('elements') as NodePath[]) {
+          if (!element?.node) continue
+          // In array syntax only static values declare props. Identifiers and
+          // spreads are runtime expressions whose values cannot be known here.
+          if (!element.isStringLiteral() && !element.isNumericLiteral()
+            && !(element.isTemplateLiteral() && element.node.expressions.length === 0)) continue
+          const name = propDeclarationName(element)
+          if (name !== null) report(name, element)
+        }
+      }
+    }
+    const processType = (root: NodePath | undefined, seen = new Set<object>()): void => {
+      if (!root || seen.has(root.node)) return
+      seen.add(root.node)
+      if (root.isTSTypeReference() && root.node.typeName.type === 'Identifier') {
+        processType(types.get(root.node.typeName.name), seen)
+        return
+      }
+      if (root.isTSIntersectionType()) {
+        for (const type of root.get('types') as NodePath[]) processType(type, seen)
+        return
+      }
+      const members = root.isTSTypeLiteral() ? root.get('members') as NodePath[]
+        : root.isTSInterfaceBody() ? root.get('body') as NodePath[] : []
+      for (const member of members) {
+        if (!member.isTSPropertySignature() && !member.isTSMethodSignature()) continue
+        const key = member.get('key') as NodePath
+        const name = propDeclarationName(key)
+        if (name !== null) report(name, key)
+      }
+    }
+    traverse(file, { enter(path) {
+      if (path.isExportDefaultDeclaration()) {
+        const object = componentObject(path)
+        const props = object && objectPropertyPath(object, 'props')
+        if (props?.isObjectProperty()) processRuntime(pathValue(props))
+      }
+      if (!block.setup || !path.isCallExpression() || path.node.callee.type !== 'Identifier'
+        || path.node.callee.name !== 'defineProps') return
+      const runtime = (path.get('arguments') as NodePath[])[0]
+      if (runtime) processRuntime(runtime)
+      else {
+        const parameters = path.get('typeParameters') as NodePath | undefined
+        processType(parameters && (parameters.get('params') as NodePath[])[0])
+      }
+    } })
+  }
+  return findings
 }
 
 function propTypes(path: NodePath): string[] {
