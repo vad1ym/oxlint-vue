@@ -694,8 +694,8 @@ function extractTemplate(
     if (prop.name === 'slot' && prop.exp) {
       const expText = source.slice(prop.exp.loc.start.offset, prop.exp.loc.end.offset)
       const compact = expText
-        .replace(/([\{\[,:])\s+/gu, '$1')
-        .replace(/\s+([\}\],:])/gu, '$1')
+        .replace(/([{[,:])\s+/gu, '$1')
+        .replace(/\s+([}\],:])/gu, '$1')
       const opens = [...new Set([
         `(${expText})=>{`,
         `(${compact})=>{`,
