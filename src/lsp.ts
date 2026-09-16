@@ -352,7 +352,19 @@ export async function startProxy(opts: ProxyOptions = {}): Promise<Proxy> {
           ...(msg.params.diagnostics ?? []).filter(d => {
             if (isArtefact(d)) return false
             const pre = preprocessedByUri.get(real)
-            return !pre || !/(?:^|[/(])no-unused-vars\)?$/.test(String(d.code))
+            if (!pre) return true
+            if (/(?:^|[/(])no-undef\)?$/.test(String(d.code))) {
+              const line = d.range.start.line + 1
+              const column = d.range.start.character + 1
+              if (isTemplateUsedBinding(pre.code, pre.syntheticBindings, line, column, true)) return false
+              const name = d.message.match(/['"]([^'"]+)['"]/)?.[1]
+              if (name && (name.startsWith('$') || pre.templateGlobals.includes(name))
+                && isTemplateUsedBinding(pre.code, pre.templateRange, line, column, true)) return false
+            }
+            if (/(?:^|[/(])array-callback-return\)?$/.test(String(d.code))
+              && isTemplateUsedBinding(pre.code, pre.syntheticCallbacks,
+                d.range.start.line + 1, d.range.start.character + 1, true)) return false
+            return !/(?:^|[/(])no-unused-vars\)?$/.test(String(d.code))
               || !isTemplateUsedBinding(pre.code, pre.templateUsedBindings,
                 d.range.start.line + 1, d.range.start.character + 1, true)
           }),

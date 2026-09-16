@@ -28,7 +28,7 @@ async function lint(template, script, style = '', extra = []) {
     const pre = preprocess(source)
     assert.equal(pre.code.length, source.length)
     await fs.writeFile(filename, source)
-    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({ plugins: [], categories: {}, rules: { 'no-unused-vars': 'error' } }))
+    await fs.writeFile(path.join(dir, '.oxlintrc.json'), JSON.stringify({ plugins: [], categories: {}, globals: { defineProps: 'readonly' }, rules: { 'no-unused-vars': 'error' } }))
     return await runOxlint([filename], { cwd: dir, extraArgs: extra })
   } finally { await fs.rm(dir, { recursive: true, force: true }) }
 }
@@ -54,6 +54,26 @@ function save() { const active = 123; }
   assert.equal(unused.length, 3, JSON.stringify(diags))
   assert.ok(unused.some(d => d.message.includes("'local'")))
   assert.ok(unused.some(d => d.message.includes("'active'")))
+})
+
+test('synthetic component and directive references do not trigger no-undef', async () => {
+  const diags = await lint('<ElForm ref="form" v-loading="loading">{{ $slots.default }} {{ missing }}</ElForm>', 'defineProps<{ loading: boolean }>();', '', ['-D', 'no-undef'])
+  const undefinedNames = diags.filter(d => d.rule.includes('no-undef')).map(d => d.message)
+  assert.equal(undefinedNames.length, 1, JSON.stringify(diags))
+  assert.match(undefinedNames[0], /missing/)
+})
+
+test('compact slot syntax preserves its local scope', async () => {
+  const diags = await lint('<ElTableColumn #="{ row }">{{ row.name }}</ElTableColumn>', '', '', ['-D', 'no-undef'])
+  assert.ok(!diags.some(d => d.rule.includes('no-undef')), JSON.stringify(diags))
+  assert.ok(!diags.some(d => d.rule === 'oxlint-vue/incomplete-template'), JSON.stringify(diags))
+})
+
+test('synthetic v-for callbacks do not trigger array-callback-return', async () => {
+  const diags = await lint('<div v-for="item in items" :key="item">{{ item }}</div>', 'const items = []; [1].map(() => {});', '', ['-D', 'array-callback-return'])
+  const callbacks = diags.filter(d => d.rule.includes('array-callback-return'))
+  assert.equal(callbacks.length, 1, JSON.stringify(diags))
+  assert.ok(callbacks[0].line > 3, JSON.stringify(callbacks))
 })
 
 test('v-for and slot bindings do not count as uses of same-named script variables', async () => {

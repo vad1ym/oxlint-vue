@@ -216,7 +216,16 @@ export async function runOxlint(
 
     return dedupe([...virtual, ...native, ...structural]).filter(d => {
       const pre = preprocessed.get(d.filename)
-      return !pre || !/(?:^|[/(])no-unused-vars\)?$/.test(d.rule)
+      if (!pre) return true
+      if (/(?:^|[/(])no-undef\)?$/.test(d.rule)) {
+        if (isTemplateUsedBinding(pre.code, pre.syntheticBindings, d.line, d.column)) return false
+        const name = d.message.match(/['"]([^'"]+)['"]/)?.[1]
+        if (name && (name.startsWith('$') || pre.templateGlobals.includes(name))
+          && isTemplateUsedBinding(pre.code, pre.templateRange, d.line, d.column)) return false
+      }
+      if (/(?:^|[/(])array-callback-return\)?$/.test(d.rule)
+        && isTemplateUsedBinding(pre.code, pre.syntheticCallbacks, d.line, d.column)) return false
+      return !/(?:^|[/(])no-unused-vars\)?$/.test(d.rule)
         || !isTemplateUsedBinding(pre.code, pre.templateUsedBindings, d.line, d.column)
     })
   } finally {

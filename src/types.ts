@@ -37,6 +37,14 @@ export interface PreprocessResult {
   coverageGaps: CoverageGap[]
   hasScript: boolean
   templateUsedBindings: UsedBinding[]
+  /** Synthetic component/directive references that must not trip no-undef. */
+  syntheticBindings: UsedBinding[]
+  /** Synthetic v-for callbacks that must not trip array-callback-return. */
+  syntheticCallbacks: UsedBinding[]
+  /** Names Vue exposes only to template expressions, such as undeclared props. */
+  templateGlobals: string[]
+  /** Source range of the template block. */
+  templateRange: UsedBinding[]
 }
 
 /**

@@ -574,6 +574,10 @@ export const lintConfig = {
         'vue/no-textarea-mustache': 'error',
         'vue/no-child-content': 'error',
         'vue/no-v-html': 'off',
+        // Vue 2-only rules conflict with this Vue 3 preset.
+        'vue/no-custom-modifiers-on-v-model': 'off',
+        'vue/no-v-for-template-key': 'off',
+        'vue/no-v-model-argument': 'off',
         'vue/no-useless-mustaches': 'off',
         'vue/no-useless-v-bind': 'error',
         'vue/require-v-for-with-index-key': 'off',

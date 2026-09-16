@@ -11,6 +11,7 @@ import type { CoverageGap, PreprocessResult } from './types.js'
 // JavaScript version carried around become named constants.
 import { ElementTypes, NodeTypes, walkIdentifiers } from '@vue/compiler-core'
 import { parse } from '@vue/compiler-sfc'
+import { analyzeScript } from './script-analysis.js'
 import { templateUsedBindings } from './template-usage.js'
 
 /**
@@ -165,6 +166,7 @@ export function preprocess(
   // astral character (emoji, rare CJK) and quietly corrupts the mapping.
   const chars: CharBuffer = source.split('')
   const coverageGaps: CoverageGap[] = []
+  const emitted: EmittedRegion[] = []
 
   const parseErrors = errors.map(e => ({
     message: e.message,
@@ -190,7 +192,7 @@ export function preprocess(
 
   // 3. Extract template expressions into the blanked template region.
   if (descriptor.template?.ast) {
-    extractTemplate(descriptor.template.ast, source, chars, [], coverageGaps)
+    extractTemplate(descriptor.template.ast, source, chars, emitted, coverageGaps)
   }
 
   if (descriptor.template && (descriptor.template.src || (descriptor.template.lang && descriptor.template.lang !== 'html'))) {
@@ -212,7 +214,20 @@ export function preprocess(
     coverageGaps.push({ offset: block?.loc.start.offset ?? 0, end: block?.loc.end.offset ?? 0,
       kind: 'binding', message: `Binding usage analysis failed: ${(err as Error).message}` })
   }
-  return { code, descriptor, parseErrors, coverageGaps, hasScript: scripts.length > 0, templateUsedBindings: usedBindings }
+  const syntheticBindings = emitted
+    .filter(region => region.kind === 'binding')
+    .map(({ start, end }) => ({ start, end }))
+  const syntheticCallbacks = emitted
+    .filter(region => region.kind === 'v-for')
+    .map(({ start, end }) => ({ start, end }))
+  const script = analyzeScript(descriptor.scriptSetup?.content)
+  const templateGlobals = [...new Set([...script.props.keys(), ...script.instanceProps])]
+  const templateRange = descriptor.template
+    ? [{ start: descriptor.template.loc.start.offset, end: descriptor.template.loc.end.offset }]
+    : []
+  return { code, descriptor, parseErrors, coverageGaps, hasScript: scripts.length > 0,
+    templateUsedBindings: usedBindings, syntheticBindings, syntheticCallbacks,
+    templateGlobals, templateRange }
 }
 
 /** Built-in directives resolve to no user binding. */
@@ -426,6 +441,7 @@ function extractTemplate(
     // followed immediately by a `ref` reference would read as `VFormformRef`).
     if (writeAt(chars, start, `typeof ${ident};`, wide)) {
       claim(start, start + ident.length + 8)
+      out.push({ start, end: start + ident.length + 8, kind: 'binding' })
       return
     }
 
@@ -440,9 +456,13 @@ function extractTemplate(
     // The bare identifier is fine there -- ASI terminates the statement.
     if (writeAt(chars, at, `${ident};`, narrow)) {
       claim(at, at + ident.length + 1)
+      out.push({ start, end: at + ident.length + 1, kind: 'binding' })
       return
     }
-    if (writeAt(chars, at, ident, narrow)) claim(at, at + ident.length)
+    if (writeAt(chars, at, ident, narrow)) {
+      claim(at, at + ident.length)
+      out.push({ start, end: at + ident.length, kind: 'binding' })
+    }
   }
 
   /**
@@ -477,9 +497,13 @@ function extractTemplate(
     if (budget > chars.length) return
     if (writeAt(chars, at, `${content};`, budget)) {
       claim(at, at + content.length + 1)
+      out.push({ start: at, end: at + content.length + 1, kind: 'binding' })
       return
     }
-    if (writeAt(chars, at, content, budget)) claim(at, at + content.length)
+    if (writeAt(chars, at, content, budget)) {
+      claim(at, at + content.length)
+      out.push({ start: at, end: at + content.length, kind: 'binding' })
+    }
   }
 
   /**
@@ -502,9 +526,13 @@ function extractTemplate(
 
     if (writeAt(chars, at, `${ident};`, budget)) {
       claim(at, at + ident.length + 1)
+      out.push({ start: at, end: at + ident.length + 1, kind: 'binding' })
       return
     }
-    if (writeAt(chars, at, ident, budget)) claim(at, at + ident.length)
+    if (writeAt(chars, at, ident, budget)) {
+      claim(at, at + ident.length)
+      out.push({ start: at, end: at + ident.length, kind: 'binding' })
+    }
   }
 
   /**
@@ -665,12 +693,20 @@ function extractTemplate(
 
     if (prop.name === 'slot' && prop.exp) {
       const expText = source.slice(prop.exp.loc.start.offset, prop.exp.loc.end.offset)
-      const open = `((${expText})=>{`
-      if (!writeAt(chars, dirStart, open, dirEnd)) {
+      const compact = expText
+        .replace(/([\{\[,:])\s+/gu, '$1')
+        .replace(/\s+([\}\],:])/gu, '$1')
+      const opens = [...new Set([
+        `(${expText})=>{`,
+        `(${compact})=>{`,
+        ...(IDENTIFIER.test(expText.trim()) ? [`${expText.trim()}=>{`] : []),
+      ])]
+      const open = opens.find(candidate => writeAt(chars, dirStart, candidate, dirEnd))
+      if (!open) {
         gap(prop, 'scope', 'Not enough padding to preserve the slot scope.')
         return
       }
-      if (closeScope(node, dirEnd) === null) {
+      if (closeScope(node, dirEnd, ['};', '}']) === null) {
         blankRegion(chars, dirStart, dirEnd)
         gap(prop, 'scope', 'Not enough padding to preserve the directive scope.')
         return
@@ -720,7 +756,11 @@ function extractTemplate(
    * tag (`</p>`), falling back to the self-closing `/>`. Returns null when
    * there is genuinely no room, so the caller can back the whole thing out.
    */
-  function closeScope(node: ElementNode, notBefore: number): number | null {
+  function closeScope(
+    node: ElementNode,
+    notBefore: number,
+    closers = ['});', '})'],
+  ): number | null {
     const end = node.loc.end.offset
     // Never close before an expression on this element or inside a child.
     let start = Math.max(notBefore, node.loc.start.offset)
@@ -728,7 +768,7 @@ function extractTemplate(
       if (written.has(at)) { start = at + 1; break }
     }
     // Scan backwards for a run of padding wide enough to hold the closer.
-    for (const closer of ['});', '})']) {
+    for (const closer of closers) {
       for (let at = end - closer.length; at >= start; at--) {
         let free = true
         for (let i = 0; i < closer.length; i++) {

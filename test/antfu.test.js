@@ -10,7 +10,10 @@ test('antfu export provides configs for oxlint and oxfmt', () => {
   assert.equal(lintConfig.rules['jsdoc/check-access'], 'warn')
   assert.equal(lintConfig.rules['regexp/prefer-d'], 'error')
   assert.equal(lintConfig.rules['vue/no-watch-after-await'], 'error')
-  assert.equal(Object.keys(lintConfig.settings.vue.rules).length, 25)
+  assert.ok(Object.keys(lintConfig.settings.vue.rules).length >= 28)
+  assert.equal(lintConfig.settings.vue.rules['vue/no-v-model-argument'], 'off')
+  assert.equal(lintConfig.settings.vue.rules['vue/no-custom-modifiers-on-v-model'], 'off')
+  assert.equal(lintConfig.settings.vue.rules['vue/no-v-for-template-key'], 'off')
   assert.deepEqual(lintConfig.jsPlugins, ['eslint-plugin-regexp'])
   assert.ok(lintConfig.ignorePatterns.includes('**/node_modules/**'))
 
