@@ -65,9 +65,9 @@ blank virtual document and the original parsing diagnostics.
 style. Padding is not involved: oxfmt reads the real file, so positions and
 structure are its problem, not ours.
 
-The style itself comes from [`antfu-oxlint-vue`](https://github.com/vad1ym/antfu-oxlint-vue),
-which maps antfu's `style/*` and `perfectionist` rules onto oxfmt options. Without
-that package oxfmt uses its own defaults — double quotes and semicolons.
+The built-in `fmtConfig` export from `oxlint-vue/antfu` maps Antfu's `style/*`
+and `perfectionist` rules onto oxfmt options. Without that config oxfmt uses its
+own defaults — double quotes and semicolons.
 
 oxfmt 0.63.0 has a bug: it applies `semi: false` to multi-statement inline
 handlers, which Vue parses as a single expression, so the result no longer

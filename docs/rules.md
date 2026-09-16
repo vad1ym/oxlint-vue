@@ -4,9 +4,9 @@ The 25 rules `oxlint-vue` adds on top of oxlint. They walk the
 `compiler-sfc` template AST, which the padding transform discards, and are
 configured under `settings.vue.rules` -- a key oxlint ignores.
 
-With [antfu-oxlint-vue](https://github.com/vad1ym/antfu-oxlint-vue) you write
-them flat under `rules` alongside every other rule; it routes them here for
-you, since these names and oxlint's native `vue/*` rules never overlap.
+The built-in `lintConfig` from `oxlint-vue/antfu` enables the adapted Antfu
+selection of these rules. Their names and oxlint's native `vue/*` rules never
+overlap.
 
 | Rule | Default |
 |---|---|
@@ -39,9 +39,28 @@ you, since these names and oxlint's native `vue/*` rules never overlap.
 oxlint validates its own `rules` map strictly and does not know these names,
 so they live under `settings`, which it ignores:
 
+```js
+import { lintConfig } from 'oxlint-vue/antfu'
+
+export default {
+  ...lintConfig,
+  settings: {
+    ...lintConfig.settings,
+    vue: {
+      ...lintConfig.settings.vue,
+      rules: {
+        ...lintConfig.settings.vue.rules,
+        'vue/no-v-html': 'off',
+      },
+    },
+  },
+}
+```
+
+Without the preset, configure the same nesting directly:
+
 ```jsonc
 {
-  "extends": ["./node_modules/antfu-oxlint-vue/configs/antfu.oxlintrc.json"],
   "settings": {
     "vue": {
       "rules": { "vue/no-v-html": "off" }
@@ -55,23 +74,26 @@ Same severities as oxlint: `"off"`/`"warn"`/`"error"`, `0`/`1`/`2`,
 
 ## Coverage against antfu
 
-Measured against `@antfu/eslint-config@9.3.0` with `{ vue: true, typescript: true }`
-— 578 active rules.
+The built-in config is ported from `@antfu/eslint-config@9.5.1` with Vue and
+TypeScript enabled. Compatible rules retain Antfu's severity and options.
 
-| antfu group | Rules | Here |
-|---|---|---|
-| core ESLint | 105 | **99** |
-| `ts`, `unicorn`, `import` | 47 | **47** |
-| `regexp` | 60 | **54** via oxlint `jsPlugins` |
-| `style`, `perfectionist` | 69 | applied by `--format-code`, not checked |
-| `vue/*` | 150 | **46** native + **25** own structural |
-| `jsonc`, `yaml`, `toml`, `markdown` | 90 | out of scope |
+| Antfu group | Ported here |
+|---|---:|
+| core JavaScript | **99** oxlint rules |
+| TypeScript | **28** file-scoped oxlint rules; core rules stay TS-aware |
+| Node, JSDoc, imports, Unicorn | **35** oxlint rules |
+| RegExp | **60** plugin rules plus 7 core overrides |
+| tests | **7** file-scoped oxlint rules |
+| Vue | **36** native plus **25** template rules |
+| stylistic, perfectionist | applied by oxfmt |
+| JSON/JSONC/JSON5, YAML, TOML, Markdown, HTML, CSS | formatted by oxfmt |
 
 **Not ported.** `eslint-plugin-vue` itself — the name `vue` is reserved for
 oxlint's native plugin, so `jsPlugins` rejects it; hence 25 hand-written
 structural rules instead of 253 loaded ones. Also 6 core rules
 (`dot-notation`, `no-dupe-args`, `no-octal`, `no-octal-escape`,
-`no-restricted-syntax`, `no-undef-init`), ~12 Vue 2 deprecations, most of
+`no-restricted-syntax`, `no-undef-init`), ESLint-only plugin rules, type-aware
+rules, ~12 Vue 2 deprecations, most of
 `vue/valid-*`, API-style rules (`v-bind-style`, casing), type-aware template
 rules, and cross-block checks.
 

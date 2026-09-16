@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 import fs from 'node:fs/promises'
-import { existsSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import { loadConfig, resolveLintConfig, runOxlint } from './run.js'
@@ -314,18 +313,13 @@ async function runWatch(
 /**
  * Write starter configs.
  *
- * With the preset package installed these are `.mjs` calling its factory:
+ * Both presets ship with oxlint-vue and are exposed from `oxlint-vue/antfu`:
  *
- *   export default antfu({ rules: { 'no-console': 'off' } })
+ *   import { lintConfig } from 'oxlint-vue/antfu'
+ *   export default lintConfig
  *
- * The factory returns a complete config, so `extends` never enters into it --
- * oxlint does NOT inherit `ignorePatterns` through `extends`, and a config
- * written that way walks node_modules: 102k diagnostics on a scratch project.
- * oxfmt has no `extends` at all, so a JS config is the only way to reference
- * its preset rather than copy the file.
- *
- * Without the preset there is nothing to call, and a plain JSON config is
- * simpler and works in every runtime.
+ * Exporting the complete objects avoids `extends`: oxlint does not inherit
+ * `ignorePatterns` through it, and oxfmt has no `extends` support at all.
  */
 async function runInit(cwd: string): Promise<number> {
   const created: string[] = []
@@ -341,41 +335,15 @@ async function runInit(cwd: string): Promise<number> {
     created.push(path.basename(target))
   }
 
-  // The presets live in their own package so people looking for an antfu
-  // config on oxlint can find them. This tool works without it -- oxlint's
-  // default categories still apply -- so the package is detected, never
-  // required, and never installed on the user's behalf.
-  const presetDir = path.join(cwd, 'node_modules', 'antfu-oxlint-vue', 'configs')
-  const hasPresets = existsSync(presetDir)
+  await write(path.join(cwd, 'oxlint.config.mjs'), `import { lintConfig } from 'oxlint-vue/antfu'
 
-  if (hasPresets) {
-    await write(path.join(cwd, 'oxlint.config.mjs'), `import antfu from 'antfu-oxlint-vue'
-
-export default antfu({
-  rules: {
-    // Your rules here -- oxlint's and the template ones alike, e.g.
-    //   'no-console': 'off',
-    //   'vue/no-v-html': 'off',
-  },
-})
+export default lintConfig
 `)
 
-    await write(path.join(cwd, 'oxfmt.config.mjs'), `import preset from 'antfu-oxlint-vue/oxfmtrc'
+  await write(path.join(cwd, 'oxfmt.config.mjs'), `import { fmtConfig } from 'oxlint-vue/antfu'
 
-export default {
-  ...preset,
-  // Your formatting overrides here.
-}
+export default fmtConfig
 `)
-  } else {
-    // No preset to spread: JSON is simpler, and works outside Node too.
-    await write(path.join(cwd, '.oxlintrc.json'), `${JSON.stringify({
-      $schema: './node_modules/oxlint/configuration_schema.json',
-      ignorePatterns: ['**/node_modules/**', '**/dist/**'],
-      rules: {},
-      settings: { vue: { rules: {} } },
-    }, null, 2)}\n`)
-  }
 
   for (const name of skipped) {
     process.stderr.write(`oxlint-vue: ${name} already exists, left alone.\n`)
@@ -383,8 +351,8 @@ export default {
   if (!created.length) {
     process.stderr.write(
       'Nothing to do. To wire the preset into an existing config:\n'
-      + "  import antfu from 'antfu-oxlint-vue'\n"
-      + '  export default antfu()\n',
+      + "  import { lintConfig } from 'oxlint-vue/antfu'\n"
+      + '  export default lintConfig\n',
     )
     return 1
   }
@@ -399,16 +367,6 @@ export default {
     + `${C.dim('settings.vue.rules')}, and formatting in ${C.dim('oxfmt.config.mjs')}.\n`,
   )
 
-  if (!hasPresets) {
-    // Without a preset the config is bare: oxlint's default categories apply,
-    // but none of the antfu rules, globals or formatting do. Worth saying so,
-    // since the difference is invisible until someone compares outputs.
-    process.stdout.write(
-      `\n${C.dim('Tip: npm i -D antfu-oxlint-vue adds the antfu preset —')}\n`
-      + `${C.dim('     101 lint rules, Vue/Nuxt globals and matching')}\n`
-      + `${C.dim('     formatting. Re-run init afterwards to wire it up.')}\n`,
-    )
-  }
   return 0
 }
 

@@ -34,6 +34,10 @@
     "./lsp": {
       "types": "./dist/lsp.d.ts",
       "import": "./dist/lsp.js"
+    },
+    "./antfu": {
+      "types": "./dist/antfu.d.ts",
+      "import": "./dist/antfu.js"
     }
   },
   "main": "./dist/index.js",
@@ -93,10 +97,5 @@
   "changelog": {
     "output": false
   },
-  "types": "./dist/index.d.ts",
-  "peerDependenciesMeta": {
-    "antfu-oxlint-vue": {
-      "optional": true
-    }
-  }
+  "types": "./dist/index.d.ts"
 }
